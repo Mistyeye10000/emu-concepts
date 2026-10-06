@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept 3 home</title>
+<!--
+  Concept 3 home: Soft app
+  Memorable moment: a large rounded photograph of the river trail with the search pill sitting over its lower edge, the way a native app would.
+  Colours: white, sky #EAF1F8 with sky-8 #22405C, peach #FBE6D8 with rust-8 #6E3A0D, lilac #EFD2F9 selection, rust #9B5212 action, bark #291605.
+  Type: Newsreader 400 for the headline and names; Inter for UI.
+  Layout:  [ headline + line ]
+           [ big rounded photo, search pill overlapping its bottom edge ]
+           [ quick starts: chips that open the directory with a filter on ]
+           [ near you: horizontal row of therapist photo cards ]
+           [ how it works on sky ] [ therapists on peach ]
+  Revised in review: headline originally sat over the photo with a scrim; moved above it so the photo stays clean and the text needs no overlay.
+-->
+<script src="data.js?v=8"></script>
+<script src="kit.js?v=8"></script>
+<script>document.write(`<link rel="stylesheet" href="${EMU.brand.fontsHref}">`)</script>
+<style>
+  html { scrollbar-gutter: stable; }
+  :root { --ink: #291605; --ink-2: #70655C; --rule: #E7E3EC; --rust: #9B5212; --rust-d: #6E3A0D; --lilac: #EFD2F9; --lilac-7: #6A307E; --lilac-8: #4B2259; --sky: #EAF1F8; --sky-8: #22405C; --peach: #FBE6D8;
+    --serif: 'Newsreader', Georgia, serif; --sans: 'Inter', system-ui, sans-serif; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #fff; color: var(--ink); font: 400 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  img { display: block; max-width: 100%; }
+  :focus-visible { outline: 2px solid var(--rust); outline-offset: 3px; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 16px; }
+  @media (min-width: 768px) { .wrap { padding: 0 32px; } }
+  header.top .wrap { display: flex; align-items: center; justify-content: space-between; min-height: 72px; }
+  .logo { font: 700 22px/1 var(--sans); letter-spacing: -0.03em; text-decoration: none; }
+  nav a { text-decoration: none; font-weight: 500; padding: 10px 12px; border-radius: 99px; }
+  nav a:hover { background: var(--sky); }
+
+  .intro { padding: 24px 0 28px; text-align: center; }
+  h1 { font: 400 clamp(40px, 6vw, 76px)/1 var(--serif); letter-spacing: -0.025em; margin: 0 auto; max-width: 14ch; text-wrap: balance; }
+  .intro p { margin: 16px auto 0; font-size: 18px; color: var(--ink-2); max-width: 44ch; }
+
+  .hero { position: relative; padding-bottom: 44px; }
+  .hero figure { margin: 0; border-radius: 36px; overflow: hidden; height: clamp(320px, 52vw, 560px); }
+  .hero img { width: 100%; height: 100%; object-fit: cover; object-position: 55% 62%; }
+  .hero .credit { position: absolute; right: 22px; top: 14px; font-size: 12px; color: #fff; background: rgba(41,22,5,.62); padding: 3px 10px; border-radius: 99px; }
+  .pill { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: min(680px, calc(100% - 32px)); display: grid; grid-template-columns: minmax(0, 1.3fr) auto minmax(0, 1fr) auto; align-items: center; gap: 4px; padding: 8px 8px 8px 10px; background: #fff; border-radius: 99px; box-shadow: 0 18px 40px -16px rgba(34,64,92,.45), 0 0 0 1px var(--rule); }
+  .pill .f { display: grid; padding: 4px 16px; border-radius: 99px; min-width: 0; }
+  .pill .f:hover { background: var(--sky); }
+  .pill label { font: 600 12px/1.2 var(--sans); color: var(--sky-8); }
+  .pill input, .pill select { font: 500 16px var(--sans); color: var(--ink); border: 0; background: transparent; padding: 0; width: 100%; min-width: 0; }
+  .pill .div { width: 1px; height: 32px; background: var(--rule); }
+  .pill button { font: 600 16px var(--sans); min-height: 52px; padding: 0 24px; border-radius: 99px; border: 0; background: var(--rust); color: #fff; cursor: pointer; }
+  .pill button:hover { background: var(--rust-d); }
+  @media (max-width: 560px) { .pill { grid-template-columns: minmax(0, 1fr) auto; border-radius: 28px; } .pill .div, .pill .f.d { display: none; } .pill button { padding: 0 18px; } }
+
+  .quick { padding: 36px 0 8px; }
+  .quick h2, .near h2, .how h2 { font: 400 30px/1.2 var(--serif); margin: 0 0 16px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .chip { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 18px; border-radius: 99px; border: 1px solid #877A6E; text-decoration: none; font-weight: 500; }
+  .chip:hover { background: var(--sky); }
+  .chip .ic { width: 18px; height: 18px; color: var(--rust); }
+
+  .near { padding: 48px 0 24px; }
+  .near .head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .near .head a { font-weight: 600; color: var(--rust); text-underline-offset: 4px; }
+  .row { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(240px, 1fr); gap: 20px; overflow-x: auto; padding-bottom: 12px; scroll-snap-type: x mandatory; }
+  .tcard { scroll-snap-align: start; position: relative; text-decoration: none; display: grid; gap: 8px; }
+  .tcard .ph { position: relative; aspect-ratio: 1; border-radius: 24px; overflow: hidden; background: var(--sky); }
+  .tcard img { width: 100%; height: 100%; object-fit: cover; }
+  .tcard .at { position: absolute; left: 10px; bottom: 10px; background: rgba(255,255,255,.95); border-radius: 99px; padding: 5px 12px; font: 600 12px var(--sans); }
+  .tcard .ex { position: absolute; right: 10px; top: 10px; background: rgba(255,255,255,.95); border-radius: 99px; padding: 4px 9px; font: 600 12px var(--sans); border: 1px dashed var(--ink-2); }
+  .tcard b { font: 500 22px/1.2 var(--serif); }
+  .tcard span.m { font-size: 14px; color: var(--ink-2); }
+  .tcard:hover b { text-decoration: underline; text-underline-offset: 4px; }
+
+  .duo { display: grid; gap: 20px; padding: 48px 0 72px; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 900px) { .duo { grid-template-columns: 1.4fr 1fr; } }
+  .how { background: var(--sky); border-radius: 32px; padding: 36px; }
+  .how ol { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 18px; counter-reset: s; }
+  .how li { counter-increment: s; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 2px 14px; }
+  .how li::before { content: counter(s); grid-row: span 2; width: 44px; height: 44px; border-radius: 14px; background: #fff; color: var(--sky-8); display: grid; place-items: center; font: 500 22px var(--serif); }
+  .how h3 { margin: 0; font: 600 18px var(--sans); color: var(--sky-8); }
+  .how p { margin: 0; }
+  .ther { background: var(--peach); border-radius: 32px; padding: 36px; display: grid; align-content: space-between; gap: 24px; }
+  .ther h2 { font: 400 30px/1.2 var(--serif); margin: 0; color: var(--rust-d); }
+  .ther p { margin: 10px 0 0; }
+  .ther a { justify-self: start; display: inline-flex; align-items: center; min-height: 48px; padding: 0 22px; border-radius: 99px; background: #fff; color: var(--rust-d); font-weight: 700; text-decoration: none; }
+
+  footer.end { border-top: 1px solid var(--rule); padding: 36px 0 56px; color: var(--ink-2); font-size: 14px; }
+  footer.end .cols { display: grid; gap: 24px; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 860px) { footer.end .cols { grid-template-columns: 1fr 1.6fr; } }
+  footer.end nav { display: flex; flex-wrap: wrap; margin-left: -12px; }
+  footer.end nav a { font-size: 16px; color: var(--ink); }
+  footer.end p { margin: 0 0 10px; max-width: 70ch; }
+  footer.end .crisis { color: var(--ink); font-weight: 600; }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="logo" href="c3-home.html">emu.</a><nav aria-label="Main"><a href="c3-directory.html">Find a therapist</a><a href="#">For therapists</a></nav></div></header>
+<main id="main"></main>
+<footer class="end"><div class="wrap cols" id="foot"></div></footer>
+<script>
+  const { mockBar, icon, placeIcon } = KIT; const H = EMU.home, PH = EMU.photos;
+  mockBar(3, 'Soft app');
+  const quick = [['Walk and talk', 'walk'], ['Self-pay', 'check'], ['Anxiety', 'leaf'], ['Couples', 'leaf'], ['Saturday', 'cal'], ['Up to $150', 'check']];
+  document.getElementById('main').innerHTML = `
+    <section class="wrap intro"><h1>${H.headline}</h1><p>${H.line}</p></section>
+    <section class="wrap hero" aria-label="Search">
+      <figure><img src="${PH.trailWalk.src}" alt="${PH.trailWalk.alt}"></figure>
+      <span class="credit">${PH.trailWalk.credit}</span>
+      <form class="pill" action="c3-directory.html" role="search">
+        <div class="f"><label for="loc">City or ZIP code</label><input id="loc" name="location" placeholder="Philadelphia, PA" autocomplete="address-level2"></div>
+        <span class="div" aria-hidden="true"></span>
+        <div class="f d"><label for="dist">Distance</label><select id="dist" name="radius"><option>Within 5 miles</option><option selected>Within 10 miles</option><option>Within 25 miles</option><option>Within 50 miles</option></select></div>
+        <button>Search</button>
+      </form>
+    </section>
+    <section class="wrap near" aria-labelledby="h-near">
+      <div class="head"><h2 id="h-near">Therapists near Philadelphia</h2><a href="c3-directory.html">See all 4</a></div>
+      <div class="row">${EMU.therapists.map(p => `<a class="tcard" href="${p.example ? '#' : 'c3-profile.html'}"><div class="ph"><img src="${p.photo}" alt="Portrait of ${p.name}"><span class="at">${p.place}</span>${p.example ? '<span class="ex">Example</span>' : ''}</div><b>${p.name}</b><span class="m">${p.credential}<br>$${p.price} per session</span></a>`).join('')}</div>
+    </section>
+    <section class="wrap duo">
+      <div class="how" aria-labelledby="h-how"><h2 id="h-how">How Emu works</h2><ol>${EMU.howItWorks.map(([t, d]) => `<li><h3>${t}</h3><p>${d}</p></li>`).join('')}</ol></div>
+      <aside class="ther" aria-labelledby="h-t"><div><h2 id="h-t">${H.therapistsTitle}</h2><p>${H.therapistsLine}</p><p><b>${H.founding}</b></p></div><a href="#">Join as a therapist</a></aside>
+    </section>`;
+  document.getElementById('foot').innerHTML = `
+    <nav aria-label="Footer"><a href="c3-directory.html">Find a therapist</a><a href="#">About Emu</a><a href="#">For therapists</a><a href="#">Contact</a><a href="#">Privacy</a><a href="#">Terms</a></nav>
+    <div><p>${H.disclaimer}</p><p class="crisis">${H.crisis}</p></div>`;
+</script>
+</body>
+</html>

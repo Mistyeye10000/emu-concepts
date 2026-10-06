@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept 5 profile</title>
+<script src="data.js?v=8"></script>
+<script src="kit.js?v=8"></script>
+<script src="map.js?v=8"></script>
+<script src="request.js?v=8"></script>
+<script>document.write(`<link rel="stylesheet" href="${EMU.brand.fontsHref}">`)</script>
+<style>
+  html { scrollbar-gutter: stable; }
+  :root { --ink: #291605; --ink-2: #70655C; --line: #E3E0DD; --am: #FFF1CC; --am-t: #5C3D00; --pm: #E3EEF6; --pm-t: #1F4560; --hatch: #F1F0EE; --rust: #9B5212; --rust-d: #6E3A0D; --lilac: #EFD2F9; --lilac-7: #6A307E; --lilac-8: #4B2259; --error: #B42318;
+    --serif: 'Newsreader', Georgia, serif; --sans: 'Inter', system-ui, sans-serif; --hour: 64px; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #fff; color: var(--ink); font: 400 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--rust); outline-offset: 2px; }
+  .ic { width: 18px; height: 18px; flex: none; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+  @media (min-width: 768px) { .wrap { padding: 0 40px; } }
+  header.top .wrap { display: flex; justify-content: space-between; align-items: center; min-height: 72px; }
+  .logo { font: 700 22px/1 var(--sans); letter-spacing: -0.03em; text-decoration: none; }
+  nav a { text-decoration: none; font-weight: 500; padding: 10px 12px; border-radius: 8px; }
+  nav a:hover { background: #F6F5F3; }
+  .back { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; font-weight: 500; text-decoration: none; margin-left: -6px; padding: 0 10px 0 6px; border-radius: 8px; }
+  .back:hover { background: #F6F5F3; }
+
+  .who { display: grid; grid-template-columns: 80px minmax(0, 1fr); gap: 20px; align-items: center; margin-top: 16px; }
+  .who img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; }
+  h1 { font: 500 clamp(32px, 4.6vw, 46px)/1.05 var(--serif); letter-spacing: -0.02em; margin: 0; }
+  .who p { margin: 4px 0 0; }
+  .ver { display: inline-flex; gap: 6px; align-items: center; color: var(--lilac-7); font-weight: 600; font-size: 14px; margin-top: 4px; }
+
+  /* Calendar */
+  .cal-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 20px; margin: 36px 0 12px; }
+  .cal-head h2 { font: 500 28px/1.2 var(--serif); margin: 0; }
+  .cal-head p { margin: 0; color: var(--ink-2); font-size: 16px; }
+  .calwrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+  .cal { display: grid; grid-template-columns: 56px repeat(8, minmax(100px, 1fr)); min-width: 880px; }
+  .cal .dh { padding: 10px 8px; border-bottom: 1px solid var(--line); border-left: 1px solid var(--line); font: 600 14px var(--sans); background: #FBFAF9; }
+  .cal .dh small { display: block; font-weight: 400; color: var(--ink-2); }
+  .cal .dh.soon { color: var(--ink-2); }
+  .cal .corner { border-bottom: 1px solid var(--line); background: #FBFAF9; }
+  .hours { position: relative; }
+  .hours span { position: absolute; right: 8px; font: 500 12px var(--sans); color: var(--ink-2); transform: translateY(-50%); font-variant-numeric: tabular-nums; }
+  .col { position: relative; border-left: 1px solid var(--line); background-image: repeating-linear-gradient(to bottom, transparent 0 calc(var(--hour) - 1px), var(--line) calc(var(--hour) - 1px) var(--hour)); background-position: 0 calc(var(--hour) / 2 + 1px); }
+  .col.soon { background: repeating-linear-gradient(135deg, var(--hatch) 0 6px, #fff 6px 12px); }
+  .col.soon::after { content: "Too soon to book"; position: absolute; top: 12px; left: 8px; right: 8px; font-size: 12px; color: var(--ink-2); line-height: 1.3; }
+  .blk { position: absolute; left: 4px; right: 4px; border: 0; border-radius: 6px; cursor: pointer; text-align: left; padding: 6px 8px; font: 600 13px/1.2 var(--sans); font-variant-numeric: tabular-nums; display: flex; justify-content: space-between; align-items: flex-start; }
+  .blk.am { background: var(--am); color: var(--am-t); }
+  .blk.pm { background: var(--pm); color: var(--pm-t); }
+  .blk:hover { box-shadow: inset 0 0 0 1.5px currentColor; }
+  .blk .ic { width: 14px; height: 14px; display: none; }
+  .blk[aria-pressed="true"] { background: var(--lilac); color: var(--lilac-8); box-shadow: inset 0 0 0 2px var(--lilac-7); }
+  .blk[aria-pressed="true"] .ic { display: block; }
+
+  .bar { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; margin: 16px 0 0; padding: 16px 20px; background: #FBFAF9; border: 1px solid var(--line); border-radius: 10px; }
+  .chosen { margin: 0; font-weight: 600; flex: 1 1 260px; }
+  .chosen.is-error { color: var(--error); }
+  .bar .price { color: var(--ink-2); }
+  .btn { font: 600 16px var(--sans); min-height: 48px; padding: 0 22px; border-radius: 8px; border: 0; background: var(--rust); color: #fff; cursor: pointer; }
+  .btn:hover { background: var(--rust-d); }
+  .fine { flex-basis: 100%; margin: 0; font-size: 14px; color: var(--ink-2); }
+
+  .rest { display: grid; gap: 40px; margin: 56px 0 96px; }
+  @media (min-width: 900px) { .rest { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 64px; } }
+  .rest h2 { font: 500 24px/1.2 var(--serif); margin: 0 0 8px; }
+  .rest p { margin: 0 0 28px; max-width: 64ch; }
+  .meet iframe { width: 100%; height: 220px; border: 0; border-radius: 10px; filter: saturate(.7); margin-top: 12px; }
+  .meet .pl { font-weight: 600; margin: 0; }
+  .meet .addr { margin: 0; color: var(--ink-2); }
+  .meet .say { margin: 12px 0 0; font: 400 21px/1.45 var(--serif); }
+  dl { margin: 0; }
+  dt { font-weight: 600; margin-top: 12px; }
+  dd { margin: 2px 0 0; color: var(--ink-2); }
+:root { --x-accent: var(--pm-t); --x-tint: var(--am); --x-call-ink: var(--am-t); --x-line: var(--line); --x-r: 10px; }
+  /* Profile gap additions (shared classes, concept accents) */
+  .exm { color: var(--x-accent); font-weight: 700; margin-left: 2px; text-decoration: none; }
+  .x-facts { margin: 18px 0 0; }
+  .x-row { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 12px; padding: 9px 0; border-top: 1px solid var(--x-line); }
+  .x-row dt { font-weight: 600; font-size: 14px; color: var(--ink-2); }
+  .x-row dd { margin: 0; font-size: 16px; }
+  .x-call { background: var(--x-tint); border-radius: var(--x-r, 12px); padding: 14px 16px; display: grid; gap: 4px; margin-top: 14px; }
+  .x-call b { color: var(--x-call-ink, var(--x-accent)); font-weight: 600; }
+  .x-call span { font-size: 14px; color: var(--ink-2); }
+  .x-notice { margin: 6px 0 0; font-size: 14px; color: var(--ink-2); }
+  .x-next { margin-top: 6px; }
+  .x-h { font-weight: 600; font-size: 14px; margin: 0 0 6px; }
+  .x-next ol { margin: 0; padding-left: 20px; font-size: 14px; color: var(--ink-2); }
+  .x-next li + li { margin-top: 3px; }
+  .x-ask { font: 600 16px var(--sans); min-height: 44px; width: 100%; padding: 0 14px; border: 1.5px dashed #877A6E; background: transparent; border-radius: var(--x-r, 12px); color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+  .x-ask:hover { border-style: solid; }
+  .x-prop { font-size: 12px; font-weight: 600; color: var(--ink-2); border: 1px solid #877A6E; border-radius: 99px; padding: 1px 7px; }
+  .x-note { font-size: 14px; color: var(--ink-2); margin: 6px 0 0; }
+  .x-place { margin-top: 16px; display: grid; gap: 6px; }
+  .x-place p { margin: 0; font-size: 16px; }
+  .x-legend { font-size: 14px; color: var(--ink-2); margin: 32px 0 0; }
+  .x-foot { max-width: 1200px; margin: 0 auto; padding: 28px 20px 48px; border-top: 1px solid var(--x-line); font-size: 14px; color: var(--ink-2); }
+  @media (min-width: 768px) { .x-foot { padding: 28px 40px 48px; } }
+  .x-foot p { margin: 0 0 8px; max-width: 75ch; }
+  .x-crisis { color: var(--ink) !important; font-weight: 600; }
+  .x-hints { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 8px; }
+  .x-hint { font-size: 14px; font-weight: 600; color: var(--x-accent); }
+  :root { --x-pin: #1F4560; --x-pin-on: #9B5212; }
+  /* Locations, picker and map (live app: several places per therapist, location-first booking) */
+  .x-map { height: 320px; border-radius: var(--x-r, 12px); overflow: hidden; position: relative; z-index: 0; background: #E9ECE6; }
+  .x-also { margin-top: 20px; }
+  .x-loclist { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 10px; }
+  .x-locitem { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 12px; padding: 10px; border-radius: var(--x-r, 12px); transition: background-color .2s ease-out; }
+  .x-locitem.is-on { background: var(--x-tint); }
+  .x-num { width: 28px; height: 28px; border-radius: 50%; background: var(--x-pin); color: #fff; display: grid; place-items: center; font: 700 13px var(--sans); }
+  .x-locname { margin: 0; font-weight: 600; display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; }
+  .x-tag { font-size: 12px; font-weight: 600; color: var(--x-accent); border: 1px solid currentColor; border-radius: 99px; padding: 1px 8px; }
+  .x-addr { margin: 2px 0 0; font-size: 14px; color: var(--ink-2); }
+  .x-instr { margin: 6px 0 0; }
+  .x-picker { margin: 4px 0 14px; }
+  .x-locs { display: grid; gap: 6px; }
+  .x-loc { font: inherit; font-size: 16px; text-align: left; display: grid; grid-template-columns: 16px 22px minmax(0, 1fr); gap: 8px; align-items: center; min-height: 48px; padding: 6px 10px; border: 1px solid #877A6E; border-radius: var(--x-r, 12px); background: #fff; color: var(--ink); cursor: pointer; }
+  .x-loc:hover { border-color: var(--ink); }
+  .x-loc small { display: block; font-size: 12px; color: var(--ink-2); font-weight: 400; }
+  .x-loc .x-tick { visibility: hidden; width: 16px; height: 16px; }
+  .x-loc .x-n { width: 22px; height: 22px; border-radius: 50%; background: var(--x-pin); color: #fff; display: grid; place-items: center; font: 700 12px var(--sans); }
+  .x-loc[aria-pressed="true"] { border-color: var(--x-pin); background: var(--x-tint); font-weight: 600; }
+  .x-loc[aria-pressed="true"] .x-tick { visibility: visible; }
+  .x-hint-line, .x-none { font-size: 14px; color: var(--ink-2); margin: 6px 0 0; }
+  :root { --rq-ink:#291605;--rq-soft:#70655C;--rq-panel:#FFF1CC;--rq-accent:#9B5212;--rq-accent-hover:#6E3A0D;--rq-radius:12px;--rq-btn-radius:8px;--rq-serif:'Newsreader',Georgia,serif;--rq-sans:'Inter',system-ui,sans-serif; }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="logo" href="c5-home.html">emu.</a><nav aria-label="Main"><a href="c5-directory.html">Find a therapist</a><a href="#">For therapists</a></nav></div></header>
+<main class="wrap" id="main"></main>
+<script>
+  const { icon, mockBar, booking, fullSlot, ex, exm, facts, freeCall, whatNext, placeMore, contact, legend, notice, payLine, crisisFoot, otherLocs, locPicker, wireLocs, mountLocMap, moreLocs } = KIT;
+  mockBar(5, 'This week', 'c5-directory.html', 'Directory');
+  const j = EMU.therapists[0], P = EMU.profile, L = P.location;
+  const H0 = 8.5; // calendar starts 8:30
+  const mins = t => { let [h, m] = t.split(':').map(Number); if (h < 8) h += 12; return h * 60 + m; };
+  const week = [...Array(8)].map((_, i) => new Date(2026, 9, 5 + i)); // Mon Oct 5 to Mon Oct 12
+  const label = d => d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  const hours = [9, 10, 11, 12, 1, 2, 3].map((h, i) => `<span style="top:${(i + .5) * 64}px">${h}:00</span>`).join('');
+  const daysHTML = av => {
+    const avail = Object.fromEntries(av.map(a => [a.day, a]));
+    let any = false;
+    const cols = week.map(d => {
+      const soon = d.getDate() < 6;
+      const a = avail[label(d)];
+      let blocks = '';
+      if (a) {
+        any = true;
+        const mk = (t, cls) => { const top = (mins(t) / 60 - H0) * 64; return `<button class="blk ${cls}" style="top:${top}px;height:${50 / 60 * 64 - 4}px" aria-pressed="false" data-t="${fullSlot(a.day, t)}" aria-label="${a.day}, ${t} ${cls === 'am' ? 'AM' : 'PM'}">${t}${icon('check')}</button>`; };
+        blocks = a.morning.map(t => mk(t, 'am')).join('') + a.afternoon.map(t => mk(t, 'pm')).join('');
+      }
+      return `<div class="col ${soon ? 'soon' : ''}" style="height:${7 * 64}px" role="group" aria-label="${label(d)}">${blocks}</div>`;
+    }).join('');
+    const later = av.filter(x => !week.some(d => label(d) === x.day)).map(x => x.day);
+    return `<div class="calwrap" tabindex="0" role="region" aria-labelledby="h-cal"><div class="cal">
+        <div class="corner"></div>
+        ${week.map(d => `<div class="dh ${d.getDate() < 6 ? 'soon' : ''}">${d.toLocaleDateString('en-US', { weekday: 'short' })}<small>Oct ${d.getDate()}</small></div>`).join('')}
+        <div class="hours" style="height:${7 * 64}px" aria-hidden="true">${hours}</div>${cols}
+      </div></div>${later.length ? `<p class="x-none">${any ? 'More times' : 'Next openings here'}: ${later.join(', ')}.</p>` : ''}`;
+  };
+
+  document.getElementById('main').innerHTML = `
+    <a class="back" href="c5-directory.html">${icon('left')}Back to your search</a>
+    <div class="who"><img src="${j.photo}" alt="Portrait of ${j.name}"><div><h1>${j.name}</h1><p>${j.credential}, ${j.city}. Meets at ${L.name}${moreLocs()}.</p><span class="ver">${icon('badge')}License verified in ${j.state}</span></div></div>
+    <div style="max-width:560px">${freeCall()}</div>
+
+    <section id="book" aria-labelledby="h-cal">
+      <div class="cal-head"><h2 id="h-cal">Jordan's week</h2><p>Next eight days. Pick a place, then an opening.</p></div>
+      ${locPicker()}<div data-days></div>
+      <div class="bar">
+        <p class="chosen" data-chosen aria-live="polite">Choose an opening in the calendar</p>
+        <span class="price">$${j.price} per session</span>
+        <button class="btn" data-request>Request appointment</button>
+        <p class="fine">${payLine()} ${notice().replace(/<[^>]+>/g, '')}</p><div style="flex-basis:100%;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">${whatNext()}<div>${contact()}</div></div>
+      </div>
+    </section>
+
+    <div class="rest">
+      <div>
+        <h2>About me</h2><p>${P.about}</p>
+        <h2>What you can expect</h2><p>${P.expect}</p>
+        <h2>${EMU.labels.focus}</h2><p>${j.specialties.join(', ')}</p><h2>Sessions</h2>${facts()}
+        <h2>${EMU.labels.approaches}</h2><dl>${P.methods.map(([n, d]) => `<dt>${n}</dt><dd>${d}</dd>`).join('')}</dl>
+      </div>
+      <div class="meet">
+        <h2>Where you'll meet</h2>
+        <p class="pl">${L.name}, ${L.type.toLowerCase()}</p><p class="addr">${L.address}</p>
+        <p class="say">${L.instructions}</p>${placeMore()}
+        <div class="x-map" id="locmap" role="region" aria-label="Map of Jordan's three meeting places"></div>${otherLocs()}
+      </div>
+    </div>`;
+  booking(document.getElementById('book'));
+  wireLocs(document.getElementById('book'), daysHTML);
+  mountLocMap(document.getElementById('locmap'));
+  document.querySelector('main').insertAdjacentHTML('beforeend', legend());
+  document.querySelector('main').insertAdjacentHTML('afterend', crisisFoot());
+</script>
+</body>
+</html>

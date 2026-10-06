@@ -1,0 +1,316 @@
+<!doctype html>
+<!--
+CONCEPT 10: OUT THERE. Plan.
+Structure and motion follow superpower.com, as asked: a rounded full-bleed photo hero, a floating pill nav that
+appears on scroll, a how-it-works row with small interface previews, a long sticky section where the photograph
+behind changes as you scroll through three kinds of place (with a step index and short questions), a plain
+comparison table, a therapist strip, a card for therapists, and a closing photo with the search.
+Emu's content only: Rachel's copy, our real photos, and no invented reviews, member counts or ratings, so the
+sections that hold social proof on superpower hold real Emu content here.
+Colours: white page; bark #291605 as the dark; lilac #EFD2F9 for small badges and the active step; rust #9B5212
+only on the search button; white pills on dark. Type: Inter 500 at large sizes with tight tracking (superpower's
+confident sans), Newsreader for the softer lines and quotes.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept 10 landing</title>
+<script src="data.js?v=8"></script>
+<script src="kit.js?v=8"></script>
+<script src="motion.js?v=2"></script>
+<script>document.write(`<link rel="stylesheet" href="${EMU.brand.fontsHref}">`)</script>
+<style>
+  html { scrollbar-gutter: stable; scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  :root { --ink: #291605; --soft: #6B6159; --line: #ECE8E4; --wash: #F7F5F3; --lilac: #EFD2F9; --plum: #4B2259; --rust: #9B5212; --rust-d: #6E3A0D;
+    --serif: 'Newsreader', Georgia, serif; --sans: 'Inter', system-ui, sans-serif; --r: 24px; }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: #fff; color: var(--ink); font: 400 16px/1.55 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--rust); outline-offset: 3px; }
+  .ic { width: 18px; height: 18px; flex: none; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 16px; }
+  @media (min-width: 768px) { .wrap { padding: 0 32px; } }
+  .pill { font: 600 15px var(--sans); min-height: 46px; padding: 0 22px; border-radius: 99px; border: 0; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: transform .15s, background-color .15s, color .15s; }
+  .pill:active { transform: scale(.98); }
+  .pill.dark { background: var(--ink); color: #fff; } .pill.dark:hover { background: #000; }
+  .pill.light { background: #fff; color: var(--ink); } .pill.light:hover { background: var(--lilac); }
+  .pill.glass { background: rgba(255,255,255,.16); color: #fff; backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.35); } .pill.glass:hover { background: rgba(255,255,255,.28); }
+
+  /* Top bar and floating pill nav */
+  header.top .wrap { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; min-height: 64px; }
+  header.top nav { display: flex; gap: 4px; }
+  header.top nav a { text-decoration: none; font-size: 14px; font-weight: 500; padding: 10px; }
+  @media (max-width: 760px) { header.top nav { display: none; } }
+  .logo { font: 400 30px/1 var(--serif); text-decoration: none; justify-self: center; }
+  header.top .right { justify-self: end; display: flex; gap: 8px; align-items: center; }
+  header.top .right a.login { font-size: 14px; font-weight: 500; text-decoration: none; padding: 10px; }
+  .float { position: fixed; top: 14px; left: 50%; z-index: 50; transform: translate(-50%, -140%); transition: transform .35s cubic-bezier(.2,.7,.2,1); display: flex; align-items: center; gap: 4px; padding: 6px 6px 6px 18px; border-radius: 99px; background: rgba(41,22,5,.88); backdrop-filter: blur(10px); color: #fff; box-shadow: 0 14px 40px -16px rgba(0,0,0,.5); white-space: nowrap; max-width: calc(100vw - 24px); }
+  .float.show { transform: translate(-50%, 0); }
+  html.reduce .float { transition: none; }
+  .float a.l { font-size: 14px; text-decoration: none; padding: 8px 10px; opacity: .9; }
+  .float .logo { font-size: 22px; margin: 0 10px; }
+  .float .pill { min-height: 38px; padding: 0 16px; font-size: 14px; }
+  @media (max-width: 640px) { .float a.l { display: none; } }
+
+  /* Hero card */
+  .hero { position: relative; margin: 0 12px; height: min(calc(100svh - 76px), 880px); min-height: 560px; border-radius: var(--r); overflow: hidden; background: var(--ink); color: #fff; display: grid; align-items: center; }
+  .hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.08); transition: transform 1.8s cubic-bezier(.2,.7,.2,1); }
+  .hero.ready > img, html.reduce .hero > img { transform: scale(1); }
+  .hero::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(20,12,4,.86) 0%, rgba(20,12,4,.72) 38%, rgba(20,12,4,.3) 62%, rgba(20,12,4,0) 80%); }
+  .hero .in { min-width: 0; width: 100%; position: relative; z-index: 2; padding: 0 24px; max-width: 680px; }
+  @media (min-width: 768px) { .hero .in { padding: 0 64px; } }
+  .badge { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; margin-bottom: 20px; }
+  .badge .ic { width: 16px; height: 16px; color: var(--lilac); }
+  .hero h1 { font: 500 clamp(44px, 6.4vw, 84px)/1 var(--sans); letter-spacing: -0.04em; margin: 0; }
+  .hero .line { font: 400 clamp(19px, 1.8vw, 22px)/1.45 var(--serif); margin: 18px 0 28px; max-width: 34ch; color: #F3EEE9; }
+  .sp { display: flex; gap: 6px; padding: 6px; background: #fff; border-radius: 99px; max-width: 520px; width: 100%; }
+  .sp label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .sp input { flex: 1; min-width: 0; font: 500 16px var(--sans); border: 0; padding: 0 16px; border-radius: 99px; color: var(--ink); background: transparent; min-height: 46px; }
+  .sp input:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--rust); }
+  .sp .pill { background: var(--rust); color: #fff; } .sp .pill:hover { background: var(--rust-d); }
+  .hero .more { margin-top: 14px; }
+  .hero .credit { position: absolute; right: 16px; bottom: 14px; z-index: 2; font-size: 12px; color: #fff; opacity: .9; text-shadow: 0 1px 8px rgba(0,0,0,.6); max-width: 60%; text-align: right; }
+  @media (max-width: 700px) { .hero::before { background: linear-gradient(0deg, rgba(20,12,4,.85) 0%, rgba(20,12,4,.55) 60%, rgba(20,12,4,.2) 100%); } .hero { align-items: end; } .hero .in { padding-bottom: 56px; } .hero .credit { left: 16px; max-width: none; text-align: left; } }
+
+  /* How it works */
+  .how { padding: 120px 0 80px; text-align: center; }
+  h2.big { font: 500 clamp(36px, 4.4vw, 56px)/1.05 var(--sans); letter-spacing: -0.035em; margin: 0; }
+  .sub { font: 400 20px/1.4 var(--serif); color: var(--soft); margin: 14px auto 0; max-width: 40ch; }
+  .steps { list-style: none; margin: 56px 0 0; padding: 0; display: grid; gap: 20px; text-align: left; counter-reset: s; }
+  @media (min-width: 900px) { .steps { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .steps li { counter-increment: s; }
+  .vig { height: 240px; border-radius: 20px; background: var(--wash); display: grid; place-items: center; overflow: hidden; position: relative; }
+  .steps h3 { font: 600 19px var(--sans); margin: 18px 0 6px; display: flex; gap: 10px; align-items: baseline; }
+  .steps h3::before { content: counter(s); font: 500 14px var(--sans); color: var(--soft); }
+  .steps p { margin: 0; color: var(--soft); max-width: 36ch; }
+  .v-search { background: #fff; border-radius: 99px; padding: 6px 6px 6px 18px; display: flex; align-items: center; gap: 10px; box-shadow: 0 18px 40px -20px rgba(41,22,5,.35); width: 80%; font-weight: 500; }
+  .v-search span.b { margin-left: auto; background: var(--rust); color: #fff; border-radius: 99px; padding: 8px 14px; font-size: 14px; }
+  .v-card { background: #fff; border-radius: 16px; padding: 16px; width: 78%; box-shadow: 0 18px 40px -20px rgba(41,22,5,.35); display: grid; grid-template-columns: 52px 1fr; gap: 4px 12px; align-items: center; }
+  .v-card img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; grid-row: span 2; }
+  .v-card b { font: 400 20px var(--serif); } .v-card small { color: var(--soft); }
+  .v-card .t { grid-column: 1 / -1; display: flex; gap: 6px; margin-top: 8px; }
+  .v-card .t i { font-style: normal; font-size: 13px; padding: 4px 10px; border-radius: 99px; border: 1px solid var(--line); }
+  .v-card .t i.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .v-map { position: absolute; inset: 0; background: linear-gradient(#E6ECE5 1px, transparent 1px) 0 0 / 28px 28px, linear-gradient(90deg, #E6ECE5 1px, transparent 1px) 0 0 / 28px 28px, #F1F4EF; }
+  .v-pin { position: relative; z-index: 1; display: grid; justify-items: center; gap: 10px; }
+  .v-pin .dot { width: 22px; height: 22px; border-radius: 50%; background: var(--lilac); border: 4px solid var(--plum); }
+  .v-pin .ring { position: absolute; top: -9px; width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--plum); }
+  html:not(.reduce) .v-pin .ring { animation: ring 2.2s cubic-bezier(.2,.7,.2,1) infinite; }
+  @keyframes ring { from { transform: scale(.5); opacity: .8; } to { transform: scale(1.8); opacity: 0; } }
+  .v-pin q { background: #fff; border-radius: 12px; padding: 10px 14px; font: 400 16px/1.35 var(--serif); max-width: 230px; text-align: center; box-shadow: 0 18px 40px -20px rgba(41,22,5,.35); quotes: none; }
+
+  /* Sticky story */
+  .story { position: relative; margin: 0 12px; }
+  .story .stage { position: sticky; top: 12px; height: calc(100svh - 24px); min-height: 560px; border-radius: var(--r); overflow: hidden; background: var(--ink); color: #fff; }
+  .story .ph { position: absolute; inset: 0; opacity: 0; transition: opacity .8s ease, transform 1.6s cubic-bezier(.2,.7,.2,1); transform: scale(1.06); }
+  .story .ph.on { opacity: 1; transform: scale(1); }
+  html.reduce .story .ph { transition: none; transform: none; }
+  .story .ph img { width: 100%; height: 100%; object-fit: cover; }
+  .story .stage::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(20,12,4,.8) 0%, rgba(20,12,4,.45) 50%, rgba(20,12,4,.15) 100%); }
+  .story .copy { position: absolute; z-index: 2; left: 24px; right: 24px; bottom: 32px; max-width: 520px; }
+  @media (min-width: 768px) { .story .copy { left: 56px; bottom: 56px; } }
+  .story .panelx { display: none; }
+  .story .panelx.on { display: block; }
+  html:not(.reduce) .story .panelx.on { animation: rise .5s cubic-bezier(.2,.7,.2,1); }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+  .story h3 { font: 500 clamp(32px, 3.8vw, 52px)/1.05 var(--sans); letter-spacing: -0.035em; margin: 0 0 12px; }
+  .story .copy p { margin: 0 0 22px; font: 400 20px/1.45 var(--serif); color: #F3EEE9; }
+  .story details { background: rgba(255,255,255,.12); backdrop-filter: blur(8px); border-radius: 14px; margin-top: 8px; border: 1px solid rgba(255,255,255,.18); }
+  .story summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 14px 16px; font-weight: 500; min-height: 48px; }
+  .story summary::-webkit-details-marker { display: none; }
+  .story summary .pm { width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,.2); display: grid; place-items: center; flex: none; transition: transform .25s; }
+  .story details[open] summary .pm { transform: rotate(45deg); }
+  .story details p { margin: 0; padding: 0 16px 16px; font: 400 16px/1.5 var(--sans) !important; color: #EFE9E3 !important; }
+  .story .exm { color: var(--lilac); }
+  .story .idx { position: absolute; z-index: 2; right: 24px; top: 50%; transform: translateY(-50%); list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; text-align: right; }
+  @media (max-width: 900px) { .story .idx { display: none; } }
+  .story .idx li { font-size: 15px; opacity: .55; transition: opacity .3s; display: flex; gap: 12px; justify-content: flex-end; align-items: center; }
+  .story .idx li span { font-variant-numeric: tabular-nums; font-size: 13px; }
+  .story .idx li.on { opacity: 1; font-weight: 600; }
+  .story .idx li.on::before { content: ""; width: 24px; height: 2px; background: var(--lilac); }
+  .story .credit { position: absolute; z-index: 2; right: 16px; bottom: 12px; font-size: 12px; opacity: .85; }
+  .story .track { position: relative; pointer-events: none; }
+  .story .track > div { height: 100svh; }
+  .story .stage { z-index: 1; }
+  @media (max-width: 900px) {
+    .story .stage { position: relative; height: auto; min-height: 0; background: none; color: var(--ink); border-radius: 0; overflow: visible; }
+    .story .stage::before, .story .idx, .story .stage > .credit { display: none; }
+    .story .ph { position: relative; opacity: 1; transform: none; border-radius: 20px; overflow: hidden; height: 300px; margin-top: 32px; }
+    .story .copy { position: static; max-width: none; }
+    .story .panelx { display: block !important; }
+    .story .panelx p { color: var(--soft); }
+    .story details { background: var(--wash); border-color: var(--line); }
+    .story details p { color: var(--soft) !important; }
+    .story summary .pm { background: #fff; }
+    .story .exm { color: var(--plum); }
+    .story .track { display: none; }
+  }
+
+  /* Comparison */
+  .cmp { padding: 120px 0; text-align: center; }
+  .cmp table { margin: 48px auto 0; border-collapse: collapse; width: 100%; max-width: 880px; text-align: left; }
+  .cmp th, .cmp td { padding: 16px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .cmp thead th { font-weight: 600; font-size: 15px; color: var(--soft); }
+  .cmp thead th.emu { color: var(--plum); }
+  .cmp tbody th { font-weight: 600; width: 26%; }
+  .cmp td.emu { background: #FBF4FD; font-weight: 500; }
+  .cmp thead th.emu { background: #FBF4FD; border-radius: 12px 12px 0 0; }
+  @media (max-width: 640px) { .cmp table, .cmp tbody, .cmp tr, .cmp th, .cmp td { display: block; } .cmp thead { display: none; } .cmp tr { padding: 14px 0; border-bottom: 1px solid var(--line); } .cmp th, .cmp td { border: 0; padding: 4px 0; } .cmp td::before { content: attr(data-h) ": "; color: var(--soft); } .cmp td.emu { background: none; } }
+
+  /* Therapist strip */
+  .people { padding: 40px 0 120px; }
+  .people .hd { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 16px; }
+  .people .hd h2 { text-align: left; }
+  .strip { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(260px, 1fr); gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 32px 0 8px; }
+  .strip a { scroll-snap-align: start; text-decoration: none; display: grid; gap: 10px; }
+  .strip .ph { aspect-ratio: 4 / 5; border-radius: 20px; overflow: hidden; position: relative; background: var(--wash); }
+  .strip .ph img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+  .strip a:hover .ph img, .strip a:focus-visible .ph img { transform: scale(1.05); }
+  .strip .ph .where { position: absolute; left: 12px; bottom: 12px; right: 12px; background: #fff; border-radius: 12px; padding: 8px 12px; font-size: 14px; }
+  .strip .ph .ex { position: absolute; top: 12px; left: 12px; background: var(--lilac); color: var(--plum); border-radius: 99px; padding: 3px 10px; font-size: 13px; font-weight: 600; }
+  .strip b { font: 400 24px/1.1 var(--serif); }
+  .strip small { color: var(--soft); font-size: 15px; }
+
+  /* For therapists card */
+  .join { display: grid; gap: 0; border-radius: var(--r); overflow: hidden; background: var(--wash); margin-bottom: 120px; }
+  @media (min-width: 900px) { .join { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+  .join .ph { position: relative; min-height: 380px; }
+  .join .ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .join .ph .chip { position: absolute; left: 20px; bottom: 20px; right: 20px; background: rgba(41,22,5,.85); color: #fff; border-radius: 16px; padding: 18px 20px; font: 400 22px/1.3 var(--serif); backdrop-filter: blur(6px); max-width: 420px; }
+  .join .tx { padding: 40px; display: grid; align-content: center; gap: 14px; }
+  @media (min-width: 900px) { .join .tx { padding: 64px; } }
+  .join h2 { font: 500 clamp(32px, 3.4vw, 46px)/1.05 var(--sans); letter-spacing: -0.035em; margin: 0; }
+  .join p { margin: 0; font: 400 20px/1.45 var(--serif); color: var(--soft); }
+  .join .pill { justify-self: start; margin-top: 10px; }
+
+  /* Closing */
+  .close { position: relative; margin: 0 12px; min-height: 80svh; border-radius: var(--r); overflow: hidden; background: var(--ink); color: #fff; display: grid; align-items: end; }
+  .close > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .close::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(0deg, rgba(20,12,4,.82) 0%, rgba(20,12,4,.35) 55%, rgba(20,12,4,.1) 100%); }
+  .close .in { min-width: 0; width: 100%; position: relative; z-index: 2; padding: 32px 24px 56px; max-width: 760px; }
+  @media (min-width: 768px) { .close .in { padding: 64px; } }
+  .close h2 { font: 500 clamp(40px, 5.6vw, 76px)/1 var(--sans); letter-spacing: -0.04em; margin: 0 0 24px; }
+  .close .credit { position: absolute; right: 16px; bottom: 12px; z-index: 2; font-size: 12px; opacity: .85; }
+  footer.end { padding: 56px 0 72px; font-size: 15px; color: var(--soft); }
+  footer.end .cols { display: grid; gap: 28px; }
+  @media (min-width: 900px) { footer.end .cols { grid-template-columns: 1.2fr 1fr 1fr; } }
+  footer.end h3 { font-size: 14px; color: var(--ink); margin: 0 0 8px; }
+  footer.end a { display: block; text-decoration: none; padding: 6px 0; }
+  footer.end p { margin: 0 0 8px; max-width: 70ch; }
+  footer.end .crisis { color: var(--ink); font-weight: 600; }
+  footer.end .logo { display: inline-block; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+<div class="float" id="float" aria-hidden="true"><a class="l" href="#how" tabindex="-1">How it works</a><a class="l" href="#places" tabindex="-1">Places</a><a class="logo" href="c10-home.html" tabindex="-1">emu.</a><a class="l" href="#therapists" tabindex="-1">For therapists</a><a class="pill light" href="c10-directory.html" tabindex="-1">Find a therapist</a></div>
+<header class="top"><div class="wrap"><nav aria-label="Main"><a href="#how">How it works</a><a href="#places">Places</a><a href="#therapists">For therapists</a></nav><a class="logo" href="c10-home.html">emu.</a><div class="right"><a class="login" href="#">Log in</a><a class="pill dark" href="c10-directory.html">Find a therapist</a></div></div></header>
+<main id="main"></main>
+<footer class="end"><div class="wrap" id="foot"></div></footer>
+<script>
+  const { mockBar, icon } = KIT; const H = EMU.home, PH = EMU.photos, X = EMU.extras, T = EMU.therapists, L0 = EMU.profile.locations[0];
+  mockBar(10, 'Out there');
+  const plus = '<span class="pm" aria-hidden="true">+</span>';
+  const qa = (q, a) => `<details><summary>${q}${plus}</summary><p>${a}</p></details>`;
+  const STORY = [
+    { name: 'Walk and talk', photo: PH.trailWalk, title: 'Walk and talk', text: H.walk,
+      qs: [['Do I need an account?', 'No. You request a time with your name and email, and the therapist replies by email.'], ['Is Emu a therapy practice?', H.disclaimer]] },
+    { name: 'Parks and paths', photo: PH.trailCity, title: 'Parks and open paths', text: H.noOffice,
+      qs: [['How do I find my therapist on the day?', `Every place has meeting instructions. At ${L0.name}: "${L0.instructions}"`], ['What if it rains?', `${X.place.weather}${KIT.exm} This is an example from Jordan's profile.`]] },
+    { name: 'Libraries', photo: PH.library, title: 'A quiet library table', text: H.aboutLine,
+      qs: [['How do I pay?', "You pay your therapist directly, outside Emu. Emu doesn't take payment."], ['How far ahead can I book?', X.notice.text]] },
+  ];
+  document.getElementById('main').innerHTML = `
+    <section class="hero" id="hero">
+      <img src="${PH.trailWalk.src}" alt="${PH.trailWalk.alt}">
+      <div class="in">
+        <p class="badge rv">${icon('badge')}Licensed therapists, public places</p>
+        <h1 class="rv" data-d="1">${H.headline}</h1>
+        <p class="line rv" data-d="2">${H.line}</p>
+        <form class="sp rv" data-d="3" action="c10-directory.html" role="search"><label for="loc">City or ZIP code</label><input id="loc" name="location" value="Philadelphia, PA" autocomplete="address-level2"><button class="pill">Search</button></form>
+        <div class="more rv" data-d="4"><a class="pill glass" href="#how">See how it works</a></div>
+      </div>
+      <small class="credit">${PH.trailWalk.credit}</small>
+    </section>
+
+    <section class="wrap how" id="how" aria-labelledby="h-how">
+      <h2 class="big rv" id="h-how">How it works</h2>
+      <p class="sub rv" data-d="1">${H.aboutLine}</p>
+      <ol class="steps">
+        <li class="rv" data-d="1"><div class="vig"><div class="v-search">${icon('pin')}Philadelphia, PA<span class="b">Search</span></div></div><h3>${EMU.howItWorks[0][0]}</h3><p>${EMU.howItWorks[0][1]}</p></li>
+        <li class="rv" data-d="2"><div class="vig"><div class="v-card"><img src="${T[0].photo}" alt=""><b>${T[0].name}</b><small>${L0.name}, $${T[0].price} per session</small><div class="t"><i>9:00 AM</i><i class="on">9:50 AM</i><i>10:40 AM</i></div></div></div><h3>${EMU.howItWorks[1][0]}</h3><p>${EMU.howItWorks[1][1]}</p></li>
+        <li class="rv" data-d="3"><div class="vig"><div class="v-map"></div><div class="v-pin"><span class="ring"></span><span class="dot"></span><q>${L0.instructions}</q></div></div><h3>${EMU.howItWorks[2][0]}</h3><p>${EMU.howItWorks[2][1]}</p></li>
+      </ol>
+    </section>
+
+    <section class="story" id="places" aria-label="Where sessions happen">
+      <div class="stage">
+        ${STORY.map((s, i) => `<div class="ph ${i ? '' : 'on'}" data-i="${i}"><img src="${s.photo.src}" alt="${s.photo.alt}" loading="${i ? 'lazy' : 'eager'}"></div>
+          <div class="copy panelx ${i ? '' : 'on'}" data-i="${i}"><h3>${s.title}</h3><p>${s.text}</p>${s.qs.map(q => qa(q[0], q[1])).join('')}<small style="display:block;margin-top:10px;font-size:12px;opacity:.8">${s.photo.credit}</small></div>`).join('')}
+        <ol class="idx" aria-hidden="true">${STORY.map((s, i) => `<li data-i="${i}" class="${i ? '' : 'on'}">${s.name}<span>0${i + 1}</span></li>`).join('')}</ol>
+      </div>
+      <div class="track" aria-hidden="true">${STORY.map((s, i) => `<div data-step="${i}"></div>`).join('')}</div>
+    </section>
+
+    <section class="wrap cmp" aria-labelledby="h-cmp">
+      <h2 class="big rv" id="h-cmp">${H.aboutLine.split('. ').slice(0, 2).join('. ')}.</h2>
+      <p class="sub rv" data-d="1">Another option.</p>
+      <table class="rv" data-d="2">
+        <thead><tr><th scope="col"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Compared</span></th><th scope="col">In an office</th><th scope="col">On a screen</th><th scope="col" class="emu">With Emu</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Where you meet</th><td data-h="In an office">A waiting room and a closed door</td><td data-h="On a screen">At home, on video</td><td class="emu" data-h="With Emu">A park, a trail or a library near you</td></tr>
+          <tr><th scope="row">How it feels</th><td data-h="In an office">Sitting across a room</td><td data-h="On a screen">Talking to a camera</td><td class="emu" data-h="With Emu">${H.walk}</td></tr>
+          <tr><th scope="row">Getting started</th><td data-h="In an office">Varies by practice</td><td data-h="On a screen">Varies by service</td><td class="emu" data-h="With Emu">Pick a place and a time, then send a request. No account needed.</td></tr>
+        </tbody>
+      </table>
+      <p class="rv" style="margin-top:40px"><a class="pill dark" href="c10-directory.html">Find a therapist</a></p>
+    </section>
+
+    <section class="wrap people" aria-labelledby="h-people">
+      <div class="hd"><h2 class="big rv" id="h-people">Therapists near Philadelphia</h2><a class="pill dark rv" href="c10-directory.html">See all 4</a></div>
+      <div class="strip" tabindex="0" aria-label="Therapists near Philadelphia, scroll sideways for more">${T.map((t, i) => `<a class="rv" data-d="${i + 1}" href="${t.example ? '#' : 'c10-profile.html'}"><div class="ph"><img src="${t.photo}" alt="Portrait of ${t.name}" loading="lazy">${t.example ? '<span class="ex">Example</span>' : ''}<span class="where">${t.place}, ${t.distance} away</span></div><b>${t.name}</b><small>${t.credential}</small></a>`).join('')}</div>
+    </section>
+
+    <section class="wrap" id="therapists" aria-labelledby="h-join"><div class="join rv">
+      <div class="ph"><img src="${EMU.brand.images.walkBanner}" alt="" loading="lazy"><p class="chip">${H.founding}</p></div>
+      <div class="tx"><h2 id="h-join">${H.therapistsTitle}</h2><p>${H.therapistsLine}</p><a class="pill dark" href="#">Join as a therapist</a></div>
+    </div></section>
+
+    <section class="close" aria-labelledby="h-close">
+      <img src="${PH.library.src}" alt="${PH.library.alt}" loading="lazy">
+      <div class="in"><h2 class="rv" id="h-close">${H.headline}</h2>
+        <form class="sp rv" data-d="1" action="c10-directory.html" role="search"><label for="loc2">City or ZIP code</label><input id="loc2" name="location" value="Philadelphia, PA" autocomplete="address-level2"><button class="pill">Search</button></form></div>
+      <small class="credit">${PH.library.credit}</small>
+    </section>`;
+  document.getElementById('foot').innerHTML = `<div class="cols">
+    <div><a class="logo" href="c10-home.html">emu.</a><p>${H.disclaimer}</p><p class="crisis">${H.crisis}</p></div>
+    <nav aria-label="Explore"><h3>Explore</h3><a href="c10-directory.html">Find a therapist</a><a href="#how">How it works</a><a href="#places">Places</a></nav>
+    <nav aria-label="Company"><h3>Emu</h3><a href="#therapists">For therapists</a><a href="#">About</a><a href="#">Contact</a><a href="#">Privacy</a><a href="#">Terms</a></nav></div>`;
+
+  // Hero settles; floating nav appears after the hero
+  const hero = document.getElementById('hero'), hb = hero.querySelector('img');
+  const ready = () => requestAnimationFrame(() => hero.classList.add('ready'));
+  hb.complete ? ready() : hb.addEventListener('load', ready);
+  const fl = document.getElementById('float');
+  MOTION.pillNav(fl, hero);
+  new MutationObserver(() => { const on = fl.classList.contains('show'); fl.setAttribute('aria-hidden', !on); fl.querySelectorAll('a').forEach(a => a.tabIndex = on ? 0 : -1); }).observe(fl, { attributes: true, attributeFilter: ['class'] });
+
+  // Sticky story: the step in the middle of the viewport sets the photo, copy and index
+  const steps = [...document.querySelectorAll('[data-step]')];
+  const setStep = i => {
+    document.querySelectorAll('.story .ph').forEach(p => p.classList.toggle('on', +p.dataset.i === i));
+    document.querySelectorAll('.story .panelx').forEach(p => p.classList.toggle('on', +p.dataset.i === i));
+    document.querySelectorAll('.story .idx li').forEach(p => p.classList.toggle('on', +p.dataset.i === i));
+  };
+  let cur = 0;
+  const onScroll = () => { let i = 0; steps.forEach((s, k) => { if (s.getBoundingClientRect().top < innerHeight * .55) i = k; }); if (i !== cur) { cur = i; setStep(i); } };
+  addEventListener('scroll', onScroll, { passive: true });
+  // The stage is 100svh tall and sits over the first step, so pull the track up under it
+  const fit = () => { const st = document.querySelector('.story .stage'), tr = document.querySelector('.story .track'); if (matchMedia('(max-width: 900px)').matches) { tr.style.marginTop = ''; return; } tr.style.marginTop = `-${st.offsetHeight}px`; };
+  fit(); addEventListener('resize', fit);
+  MOTION.watch();
+</script>
+</body>
+</html>

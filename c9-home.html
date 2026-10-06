@@ -1,0 +1,176 @@
+<!doctype html>
+<!--
+CONCEPT 9: ON FOOT. Plan.
+Idea: the page is a walk. One trail line runs down the whole landing page and draws itself as you scroll,
+passing through full-bleed photographs of real Philadelphia meeting places like stops on a route. The hero
+opens on the river trail with the route already starting from where you are.
+Colours: white; ink #291605; night pine #12302A for the dark scenes; trail amber #E2A33B for the route line
+only (decorative, never text); lilac #EFD2F9 for the start marker and selected states; rust #9B5212 for actions
+on light; white buttons with ink text on dark.
+Type: Newsreader 400 large and loose for the walk's words; Inter for controls.
+Motion: hero photo settles (scale 1.06 to 1, 1.4s) and its route draws in; the page-long route follows scroll;
+sections rise in once; photo bands drift slightly against the scroll. All off under reduced motion.
+Review: first idea drew a separate little route per section, which repeats concept 6. One continuous line is the
+walk you are taking, so it earns its place, and it is the only decoration on the page.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept 9 landing</title>
+<script src="data.js?v=8"></script>
+<script src="kit.js?v=8"></script>
+<script src="motion.js?v=1"></script>
+<script>document.write(`<link rel="stylesheet" href="${EMU.brand.fontsHref}">`)</script>
+<style>
+  html { scrollbar-gutter: stable; }
+  :root { --ink: #291605; --soft: #675D55; --line: #E3E0DD; --night: #12302A; --amber: #E2A33B; --lilac: #EFD2F9; --plum: #4B2259; --rust: #9B5212; --rust-d: #6E3A0D;
+    --serif: 'Newsreader', Georgia, serif; --sans: 'Inter', system-ui, sans-serif; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #fff; color: var(--ink); font: 400 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--amber); outline-offset: 3px; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+  @media (min-width: 768px) { .wrap { padding: 0 48px; } }
+  .ic { width: 18px; height: 18px; flex: none; }
+
+  header.top { position: absolute; left: 0; right: 0; z-index: 5; color: #fff; }
+  header.top .wrap { display: flex; justify-content: space-between; align-items: center; min-height: 76px; }
+  .logo { font: 400 32px/1 var(--serif); text-decoration: none; text-shadow: 0 1px 12px rgba(0,0,0,.35); }
+  header nav a { text-decoration: none; font-weight: 600; padding: 12px; text-shadow: 0 1px 10px rgba(0,0,0,.45); }
+
+  /* Hero */
+  .hero { position: relative; min-height: 100svh; display: grid; align-items: end; overflow: hidden; background: var(--night); }
+  .hero .bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.06); transition: transform 1.6s cubic-bezier(.2,.7,.2,1); }
+  html.reduce .hero .bg, .hero.ready .bg { transform: none; }
+  .hero::after { content: ""; position: absolute; inset: 0 0 auto; height: 160px; background: linear-gradient(rgba(0,0,0,.42), transparent); pointer-events: none; }
+  .hero svg.route { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .hero .wrap { position: relative; z-index: 2; width: 100%; padding-bottom: 40px; }
+  .panel { background: #fff; border-radius: 6px; padding: 28px; max-width: 560px; box-shadow: 0 30px 80px -30px rgba(0,0,0,.6); }
+  @media (min-width: 768px) { .panel { padding: 40px; } }
+  h1 { font: 400 clamp(42px, 6vw, 76px)/1 var(--serif); letter-spacing: -0.025em; margin: 0; }
+  .panel .line { margin: 16px 0 24px; font-size: 18px; color: var(--soft); }
+  .s { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+  .s label { grid-column: 1 / -1; font-weight: 600; }
+  .s input { font: 500 18px var(--sans); min-height: 54px; padding: 0 16px; border: 1.5px solid var(--ink); border-radius: 6px; color: var(--ink); min-width: 0; }
+  .btn { font: 600 17px var(--sans); min-height: 54px; padding: 0 24px; border: 0; border-radius: 6px; background: var(--rust); color: #fff; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; transition: background-color .15s, transform .15s; }
+  .btn:hover { background: var(--rust-d); }
+  .btn:active { transform: translateY(1px); }
+  .credit { position: absolute; right: 12px; bottom: 10px; z-index: 2; font-size: 12px; color: var(--ink); background: rgba(255,255,255,.92); padding: 3px 8px; border-radius: 4px; max-width: calc(100% - 24px); }
+  @media (max-width: 767px) { .credit { position: static; display: block; margin-top: 10px; } }
+
+  /* The walk: one route down the page */
+  .walk { position: relative; }
+  .walk > svg.trail { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; overflow: visible; }
+  .stop { position: relative; }
+  .intro { padding: 120px 0 100px; }
+  .intro p { margin: 0 0 0 auto; max-width: 18ch; font: 400 clamp(34px, 4.8vw, 64px)/1.12 var(--serif); letter-spacing: -0.02em; }
+  @media (max-width: 767px) { .intro { padding: 72px 0 64px; } .intro p { margin-left: 40px; } }
+
+  .band { position: relative; height: 88vh; min-height: 520px; overflow: hidden; background: var(--night); }
+  .band img { position: absolute; left: 0; width: 100%; height: 124%; top: -12%; object-fit: cover; will-change: transform; }
+  .band .cap { position: absolute; left: 16px; right: 16px; bottom: 24px; display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px; z-index: 2; }
+  @media (min-width: 768px) { .band .cap { left: 48px; right: 48px; bottom: 40px; } }
+  .band .say { background: #fff; padding: 22px 26px; border-radius: 6px; max-width: 520px; font: 400 clamp(24px, 2.6vw, 32px)/1.3 var(--serif); }
+  .band .say small { display: block; font: 400 13px/1.4 var(--sans); color: var(--soft); margin-top: 10px; }
+
+  .how { padding: 110px 0 120px; }
+  .how h2 { font: 400 clamp(36px, 4.4vw, 56px)/1.05 var(--serif); letter-spacing: -0.02em; margin: 0 0 56px; max-width: 12ch; }
+  .how ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 48px; }
+  @media (min-width: 900px) { .how ol { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; } }
+  .how li { position: relative; padding-top: 28px; }
+  .how li .dot { position: absolute; top: 0; left: 0; width: 14px; height: 14px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 5px #fff, 0 0 0 6px var(--amber); }
+  .how h3 { font: 400 32px/1.1 var(--serif); margin: 12px 0 10px; }
+  .how p { margin: 0; color: var(--soft); font-size: 17px; max-width: 34ch; }
+
+  .ther { position: relative; min-height: 80vh; display: grid; align-items: center; overflow: hidden; background: var(--night); color: #fff; }
+  .ther img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .55; }
+  .ther .wrap { position: relative; z-index: 2; width: 100%; }
+  .ther .box { max-width: 540px; background: var(--night); padding: 36px; border-radius: 6px; }
+  .ther h2 { font: 400 clamp(34px, 4vw, 52px)/1.05 var(--serif); margin: 0 0 14px; letter-spacing: -0.02em; }
+  .ther p { margin: 0 0 10px; font-size: 18px; }
+  .ther .free { color: var(--lilac); font-weight: 600; }
+  .ther .btn { background: #fff; color: var(--ink); margin-top: 14px; }
+  .ther .btn:hover { background: var(--lilac); }
+  footer.end { background: var(--night); color: #D9E3DF; padding: 40px 0 64px; font-size: 15px; }
+  footer.end p { margin: 0 0 8px; max-width: 75ch; }
+  footer.end .crisis { color: #fff; font-weight: 600; }
+  footer.end .cr { font-size: 13px; color: #A9BDB6; margin-top: 18px; }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="logo" href="c9-home.html">emu.</a><nav aria-label="Main"><a href="c9-directory.html">Find a therapist</a><a href="#therapists">For therapists</a></nav></div></header>
+<main id="main"></main>
+<footer class="end"><div class="wrap" id="foot"></div></footer>
+<script>
+  const { mockBar } = KIT; const H = EMU.home, PH = EMU.photos;
+  mockBar(9, 'On foot');
+  document.getElementById('main').innerHTML = `
+    <section class="hero" id="hero">
+      <img class="bg" src="${PH.trailWalk.src}" alt="${PH.trailWalk.alt}">
+      <svg class="route" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <path data-draw pathLength="1" d="M 360 900 C 520 760, 700 760, 820 640 S 1010 470, 1120 430 S 1290 360, 1360 300" fill="none" stroke="#E2A33B" stroke-width="5" stroke-linecap="round"/>
+        <circle class="pulse" cx="1360" cy="300" r="12" fill="#EFD2F9"/><circle cx="1360" cy="300" r="10" fill="#EFD2F9" stroke="#4B2259" stroke-width="3"/>
+      </svg>
+      <div class="wrap">
+        <div class="panel rv">
+          <h1>${H.headline}</h1>
+          <p class="line">${H.line}</p>
+          <form class="s" action="c9-directory.html" role="search"><label for="loc">City or ZIP code</label><input id="loc" name="location" value="Philadelphia, PA" autocomplete="address-level2"><button class="btn">Search</button></form>
+        </div>
+        <small class="credit">${PH.trailWalk.credit}</small>
+      </div>
+    </section>
+    <div class="walk" id="walk">
+      <svg class="trail" id="trail" aria-hidden="true"><path id="trailpath" pathLength="1" fill="none" stroke="#E2A33B" stroke-width="3.5" stroke-linecap="round"/></svg>
+      <section class="stop intro wrap" data-stop><p class="rv">${H.noOffice}</p></section>
+      <section class="stop band" data-stop aria-label="${PH.trailCity.place}">
+        <img data-drift src="${PH.trailCity.src}" alt="${PH.trailCity.alt}" loading="lazy">
+        <div class="cap"><p class="say rv">${H.walk}<small>${PH.trailCity.credit}</small></p></div>
+      </section>
+      <section class="stop how wrap" data-stop aria-labelledby="h-how">
+        <h2 id="h-how" class="rv">How Emu works</h2>
+        <ol>${EMU.howItWorks.map(([t, d], i) => `<li class="rv" data-d="${i + 1}"><span class="dot" aria-hidden="true"></span><h3>${t}</h3><p>${d}</p></li>`).join('')}</ol>
+      </section>
+      <section class="stop band" data-stop aria-label="${PH.library.place}">
+        <img data-drift src="${PH.library.src}" alt="${PH.library.alt}" loading="lazy">
+        <div class="cap"><p class="say rv">${H.aboutLine}<small>${PH.library.credit}</small></p></div>
+      </section>
+      <section class="stop ther" data-stop id="therapists" aria-labelledby="h-t">
+        <img src="${EMU.brand.images.walkBanner}" alt="" loading="lazy">
+        <div class="wrap"><div class="box rv"><h2 id="h-t">${H.therapistsTitle}</h2><p>${H.therapistsLine}</p><p class="free">${H.founding}</p><a class="btn" href="#">Join as a therapist</a></div></div>
+      </section>
+    </div>`;
+  document.getElementById('foot').innerHTML = `<p>${H.disclaimer}</p><p class="crisis">${H.crisis}</p><p class="cr">Photographs: ${PH.trailWalk.credit}. ${PH.trailCity.credit}. ${PH.library.credit}.</p>`;
+
+  // Hero settles once its photo is ready
+  const hero = document.getElementById('hero'), bg = hero.querySelector('.bg');
+  const ready = () => requestAnimationFrame(() => hero.classList.add('ready'));
+  bg.complete ? ready() : bg.addEventListener('load', ready);
+
+  // One route down the page: a smooth line through a point in each stop, drawn as you scroll
+  const walk = document.getElementById('walk'), trail = document.getElementById('trail'), path = document.getElementById('trailpath');
+  function layout() {
+    const w = walk.offsetWidth, h = walk.offsetHeight, narrow = w < 768;
+    trail.setAttribute('viewBox', `0 0 ${w} ${h}`);
+    const xs = narrow ? [20, 20, 20, 20, 20] : [w * .06, w * .92, w * .96, w * .92, w * .95];
+    const pts = [...walk.querySelectorAll('[data-stop]')].map((s, i) => [xs[i % xs.length], s.offsetTop + s.offsetHeight * (i ? .5 : .25)]);
+    pts.unshift([narrow ? 20 : w * .25, 0]); pts.push([narrow ? 20 : w * .5, h]);
+    let d = `M ${pts[0][0]} ${pts[0][1]}`;
+    for (let i = 1; i < pts.length; i++) { const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], my = (y0 + y1) / 2; d += ` C ${x0} ${my}, ${x1} ${my}, ${x1} ${y1}`; }
+    path.setAttribute('d', d);
+  }
+  layout(); addEventListener('resize', layout); addEventListener('load', layout);
+  MOTION.scrollPath(path, walk);
+
+  // Photo bands drift slightly against the scroll
+  if (!MOTION.reduce) {
+    const drifts = [...document.querySelectorAll('[data-drift]')];
+    let t = false;
+    const drift = () => { t = false; drifts.forEach(img => { const r = img.parentElement.getBoundingClientRect(); const p = (r.top + r.height / 2 - innerHeight / 2) / innerHeight; img.style.transform = `translateY(${(p * -6).toFixed(2)}%)`; }); };
+    addEventListener('scroll', () => { if (!t) { t = true; requestAnimationFrame(drift); } }, { passive: true }); drift();
+  }
+  MOTION.watch();
+</script>
+</body>
+</html>

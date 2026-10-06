@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jordan Avery at Rittenhouse Square, Emu (concept 4)</title>
+<script src="data.js?v=8"></script>
+<script src="request.js?v=8"></script>
+<script src="map.js?v=8"></script>
+<script>document.head.appendChild(Object.assign(document.createElement('link'),{rel:'stylesheet',href:EMU.brand.fontsHref}));</script>
+<style>
+  html { scrollbar-gutter: stable; }
+  :root{
+    --lilac:#EFD2F9;--lilac100:#F6E4FC;--lilac700:#6A307E;--lilac800:#4B2259;
+    --rust:#9B5212;--rust800:#6E3A0D;--bark:#291605;--cream:#FCFAF8;--white:#FFFFFF;
+    --stone200:#E3E0DD;--stone500:#877A6E;--stone600:#70655C;
+    --moss:#3F5230;--moss100:#E6EBDC;--sky:#2E5F7A;--sky100:#DCE8EF;--clay:#7A3B12;--clay100:#F1E3D6;
+    --serif:'Newsreader',Georgia,serif;--sans:'Inter',ui-sans-serif,system-ui,sans-serif;
+    /* Request form (request.js) */ --rq-ink:var(--bark);--rq-soft:var(--stone600);--rq-bg:var(--white);--rq-panel:var(--moss100);--rq-line:var(--stone200);--rq-accent:var(--rust);--rq-accent-ink:#fff;--rq-accent-hover:var(--rust800);--rq-error:#8A1C1C;--rq-radius:1.25rem;--rq-btn-radius:999px;--rq-serif:var(--serif);--rq-sans:var(--sans);--rq-title-font:500 1.625rem/1.15 var(--serif);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  body{margin:0;font-family:var(--sans);font-size:1rem;line-height:1.55;color:var(--bark);background:var(--cream);overflow-x:hidden}
+  img{max-width:100%;display:block}
+  a{color:var(--rust)} a:hover{color:var(--rust800)}
+  :focus-visible{outline:2px solid var(--rust);outline-offset:3px}
+  button{font:inherit;color:inherit}
+  .icon{width:1.125rem;height:1.125rem;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex:none}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .mock{background:#1C1410;color:#F2EAE2;font-size:.875rem;padding:.5rem 1rem;display:flex;flex-wrap:wrap;gap:.25rem 1.25rem;align-items:center;line-height:1.4}
+  .mock strong{font-weight:600;color:#fff}
+  .mock a{color:#fff;min-height:24px;display:inline-flex;align-items:center}
+  .mock .links{margin-left:auto;display:flex;gap:1rem}
+  .wrap{width:min(100% - 2.5rem, 76rem);margin-inline:auto}
+  @media (max-width:40rem){.wrap{width:calc(100% - 2rem)}}
+  header.site{position:relative;z-index:2}
+  header.site .wrap{display:flex;align-items:center;justify-content:space-between;min-height:4.5rem;gap:1rem}
+  .logo{font-family:var(--serif);font-size:1.75rem;font-weight:500;color:var(--bark);text-decoration:none}
+  nav.site a{color:var(--bark);text-decoration:none;font-weight:500;padding:.625rem .25rem;min-height:44px;display:inline-flex;align-items:center;margin-left:1.5rem}
+  nav.site a:hover{color:var(--rust)}
+  @media (max-width:40rem){nav.site a:not(:first-child){display:none}}
+
+  .back{display:inline-flex;align-items:center;gap:.5rem;min-height:44px;margin-top:1rem;text-decoration:none;font-weight:500}
+  .back:hover{text-decoration:underline}
+
+  /* The place leads */
+  .band{position:relative;margin-top:-4.5rem;padding-top:4.5rem;isolation:isolate}
+  .band::before{content:"";position:absolute;inset:0;background:center/cover no-repeat;z-index:-2}
+  .band::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(252,250,248,.92),rgba(252,250,248,.84) 50%,var(--cream))}
+  .hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:0;background:#fff;border-radius:1.5rem;overflow:hidden;border:1px solid var(--stone200);margin-top:1.25rem;box-shadow:0 24px 60px -36px rgba(41,22,5,.4)}
+  .hero .map{width:100%;min-height:24rem;max-height:40rem;align-self:stretch;background:var(--moss100);position:relative}
+  .hero .map .leaflet-container{position:absolute;inset:0}
+  .hero .maplink{position:absolute;left:.75rem;bottom:.75rem;z-index:500;background:#fff;color:var(--bark);border-radius:999px;padding:.375rem .875rem;min-height:36px;display:inline-flex;align-items:center;text-decoration:none;font-weight:500;font-size:.9375rem;border:1px solid var(--stone200)}
+  .hero .maplink:hover{text-decoration:underline}
+  /* The three places, numbered like the pins. Place 1 carries Jordan's real instructions and the notes. */
+  .spots{list-style:none;margin:0;padding:0;display:grid;gap:1rem}
+  .spots li{display:grid;grid-template-columns:1.875rem minmax(0,1fr);gap:.75rem;align-items:start}
+  .spots .n{width:1.875rem;height:1.875rem;border-radius:50%;background:var(--moss);color:#fff;font-weight:700;font-size:.875rem;display:grid;place-items:center;margin-top:.25rem}
+  .spots .pname{font-family:var(--serif);font-weight:500;font-size:clamp(1.5rem,1rem + 1.6vw,2rem);line-height:1.1;margin:0;color:var(--bark);letter-spacing:-.01em}
+  .spots li:not(:first-child) .pname{font-size:1.375rem}
+  .spots .type{margin:.25rem 0 0;font-size:1rem}
+  .spots .addr{margin:0;color:var(--bark)}
+  .spots .instr{margin:.625rem 0 0}
+  .spots .sitenotes{margin-top:.75rem}
+  .hero .site{position:relative;padding:2rem;background:var(--moss100);color:var(--moss);display:grid;align-content:center;gap:1rem;isolation:isolate}
+  .hero .site::after{content:"";position:absolute;inset:auto 0 0 0;height:4rem;background:center/cover;opacity:.26;z-index:-1;mask-image:linear-gradient(180deg,transparent,#000)}
+  .hero .site h2{font-size:1rem;font-weight:600;margin:0;display:inline-flex;align-items:center;gap:.375rem}
+  .hero .site .pname{font-family:var(--serif);font-weight:500;font-size:clamp(2rem,1.2rem + 2.6vw,3rem);line-height:1.05;margin:0;color:var(--bark);letter-spacing:-.015em}
+  .hero .site .type{margin:0;font-size:1.0625rem}
+  .hero .site .addr{margin:0;color:var(--bark)}
+  .instr{margin:.25rem 0 0;background:#fff;color:var(--bark);padding:1rem 1.25rem;border-radius:1rem;font-size:1.0625rem}
+  .instr b{display:block;color:var(--moss);font-weight:600;margin-bottom:.25rem}
+  .sitenotes{list-style:none;margin:0;padding:0;display:grid;gap:.625rem;font-size:1rem;color:var(--bark)}
+  .sitenotes li{display:grid;grid-template-columns:1.125rem minmax(0,1fr);gap:.5rem;align-items:start}
+  .sitenotes .icon{color:var(--moss);margin-top:.2rem}
+  .sitenotes b{font-weight:600;color:var(--moss)}
+  /* Example marker: the same outlined tag the directory uses on made-up cards */
+  .ex{display:inline-flex;align-items:center;min-height:1.5rem;padding:0 .5rem;border-radius:.375rem;border:1px solid var(--stone500);color:var(--stone600);font-size:.8125rem;font-weight:600;margin-left:.5rem;vertical-align:middle;font-family:var(--sans);background:#fff}
+  .legend{margin:.75rem 0 0;font-size:.9375rem;color:var(--stone600)}
+  @media (max-width:52rem){.hero{grid-template-columns:1fr}.hero .map{min-height:20rem}.hero .site{padding:1.5rem}}
+
+  .person{display:grid;grid-template-columns:9rem minmax(0,1fr);gap:2rem;align-items:center;padding:3.5rem 0 1rem}
+  .person img{width:9rem;height:9rem;border-radius:50%;object-fit:cover;border:5px solid #fff;box-shadow:0 10px 30px -14px rgba(41,22,5,.35)}
+  .person .with{margin:0 0 .25rem;font-size:1.125rem;color:var(--stone600)}
+  h1{font-family:var(--serif);font-weight:400;font-size:clamp(2.5rem,1.4rem + 3.8vw,4rem);line-height:1;letter-spacing:-.015em;margin:0}
+  .person .cred{font-size:1.125rem;margin:.75rem 0 0}
+  .person .city{color:var(--stone600);margin:.125rem 0 0}
+  .verified{display:inline-flex;align-items:center;gap:.375rem;margin-top:.625rem;color:var(--lilac700);font-weight:600}
+  .tags{list-style:none;margin:1rem 0 0;padding:0;display:flex;flex-wrap:wrap;gap:.375rem}
+  .tags li{padding:.25rem .75rem;border-radius:999px;background:var(--lilac100);color:var(--lilac800);font-weight:500;font-size:.9375rem}
+  @media (max-width:48rem){.person{grid-template-columns:5.5rem minmax(0,1fr);gap:1.25rem;padding-top:2.5rem}.person img{width:5.5rem;height:5.5rem}}
+
+  .layout{display:grid;grid-template-columns:minmax(0,1fr) 23rem;gap:3rem;align-items:start;margin-top:1.5rem}
+  @media (max-width:64rem){.layout{grid-template-columns:1fr}}
+  .sec{padding:2rem 0;border-top:1px solid var(--stone200)}
+  .sec h2{font-family:var(--serif);font-weight:500;font-size:1.75rem;line-height:1.15;margin:0 0 .75rem;letter-spacing:-.01em}
+  .sec p.body{font-size:1.125rem;margin:0;max-width:60ch}
+  .methods{margin:0;padding:0;display:grid;gap:0}
+  .methods > div{display:grid;grid-template-columns:minmax(0,14rem) minmax(0,1fr);gap:1.25rem;padding:1rem 0;border-top:1px solid var(--stone200)}
+  .methods > div:first-child{border:0;padding-top:0}
+  .methods dt{font-weight:600}
+  .methods dd{margin:0;color:var(--stone600);font-size:1.0625rem}
+  @media (max-width:40rem){.methods > div{grid-template-columns:1fr;gap:.25rem}}
+
+  /* Booking */
+  .book{position:sticky;top:1.5rem;background:#fff;border-radius:1.5rem;overflow:hidden;border:1px solid var(--stone200);box-shadow:0 20px 50px -30px rgba(41,22,5,.35)}
+  .book .strip{height:3.5rem;background:center/cover;position:relative}
+  .book .strip::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.1),#fff)}
+  .book .in{padding:.5rem 1.5rem 1.5rem;display:grid;gap:1.125rem}
+  .book h2{font-family:var(--serif);font-weight:500;font-size:1.5rem;margin:0;line-height:1.15}
+  .book .price{margin:.25rem 0 0;color:var(--stone600)}
+  .book .price b{color:var(--bark);font-weight:600}
+  .book h3.sub{font-size:1rem;font-weight:600;margin:0 0 .5rem}
+  .placepick{display:grid;gap:.375rem}
+  .placebtn{display:grid;grid-template-columns:1.75rem minmax(0,1fr) auto;gap:.625rem;align-items:center;min-height:48px;padding:.5rem .875rem .5rem .5rem;border-radius:1rem;border:1px solid var(--stone500);background:#fff;cursor:pointer;text-align:left;font-size:.9375rem;line-height:1.3}
+  .placebtn .n{width:1.75rem;height:1.75rem;border-radius:50%;background:var(--moss);color:#fff;font-weight:700;font-size:.8125rem;display:grid;place-items:center}
+  .placebtn small{display:block;font-size:.875rem;color:var(--stone600)}
+  .placebtn .tick{display:none;width:1rem;height:1rem}
+  .placebtn[aria-pressed="true"]{background:var(--lilac);border-color:var(--lilac700);color:var(--lilac800);font-weight:600}
+  .placebtn[aria-pressed="true"] small{color:var(--lilac800);font-weight:400}
+  .placebtn[aria-pressed="true"] .n{background:var(--rust)}
+  .placebtn[aria-pressed="true"] .tick{display:inline}
+  .placebtn:hover:not([aria-pressed="true"]){border-color:var(--bark)}
+  .placenote{margin:.5rem 0 0;font-size:.9375rem;color:var(--stone600)}
+  .days{display:grid;gap:.25rem;max-height:22rem;overflow:auto;padding-right:.25rem;scrollbar-width:thin}
+  .day{padding:.875rem 0;border-top:1px solid var(--stone200)}
+  .day h3{font-weight:600;font-size:1rem;margin:0 0 .5rem}
+  .group{display:grid;gap:.375rem;margin-top:.625rem}
+  .group span{font-size:.9375rem;color:var(--stone600)}
+  .slots{display:flex;flex-wrap:wrap;gap:.375rem}
+  .slot{min-height:36px;padding:0 .75rem;border-radius:999px;border:1px solid var(--stone500);background:#fff;display:inline-flex;align-items:center;gap:.25rem;cursor:pointer;font-size:.9375rem;font-variant-numeric:tabular-nums}
+  .slot .tick{display:none;width:.875rem;height:.875rem}
+  .slot[aria-pressed="true"]{background:var(--lilac);border-color:var(--lilac700);color:var(--lilac800);font-weight:600}
+  .slot[aria-pressed="true"] .tick{display:inline}
+  .slot:hover:not([aria-pressed="true"]){border-color:var(--bark)}
+  .more{display:inline-flex;align-items:center;min-height:44px;padding:0 .125rem;font-weight:500;color:var(--rust);background:none;border:0;cursor:pointer;text-decoration:underline;text-underline-offset:4px;justify-self:start;margin-top:-.5rem}
+  .more:hover{color:var(--rust800)}
+  .chosen{margin:0;padding:.75rem 1rem;background:var(--moss100);color:var(--moss);border-radius:1rem;font-size:.9375rem}
+  .chosen[data-state="error"]{background:#FBEAEA;color:#8A1C1C;font-weight:600}
+  .chosen[data-state="done"]{background:var(--sky100);color:var(--sky);font-weight:600}
+  .btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 1.25rem;border-radius:999px;border:1px solid var(--rust);font-weight:600;cursor:pointer;background:var(--rust);color:#fff;width:100%;font-size:1.0625rem;transition:background .15s ease-out}
+  .btn:hover{background:var(--rust800);border-color:var(--rust800)}
+  .honest{margin:0;font-size:1rem;color:var(--stone600);text-align:center}
+  .book .notice{margin:.375rem 0 0;font-weight:600;font-size:1rem}
+  .call{display:grid;grid-template-columns:1.25rem minmax(0,1fr);gap:.625rem;align-items:start;margin:0;padding:.875rem 1rem;background:var(--moss100);color:var(--moss);border-radius:1rem;font-weight:600;font-size:1rem;line-height:1.4}
+  .call .icon{width:1.25rem;height:1.25rem;margin-top:.1rem}
+  .call .ex{margin:.375rem 0 0 .5rem}
+  .next{margin:0;padding-top:1rem;border-top:1px solid var(--stone200)}
+  .next h3{font-size:1rem;font-weight:600;margin:0 0 .5rem}
+  .next ol{margin:0;padding-left:1.375rem;display:grid;gap:.375rem;font-size:1rem}
+  .ask{display:grid;gap:.375rem;padding-top:1rem;border-top:1px solid var(--stone200)}
+  .ask button{display:inline-flex;align-items:center;min-height:44px;padding:0 .125rem;font-weight:500;color:var(--rust);background:none;border:0;cursor:pointer;text-decoration:underline;text-underline-offset:4px;justify-self:start}
+  .ask button:hover{color:var(--rust800)}
+  .ask .tag{font-size:.9375rem;color:var(--stone600)}
+  .ask .note{margin:0;font-size:.9375rem;color:var(--stone600)}
+  .ask .note[hidden]{display:none}
+  @media (max-width:64rem){.book{position:static}}
+
+  footer.site{margin-top:5rem;padding:2rem 0 3rem;color:var(--stone600);font-size:.9375rem}
+  footer.site .wrap{display:flex;flex-wrap:wrap;gap:1rem 2rem;justify-content:space-between;border-top:1px solid var(--stone200);padding-top:2rem}
+  footer.site a{color:var(--stone600);min-height:24px;display:inline-flex;align-items:center}
+  footer.site .notice{flex-basis:100%;display:grid;gap:.5rem;max-width:72ch}
+  footer.site .notice p{margin:0}
+  footer.site .crisis{color:var(--bark);font-weight:600}
+  footer.site .links{display:flex;flex-wrap:wrap;gap:1.25rem}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="i-tree" viewBox="0 0 24 24"><path d="M12 3l5 7h-3l4 5h-5v6h-2v-6H6l4-5H7z"/></symbol>
+  <symbol id="i-rain" viewBox="0 0 24 24"><path d="M7 15a4 4 0 0 1-.5-8A6 6 0 0 1 18 8a3.5 3.5 0 0 1 0 7"/><path d="M9 17l-1 3M13 17l-1 3M17 17l-1 3"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></symbol>
+</svg>
+
+<div class="mock" role="region" aria-label="Mockup notes">
+  <strong>Concept 4, Nature-led</strong>
+  <span>Jordan Avery is real. Cards marked Example are made up. Distances and times are examples.</span>
+  <span class="links"><a href="c4-home.html">Landing</a><a href="c4-directory.html">Directory</a><a href="c4-profile.html">Profile</a><a href="index.html">All concepts</a></span>
+</div>
+
+<header class="site">
+  <div class="wrap">
+    <a class="logo" href="c4-home.html">emu.</a>
+    <nav class="site" aria-label="Site"><a href="c4-directory.html">Find a therapist</a><a href="#">For therapists</a><a href="#">Log in</a></nav>
+  </div>
+</header>
+
+<main>
+  <div class="band" id="band">
+    <div class="wrap">
+      <a class="back" href="c4-directory.html"><svg class="icon" aria-hidden="true"><use href="#i-left"/></svg>Back to your search</a>
+      <section class="hero" aria-labelledby="s-meet">
+        <div class="map" id="map" role="region" aria-label="Map of Jordan's three meeting places, numbered to match the list">
+          <a class="maplink" href="https://www.openstreetmap.org/?mlat=39.9496&mlon=-75.1718#map=16/39.9496/-75.1718" target="_blank" rel="noopener">Open the map in a new tab</a>
+        </div>
+        <div class="site">
+          <h2 id="s-meet"><svg class="icon" aria-hidden="true"><use href="#i-tree"/></svg>Where you'll meet</h2>
+          <ol class="spots" id="spots"></ol>
+          <p class="legend" style="margin:0">Places 2 and 3 are examples for this mockup.</p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section class="person">
+      <img id="photo" alt="Portrait of Jordan Avery" width="144" height="144">
+      <div>
+        <h1 id="name"></h1>
+        <p class="cred" id="cred"></p>
+        <p class="city" id="city"></p>
+        <span class="verified"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg><span>License verified in <span id="state"></span></span></span>
+        <ul class="tags" id="tags"></ul>
+      </div>
+    </section>
+
+    <div class="layout">
+      <div>
+        <section class="sec" aria-labelledby="s-about"><h2 id="s-about">About me</h2><p class="body" id="about"></p></section>
+        <section class="sec" aria-labelledby="s-expect"><h2 id="s-expect">What you can expect</h2><p class="body" id="expect"></p></section>
+        <section class="sec" aria-labelledby="s-methods"><h2 id="s-methods">Treatment approaches</h2><dl class="methods" id="methods"></dl></section>
+        <section class="sec" aria-labelledby="s-facts"><h2 id="s-facts">Good to know</h2><dl class="methods" id="facts"></dl><p class="legend" id="legend"></p></section>
+      </div>
+
+      <aside class="book" aria-labelledby="b-title">
+        <div class="strip" id="strip" aria-hidden="true"></div>
+        <div class="in">
+          <div><h2 id="b-title">Request a time</h2><p class="price" id="price"></p><p class="notice" id="notice"></p></div>
+          <p class="call" id="call"></p>
+          <div>
+            <h3 class="sub" id="placesh">Where to meet</h3>
+            <div class="placepick" id="places" role="group" aria-labelledby="placesh"></div>
+            <p class="placenote" id="placenote"></p>
+          </div>
+          <div>
+            <h3 class="sub">When</h3>
+            <div class="days" id="days"></div>
+          </div>
+          <button type="button" class="more" id="moredates">See more available dates</button>
+          <p class="chosen" id="chosen" aria-live="polite" data-state="empty">Choose a time above.</p>
+          <button class="btn" type="button" id="request">Request appointment</button>
+          <p class="honest" id="honest"></p>
+          <div class="next"><h3>What happens next</h3><ol id="steps"></ol></div>
+          <div class="ask" id="ask"></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="notice"><p id="disclaimer"></p><p class="crisis" id="crisis"></p></div>
+    <span>Emu. Licensed therapists who meet you in public places.</span>
+    <span class="links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">For therapists</a></span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const E = window.EMU, $ = s => document.querySelector(s);
+  const t = E.therapists.find(x => x.id === 'jordan'), P = E.profile;
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  const tick = '<svg class="tick icon" aria-hidden="true"><use href="#i-check"/></svg>';
+  const st = document.createElement('style');
+  st.textContent = `.band::before{background-image:url("${E.brand.images.walkBanner}")} .hero .site::after{background-image:url("${E.brand.images.textures}")} .book .strip{background-image:url("${E.brand.images.textures}")}`;
+  document.head.appendChild(st);
+  $('#photo').src = t.photo; $('#name').textContent = t.name; $('#cred').textContent = t.credential; $('#city').textContent = t.city + ', ' + t.state; $('#state').textContent = t.state;
+  $('#tags').setAttribute('aria-label', E.labels.focus); $('#s-methods').textContent = E.labels.approaches;
+  $('#tags').innerHTML = t.specialties.map(s=>`<li>${esc(s)}</li>`).join('');
+  const X = E.extras, ex = () => '<span class="ex">Example</span>';
+  $('#price').innerHTML = `<b>$${t.price} per session</b>`;
+  $('#notice').textContent = X.notice.text;
+  $('#call').innerHTML = `<svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span>${esc(X.freeCall.text)}${ex()}</span>`;
+  $('#honest').textContent = 'Jordan will reply to confirm. ' + X.payment.text;
+  $('#steps').innerHTML = X.whatNext.steps.map(s => `<li>${esc(s)}</li>`).join('');
+  $('#ask').innerHTML = `<button type="button" id="askbtn" aria-expanded="false" aria-controls="asknote">${esc(X.contact.label)}</button><span class="tag">Proposed feature, not yet decided</span><p class="note" id="asknote" hidden>${esc(X.contact.note)} Nothing is sent from this mockup.</p>`;
+  $('#askbtn').addEventListener('click', e => { const n = $('#asknote'); n.hidden = !n.hidden; e.currentTarget.setAttribute('aria-expanded', !n.hidden); });
+  const L = P.locations, near = L[0]; // Rittenhouse Square: real, and the nearest
+  $('#spots').innerHTML = L.map((l, i) => `<li><span class="n" aria-hidden="true">${i + 1}</span><div>
+      <p class="pname">${esc(l.name)}${l.example ? ex() : ''}</p>
+      <p class="type">${l.tags.map(esc).join(', ')}</p>
+      <p class="addr">${esc(l.address)}</p>
+      <p class="instr"><b>Finding Jordan on the day</b><span>${esc(l.instructions)}${l.example ? ex() : ''}</span></p>
+      ${i === 0 ? `<ul class="sitenotes" aria-label="About the place"><li><svg class="icon" aria-hidden="true"><use href="#i-tree"/></svg><span><b>Getting there.</b> ${esc(X.place.access)}${ex()}</span></li><li><svg class="icon" aria-hidden="true"><use href="#i-rain"/></svg><span><b>If it rains.</b> ${esc(X.place.weather)}${ex()}</span></li></ul>` : ''}
+    </div></li>`).join('');
+  let mapApi = null;
+  const mapEl = document.createElement('div'); mapEl.className = 'leaflet-container'; $('#map').prepend(mapEl);
+  EMU_MAP.mount(mapEl, { pins: L.map((l, i) => ({ lat: l.lat, lng: l.lng, n: i + 1, label: l.name })), pin: { bg: '#3F5230', fg: '#fff' }, activeBg: '#9B5212' }).then(m => { mapApi = m; m.map.getPane('tilePane').style.filter = 'saturate(.7) sepia(.08)'; m.focus(1); });
+  $('#facts').innerHTML = [['Languages', X.languages.items.join(', ')], [E.labels.who, X.ageGroups.items.join(', ')], ['Pay by', X.paymentOptions.items.join(', ')], ['Sliding scale', X.slidingScale.text]]
+    .map(([n, d]) => `<div><dt>${esc(n)}${ex()}</dt><dd>${esc(d)}</dd></div>`).join('');
+  $('#legend').innerHTML = '<span class="ex" style="margin:0 .5rem 0 0">Example</span>' + esc(X.exampleLegend);
+  $('#disclaimer').textContent = E.home.disclaimer; $('#crisis').textContent = E.home.crisis;
+  $('#about').textContent = P.about; $('#expect').textContent = P.expect;
+  $('#methods').innerHTML = P.methods.map(([n,d])=>`<div><dt>${esc(n)}</dt><dd>${esc(d)}</dd></div>`).join('');
+  // Booking: pick the place, then one of that place's times (as in the live app)
+  const chosen = $('#chosen'), placenote = $('#placenote'); let picked = null, loc = near;
+  $('#places').innerHTML = L.map((l, i) => `<button type="button" class="placebtn" aria-pressed="${l === near}" data-i="${i}"><span class="n" aria-hidden="true">${i + 1}</span><span>${esc(l.name)}${l.example ? ex() : ''}<small>${l.tags.map(esc).join(', ')}${i === 0 ? ', nearest to you' : ''}</small></span>${tick}</button>`).join('');
+  function renderDays() {
+    $('#days').innerHTML = loc.availability.map(d => `<div class="day"><h3>${esc(d.day)}</h3>${
+      [['Morning',d.morning,'AM'],['Afternoon',d.afternoon,'PM']].filter(g=>g[1].length).map(([g,ts,ap]) =>
+        `<div class="group"><span>${g}</span><div class="slots" role="group" aria-label="${esc(d.day)}, ${g.toLowerCase()}">${ts.map(x=>`<button type="button" class="slot" aria-pressed="false" data-t="${esc(d.day)} at ${x} ${ap}">${tick}${x}</button>`).join('')}</div></div>`).join('')}</div>`).join('');
+    placenote.textContent = loc === near ? `${near.name} is nearest to you, so its times are showing. Pick another place to see its times.` : `Times at ${loc.name}.${loc.example ? ' These times are examples for this mockup.' : ''}`;
+    picked = null; chosen.dataset.state = 'empty'; chosen.textContent = `Choose a time at ${loc.name}.`;
+  }
+  renderDays();
+  $('#places').addEventListener('click', e => { const b = e.target.closest('.placebtn'); if(!b) return;
+    document.querySelectorAll('.placebtn').forEach(x=>x.setAttribute('aria-pressed', x===b)); loc = L[+b.dataset.i]; renderDays(); if (mapApi) mapApi.focus(+b.dataset.i + 1); });
+  $('#days').addEventListener('click', e => { const b = e.target.closest('.slot'); if(!b) return;
+    document.querySelectorAll('.slot').forEach(x=>x.setAttribute('aria-pressed', x===b)); picked = b.dataset.t; chosen.dataset.state='picked'; chosen.innerHTML = esc(picked) + ' at ' + esc(loc.name) + (loc.example ? ex() : ''); });
+  $('#request').addEventListener('click', () => {
+    if (!picked) { chosen.dataset.state='error'; chosen.textContent = 'Choose a time first. Pick one of the times above.'; document.querySelector('.slot').focus(); return; }
+    EMU_REQ.open({ therapist: t, when: picked, place: loc.name, address: loc.address, onDone: () => { chosen.dataset.state='done'; chosen.textContent = 'Request sent for ' + picked + ' at ' + loc.name + '. Jordan will reply to confirm.'; } }); });
+  $('#moredates').addEventListener('click', () => {
+    EMU_CAL.open({ therapist: t, place: loc.name, address: loc.address, onDone: when => { chosen.dataset.state='done'; chosen.textContent = 'Request sent for ' + when + ' at ' + loc.name + '. Jordan will reply to confirm.'; } }); });
+})();
+</script>
+</body>
+</html>

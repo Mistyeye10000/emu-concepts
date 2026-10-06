@@ -1,0 +1,231 @@
+<!doctype html>
+<!-- CONCEPT 9: ON FOOT, directory. Plan is in c9-home.html.
+     A photographic header with the search on a solid panel, then each therapist as a full-width scene:
+     the meeting place large on one side (the real photo, or Rachel's texture art with the place named where
+     we have no photo yet), the person on the other, the trail line linking scene to scene as you scroll. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept 9 directory</title>
+<script src="data.js?v=8"></script>
+<script src="kit.js?v=8"></script>
+<script src="map.js?v=8"></script>
+<script src="motion.js?v=2"></script>
+<script>document.write(`<link rel="stylesheet" href="${EMU.brand.fontsHref}">`)</script>
+<style>
+  html { scrollbar-gutter: stable; }
+  :root { --ink: #291605; --soft: #675D55; --line: #E3E0DD; --night: #12302A; --amber: #E2A33B; --lilac: #EFD2F9; --plum: #4B2259; --rust: #9B5212; --rust-d: #6E3A0D;
+    --serif: 'Newsreader', Georgia, serif; --sans: 'Inter', system-ui, sans-serif; }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: #fff; color: var(--ink); font: 400 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--amber); outline-offset: 3px; }
+  .ic { width: 18px; height: 18px; flex: none; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+  @media (min-width: 768px) { .wrap { padding: 0 48px; } }
+  header.top { position: absolute; left: 0; right: 0; z-index: 5; color: #fff; }
+  header.top .wrap { display: flex; justify-content: space-between; align-items: center; min-height: 76px; }
+  .logo { font: 400 32px/1 var(--serif); text-decoration: none; text-shadow: 0 1px 12px rgba(0,0,0,.4); }
+  header nav a { text-decoration: none; font-weight: 600; padding: 12px; text-shadow: 0 1px 10px rgba(0,0,0,.45); }
+
+  .head { position: relative; min-height: 72vh; display: grid; align-items: end; overflow: hidden; background: var(--night); }
+  .head > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.05); transition: transform 1.6s cubic-bezier(.2,.7,.2,1); }
+  .head.ready > img, html.reduce .head > img { transform: none; }
+  .head::after { content: ""; position: absolute; inset: 0 0 auto; height: 160px; background: linear-gradient(rgba(0,0,0,.42), transparent); pointer-events: none; }
+  .head .wrap { position: relative; z-index: 2; width: 100%; padding-bottom: 32px; }
+  .panel { background: #fff; border-radius: 6px; padding: 26px 28px; max-width: 720px; box-shadow: 0 30px 80px -30px rgba(0,0,0,.6); }
+  h1 { font: 400 clamp(34px, 4.6vw, 56px)/1.02 var(--serif); letter-spacing: -0.02em; margin: 0 0 18px; }
+  .srow { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
+  .field { display: grid; gap: 6px; flex: 1 1 220px; }
+  .field label { font-weight: 600; }
+  .field input { font: 500 17px var(--sans); min-height: 48px; padding: 0 14px; border: 1.5px solid var(--ink); border-radius: 6px; color: var(--ink); }
+  .btn { font: 600 16px var(--sans); min-height: 48px; padding: 0 22px; border: 0; border-radius: 6px; background: var(--rust); color: #fff; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: background-color .15s, transform .15s; }
+  .btn:hover { background: var(--rust-d); }
+  .btn:active { transform: translateY(1px); }
+  .ghost { font: 600 15px var(--sans); min-height: 44px; padding: 0 16px; border: 1.5px solid var(--ink); border-radius: 6px; background: #fff; color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: background-color .15s; }
+  .ghost:hover { background: #F6F4F2; }
+  .ghost[aria-pressed="true"] { background: var(--ink); color: #fff; }
+  .rad { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+  .rad button { font: 500 15px var(--sans); min-height: 40px; padding: 0 12px; border: 1px solid #877A6E; border-radius: 99px; background: #fff; color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+  .rad button .ic { width: 14px; height: 14px; display: none; }
+  .rad button[aria-pressed="true"] { background: var(--night); border-color: var(--night); color: #fff; }
+  .rad button[aria-pressed="true"] .ic { display: inline; }
+  .tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 14px; }
+  .chip { font: 600 14px var(--sans); min-height: 36px; padding: 0 8px 0 12px; border: 0; border-radius: 99px; background: var(--lilac); color: var(--plum); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  .chip .ic { width: 14px; height: 14px; }
+  .credit { position: absolute; right: 12px; bottom: 10px; z-index: 2; font-size: 12px; background: rgba(255,255,255,.92); padding: 3px 8px; border-radius: 4px; }
+  @media (max-width: 767px) { .credit { position: static; display: inline-block; margin-top: 10px; } }
+
+  .count { padding: 48px 0 8px; display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: baseline; }
+  .count h2 { font: 400 clamp(28px, 3vw, 38px)/1.1 var(--serif); margin: 0; }
+  .count p { margin: 0; color: var(--soft); }
+
+  /* Scenes */
+  .scenes { padding: 24px 0 40px; }
+  .scene { display: grid; align-items: stretch; min-height: 560px; margin: 0 0 72px; }
+  @media (min-width: 900px) { .scene { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); } .scene:nth-child(even) .place { order: 2; } }
+  .place { position: relative; overflow: hidden; min-height: 320px; background: var(--night); }
+  .place img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .9s cubic-bezier(.2,.7,.2,1); }
+  .scene:hover .place img, .scene:focus-within .place img { transform: scale(1.04); }
+  .place.fallback img { opacity: .5; }
+  .place .tag { position: absolute; left: 16px; bottom: 16px; right: 16px; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+  .place .tag b { background: #fff; color: var(--ink); padding: 6px 12px; border-radius: 4px; font: 400 22px/1.2 var(--serif); }
+  .place .tag span { background: rgba(255,255,255,.92); color: var(--ink); padding: 4px 10px; border-radius: 4px; font-size: 14px; }
+  .place .big { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; }
+  .place .big svg { width: 96px; height: 96px; opacity: .9; }
+  .person { padding: 32px 24px; display: grid; align-content: center; gap: 4px; }
+  @media (min-width: 900px) { .person { padding: 40px 56px; } }
+  .person .top { display: flex; gap: 16px; align-items: center; margin-bottom: 8px; }
+  .person img.p { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 3px #fff, 0 0 0 4px var(--amber); }
+  .person h3 { font: 400 clamp(30px, 3vw, 40px)/1.05 var(--serif); margin: 0; letter-spacing: -0.015em; }
+  .person h3 a { text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1.5px no-repeat; transition: background-size .3s ease-out; }
+  .person h3 a:hover, .person h3 a:focus-visible { background-size: 100% 1.5px; }
+  .cred { margin: 2px 0 0; color: var(--soft); }
+  .ver { display: inline-flex; gap: 6px; align-items: center; font-size: 14px; font-weight: 600; color: var(--night); }
+  .exn { display: inline-block; font-size: 14px; font-weight: 600; color: var(--plum); background: var(--lilac); padding: 2px 8px; border-radius: 4px; margin-top: 6px; }
+  .sp { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 12px 0 0; }
+  .sp li { font-size: 14px; padding: 3px 10px; border-radius: 99px; border: 1px solid var(--line); }
+  .x-about { font: 400 19px/1.55 var(--serif) !important; opacity: 1 !important; margin-top: 12px !important; color: var(--ink); }
+  .meta { display: flex; flex-wrap: wrap; gap: 6px 20px; margin-top: 14px; }
+  .meta b { font-weight: 600; }
+  .go { margin-top: 18px; justify-self: start; }
+
+  :root { --x-pin: #12302A; --x-pin-on: #9B5212; }
+  .exm { color: var(--plum); font-weight: 700; margin-left: 2px; }
+  .x-hints { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 10px; }
+  .x-hint { font-size: 14px; font-weight: 600; color: var(--plum); }
+  .x-legend { font-size: 14px; color: var(--soft); margin: 0 0 40px; }
+  .mapwrap { padding: 24px 0 48px; }
+  .x-mapview { display: grid; gap: 20px; }
+  @media (min-width: 900px) { .x-mapview { grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr); align-items: start; } }
+  .x-map { height: 70vh; min-height: 420px; border-radius: 6px; overflow: hidden; position: relative; z-index: 0; background: #DCE5E1; }
+  .x-mapcount { margin: 0 0 8px; font-weight: 600; }
+  .x-maplist { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+  .x-maplist li { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; padding: 12px 0; border-top: 1px solid var(--line); }
+  .x-maplist a { font: 400 21px var(--serif); }
+  .x-maplist div > span { display: block; font-size: 14px; color: var(--soft); }
+  .x-num { width: 28px; height: 28px; border-radius: 50%; background: var(--x-pin); color: #fff; display: grid; place-items: center; font: 700 13px var(--sans); }
+  .widen { margin: 0 0 24px; padding: 22px 26px; background: var(--night); color: #fff; border-radius: 6px; display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; }
+  .widen p { margin: 0; font: 400 21px/1.4 var(--serif); }
+  .widen button { font: 600 15px var(--sans); min-height: 44px; padding: 0 16px; border: 0; border-radius: 6px; background: #fff; color: var(--ink); cursor: pointer; }
+  dialog.f { border: 0; padding: 0; width: min(560px, 100vw); max-height: 88dvh; border-radius: 8px; box-shadow: 0 30px 80px -20px rgba(41,22,5,.45); color: var(--ink); }
+  dialog.f[open] { animation: dlg .22s cubic-bezier(.2,.7,.2,1); }
+  @keyframes dlg { from { opacity: 0; transform: translateY(12px); } }
+  @media (prefers-reduced-motion: reduce) { dialog.f[open] { animation: none; } }
+  dialog.f::backdrop { background: rgba(18,48,42,.5); }
+  .dlg { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; max-height: 88dvh; }
+  .dlg header, .dlg footer { padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .dlg header { border-bottom: 1px solid var(--line); }
+  .dlg header h2 { margin: 0; font: 400 28px var(--serif); }
+  .dlg footer { border-top: 1px solid var(--line); }
+  .dlg .body { overflow-y: auto; padding: 0 20px 20px; }
+  .dlg fieldset { border: 0; margin: 20px 0 0; padding: 0; min-width: 0; }
+  .dlg legend { font-weight: 600; margin-bottom: 8px; padding: 0; }
+  .opts { display: flex; flex-wrap: wrap; gap: 6px; }
+  .opt { font: 500 15px var(--sans); min-height: 38px; padding: 0 12px; border: 1px solid #877A6E; border-radius: 99px; background: #fff; color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+  .opt .ic { width: 14px; height: 14px; display: none; }
+  .opt[aria-pressed="true"] { background: var(--night); border-color: var(--night); color: #fff; font-weight: 600; }
+  .opt[aria-pressed="true"] .ic { display: inline; }
+  .x-btn { width: 44px; height: 44px; border: 0; background: none; border-radius: 50%; cursor: pointer; display: grid; place-items: center; color: inherit; }
+  .x-foot { background: var(--night); color: #D9E3DF; padding: 32px 16px 56px; font-size: 14px; }
+  @media (min-width: 768px) { .x-foot { padding: 32px 48px 56px; } }
+  .x-foot p { margin: 0 auto 8px; max-width: 1104px; }
+  .x-crisis { color: #fff !important; font-weight: 600; }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="logo" href="c9-home.html">emu.</a><nav aria-label="Main"><a href="#">For therapists</a><a href="#">About</a></nav></div></header>
+<main id="main"></main>
+<dialog class="f" id="dlg" aria-labelledby="dlg-t">
+  <div class="dlg">
+    <header><h2 id="dlg-t">Filters</h2><button class="x-btn" aria-label="Close filters" id="close"></button></header>
+    <div class="body" id="fbody"></div>
+    <footer><button class="ghost" type="button" id="clear">Clear all</button><button class="btn" type="button" id="show">Show 4 therapists</button></footer>
+  </div>
+</dialog>
+<script>
+  const { icon, mockBar, excerpt, hints, moreLocs, exm, placeIcon } = KIT;
+  mockBar(9, 'On foot');
+  const T = EMU.therapists, S = EMU.search, PH = EMU.photos;
+  const href = t => t.example ? '#' : 'c9-profile.html';
+  const photoFor = t => /Trail/.test(t.place) ? PH.trailWalk : /Library/.test(t.place) ? PH.library : null;
+  const bigIcon = t => icon(placeIcon(t.placeType)).replace('class="ic"', 'class="ic" style="width:96px;height:96px"');
+
+  document.getElementById('main').innerHTML = `
+    <section class="head" id="head">
+      <img src="${PH.trailCity.src}" alt="${PH.trailCity.alt}">
+      <div class="wrap">
+        <div class="panel rv">
+          <h1 id="count-h">Therapists who meet near ${S.location}</h1>
+          <form class="srow" role="search" onsubmit="return false">
+            <div class="field"><label for="loc">City or ZIP code</label><input id="loc" value="${S.location}" autocomplete="address-level2"></div>
+            <button class="btn">Search</button>
+          </form>
+          <div class="rad" role="group" aria-label="How far" data-toggle-group id="radius">${S.radii.map(r => `<button type="button" aria-pressed="${r === S.radius}" data-r="${r}">${icon('check')}${r} miles</button>`).join('')}</div>
+          <div class="tools"><button type="button" class="ghost" id="open">${icon('sliders')}Filters</button><button type="button" class="ghost" id="maptoggle" aria-pressed="false">${icon('map')}Map</button><span id="chips"></span></div>
+        </div>
+        <small class="credit">${PH.trailCity.credit}</small>
+      </div>
+    </section>
+    <div class="wrap count"><h2 id="count">${S.count} therapists within ${S.radius} miles</h2><p>Nearest first. Each one starts from a public place.</p></div>
+    <div class="wrap mapwrap" id="mapview" hidden><div class="x-mapview"><div class="x-map" id="dirmap" role="region" aria-label="Map of therapists near Philadelphia"></div><div id="maplist"></div></div></div>
+    <div class="scenes" id="scenes"></div>
+    <div class="wrap"><div class="widen rv" id="widen"><p>Emu is new here, so only ${S.count} therapists meet within ${S.radius} miles so far.</p><button type="button" id="wbtn">Search within 25 miles</button></div>
+    <p class="x-legend">${exm} ${EMU.extras.exampleLegend.replace('Jordan has', 'The therapist has')}</p></div>`;
+
+  document.getElementById('scenes').innerHTML = T.map((t, i) => { const ph = photoFor(t); return `
+    <article class="scene" data-stop aria-labelledby="n-${t.id}">
+      <div class="place ${ph ? '' : 'fallback'}">
+        <img src="${ph ? ph.src : EMU.brand.images.textures}" alt="${ph ? ph.alt : ''}" loading="lazy">
+        ${ph ? '' : `<span class="big" aria-hidden="true">${bigIcon(t)}</span>`}
+        <div class="tag"><b>${t.place}</b><span>${t.placeType}, ${t.distance} away</span>${ph ? `<span>${ph.credit.split('. ').slice(1).join('. ')}</span>` : ''}</div>
+      </div>
+      <div class="person rv">
+        <div class="top"><img class="p" src="${t.photo}" alt="Portrait of ${t.name}"><div><h3 id="n-${t.id}"><a href="${href(t)}">${t.name}</a></h3><p class="cred">${t.credential}</p></div></div>
+        <span class="ver">${icon('badge')}License verified in ${t.state}</span>
+        ${t.example ? '<span class="exn">A made-up example for this mockup</span>' : ''}
+        ${excerpt(t)}
+        <ul class="sp" aria-label="${EMU.labels.focus}">${t.specialties.slice(0, 3).map(s => `<li>${s}</li>`).join('')}</ul>
+        <div class="x-hints">${hints(t.id)}</div>
+        <div class="meta"><span>Meets at ${t.place}${t.id === 'jordan' ? moreLocs() : ''}</span><b>$${t.price} per session</b><span>Next free ${t.next}</span></div>
+        <a class="btn go" href="${href(t)}">See ${t.name.split(' ')[0]}'s times</a>
+      </div>
+    </article>`; }).join('');
+
+  // Filters
+  document.getElementById('close').innerHTML = icon('x');
+  const def = g => g[1].find(x => S.activeFilters.includes(x)) || g[1][0];
+  const state = Object.fromEntries(EMU.filters.map(g => [g[0], def(g)]));
+  const renderBody = () => document.getElementById('fbody').innerHTML = EMU.filters.map(([n, o]) => `<fieldset><legend>${n}</legend><div class="opts">${o.map(x => `<button type="button" class="opt" data-g="${n}" aria-pressed="${x === state[n]}">${icon('check')}${x}</button>`).join('')}</div></fieldset>`).join('');
+  const renderChips = () => document.getElementById('chips').innerHTML = EMU.filters.filter(g => state[g[0]] !== g[1][0]).map(g => `<button type="button" class="chip" data-g="${g[0]}" aria-label="Remove filter: ${state[g[0]]}">${state[g[0]]}${icon('x')}</button>`).join(' ');
+  renderBody(); renderChips();
+  document.getElementById('fbody').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; state[b.dataset.g] = b.textContent.trim(); renderBody(); renderChips(); });
+  document.getElementById('chips').addEventListener('click', e => { const c = e.target.closest('.chip'); if (!c) return; state[c.dataset.g] = EMU.filters.find(g => g[0] === c.dataset.g)[1][0]; renderBody(); renderChips(); });
+  document.getElementById('clear').onclick = () => { EMU.filters.forEach(g => state[g[0]] = g[1][0]); renderBody(); renderChips(); };
+  const dlg = document.getElementById('dlg');
+  document.getElementById('open').onclick = () => dlg.showModal();
+  document.getElementById('close').onclick = document.getElementById('show').onclick = () => dlg.close();
+  document.getElementById('radius').addEventListener('click', e => { const b = e.target.closest('button'); if (b) document.getElementById('count').textContent = `${S.count} therapists within ${b.dataset.r} miles`; });
+  document.getElementById('wbtn').onclick = () => { document.querySelector('#radius [data-r="25"]').click(); document.getElementById('widen').innerHTML = '<p>Now searching within 25 miles. In this mockup the results stay the same.</p>'; };
+
+  // Map
+  document.getElementById('maplist').innerHTML = KIT.dirMapList(href);
+  const mt = document.getElementById('maptoggle');
+  mt.addEventListener('click', () => {
+    const on = mt.getAttribute('aria-pressed') !== 'true'; mt.setAttribute('aria-pressed', on);
+    document.getElementById('mapview').hidden = !on; document.getElementById('scenes').hidden = on;
+    if (on) { KIT.mountDirMap(document.getElementById('dirmap'), document.getElementById('maplist'), href); document.getElementById('mapview').scrollIntoView({ behavior: MOTION.reduce ? 'auto' : 'smooth', block: 'start' }); }
+  });
+
+  // Motion
+  const head = document.getElementById('head'), hb = head.querySelector('img');
+  const ready = () => requestAnimationFrame(() => head.classList.add('ready'));
+  hb.complete ? ready() : hb.addEventListener('load', ready);
+  MOTION.trail(document.getElementById('scenes'), [.3, .72, .3, .72]);
+  MOTION.watch();
+  document.body.insertAdjacentHTML('beforeend', KIT.crisisFoot());
+</script>
+</body>
+</html>

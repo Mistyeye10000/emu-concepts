@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept 3 profile</title>
+<script src="data.js?v=8"></script>
+<script src="kit.js?v=8"></script>
+<script src="map.js?v=8"></script>
+<script src="request.js?v=8"></script>
+<script>document.write(`<link rel="stylesheet" href="${EMU.brand.fontsHref}">`)</script>
+<style>
+  html { scrollbar-gutter: stable; }
+  :root {
+    --ink: #291605; --ink-2: #70655C; --rule: #E7E3EC; --cream: #FCFAF8;
+    --rust: #9B5212; --rust-d: #6E3A0D; --error: #B42318;
+    --lilac: #EFD2F9; --lilac-50: #FAF1FD; --lilac-1: #F6E4FC; --lilac-7: #6A307E; --lilac-8: #4B2259;
+    --sky: #EAF1F8; --sky-8: #22405C; --peach: #FBE6D8;
+    --serif: 'Newsreader', Georgia, serif; --sans: 'Inter', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 140px; scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body { margin: 0; background: #fff; color: var(--ink); font: 400 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--rust); outline-offset: 2px; }
+  .ic { width: 18px; height: 18px; flex: none; }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 16px; }
+  @media (min-width: 768px) { .wrap { padding: 0 32px; } }
+
+  header.top { border-bottom: 1px solid var(--rule); }
+  header.top .wrap { height: 68px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { font: 700 22px/1 var(--sans); letter-spacing: -0.03em; text-decoration: none; }
+  nav a { text-decoration: none; font-weight: 500; font-size: 16px; padding: 10px 12px; border-radius: 99px; }
+  nav a:hover { background: var(--sky); }
+  .back { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin: 12px 0 0 -8px; padding: 0 12px 0 8px; border-radius: 99px; font-weight: 500; text-decoration: none; }
+  .back:hover { background: var(--sky); }
+
+  /* Hero */
+  .hero { margin-top: 8px; background: var(--sky); border-radius: 28px; padding: 16px; display: grid; gap: 24px; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 820px) { .hero { grid-template-columns: 300px minmax(0, 1fr); padding: 20px; align-items: center; } }
+  .hero img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 20px; }
+  @media (max-width: 819px) { .hero img { aspect-ratio: 4 / 3; } }
+  .hero .txt { padding: 4px 8px 12px; }
+  h1 { font: 400 clamp(38px, 5vw, 60px)/1.02 var(--serif); letter-spacing: -0.02em; margin: 0; }
+  .hero .cred { margin: 10px 0 0; font-size: 18px; }
+  .ver { display: inline-flex; gap: 6px; align-items: center; font: 600 16px var(--sans); color: var(--lilac-7); margin-top: 8px; }
+  .facts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+  .fact { display: inline-flex; align-items: center; gap: 8px; background: #fff; border-radius: 99px; padding: 8px 14px; font: 500 16px var(--sans); }
+  .fact .ic { color: var(--rust); }
+  .fact.peach { background: var(--peach); color: var(--rust-d); font-weight: 600; }
+  .fact.peach .ic { color: var(--rust-d); }
+
+  /* Anchor nav */
+  .tabs { position: sticky; top: 0; z-index: 5; background: rgba(255,255,255,.94); backdrop-filter: blur(10px); margin-top: 20px; border-bottom: 1px solid var(--rule); }
+  .tabs ul { list-style: none; display: flex; gap: 4px; margin: 0; padding: 8px 0; overflow-x: auto; scrollbar-width: none; }
+  .tabs a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: 99px; text-decoration: none; font-weight: 500; font-size: 16px; white-space: nowrap; }
+  .tabs a:hover { background: var(--sky); }
+  .tabs a[aria-current="true"] { background: var(--ink); color: #fff; }
+
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 48px; padding: 36px 0 120px; }
+  @media (min-width: 980px) { .layout { grid-template-columns: minmax(0, 1fr) 360px; gap: 56px; align-items: start; padding-bottom: 96px; } }
+  .content section + section { margin-top: 48px; }
+  .content h2 { font: 400 30px/1.2 var(--serif); margin: 0 0 12px; letter-spacing: -0.01em; }
+  .content p { margin: 0; max-width: 64ch; font-size: 16px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .tag { font: 500 14px var(--sans); color: var(--lilac-8); background: var(--lilac-1); border-radius: 99px; padding: 5px 12px; }
+  .bubble { background: var(--lilac-50); border-radius: 22px 22px 22px 6px; padding: 22px 24px; }
+  .meet { border-radius: 24px; overflow: hidden; border: 1px solid var(--rule); }
+  .meet .top2 { padding: 22px 24px; display: grid; gap: 4px; }
+  .meet .pl { display: flex; align-items: center; gap: 8px; font: 600 18px var(--sans); }
+  .meet .pl .ic { color: var(--rust); }
+  .meet .addr { color: var(--ink-2); font-size: 16px !important; }
+  .meet .say { margin-top: 14px !important; font: italic 400 22px/1.4 var(--serif) !important; }
+  .meet iframe { width: 100%; height: 240px; border: 0; display: block; filter: saturate(.7); }
+  .methods { display: grid; gap: 10px; }
+  .method { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; padding: 18px; border-radius: 18px; background: var(--cream); }
+  .method .dot { width: 40px; height: 40px; border-radius: 12px; background: var(--sky); color: var(--sky-8); display: grid; place-items: center; font: 500 20px var(--serif); }
+  .method h3 { margin: 0 0 2px; font: 600 16px var(--sans); }
+  .method p { font-size: 16px !important; }
+
+  /* Booking */
+  .book { border-radius: 24px; border: 1px solid var(--rule); background: #fff; box-shadow: 0 20px 48px -24px rgba(34,64,92,.35); }
+  @media (min-width: 980px) { .book { position: sticky; top: 76px; } }
+  .book .hd { padding: 22px 22px 6px; }
+  .book .hd h2 { margin: 0; font: 400 26px/1.2 var(--serif); }
+  .book .hd p { margin: 4px 0 0; color: var(--ink-2); }
+  .days { display: flex; gap: 8px; overflow-x: auto; padding: 14px 22px 4px; scrollbar-width: none; }
+  .dbtn { flex: none; display: grid; justify-items: center; gap: 0; min-width: 76px; padding: 10px 8px; border-radius: 16px; border: 1px solid var(--rule); background: #fff; font: 500 13px var(--sans); color: var(--ink-2); cursor: pointer; }
+  .dbtn b { font: 500 24px/1.1 var(--serif); color: var(--ink); }
+  .dbtn[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #E3E0DD; }
+  .dbtn[aria-pressed="true"] b { color: #fff; }
+  .times { padding: 12px 22px 16px; min-height: 150px; }
+  .grp + .grp { margin-top: 12px; }
+  .grp h3 { margin: 0 0 8px; font: 600 14px var(--sans); color: var(--ink-2); }
+  .slots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .slot { font: 600 16px var(--sans); font-variant-numeric: tabular-nums; min-height: 44px; border-radius: 14px; border: 1px solid #877A6E; background: #fff; color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+  .slot:hover { background: var(--sky); }
+  .slot .ic { width: 14px; height: 14px; display: none; }
+  .slot[aria-pressed="true"] { background: var(--lilac); border-color: var(--lilac-7); color: var(--lilac-8); }
+  .slot[aria-pressed="true"] .ic { display: inline; }
+  .ft { padding: 14px 22px 22px; border-top: 1px solid var(--rule); display: grid; gap: 10px; }
+  .chosen { margin: 0; font-weight: 500; min-height: 24px; }
+  .chosen.is-error { color: var(--error); font-weight: 600; }
+  .btn { font: 600 16px var(--sans); min-height: 50px; padding: 0 22px; border-radius: 99px; border: 0; background: var(--rust); color: #fff; cursor: pointer; }
+  .btn:hover { background: var(--rust-d); }
+  .fine { margin: 0; font-size: 14px; color: var(--ink-2); }
+
+  /* Phone booking bar */
+  .dock { display: none; }
+  @media (max-width: 979px) {
+    .dock { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: #fff; border-top: 1px solid var(--rule); box-shadow: 0 -10px 30px -16px rgba(41,22,5,.3); }
+    .dock p { margin: 0; font-size: 14px; color: var(--ink-2); line-height: 1.3; }
+    .dock p b { display: block; color: var(--ink); font-size: 16px; }
+    .dock .btn { min-height: 46px; padding: 0 18px; flex: none; }
+  }
+:root { --x-accent: var(--sky-8); --x-tint: var(--peach); --x-call-ink: var(--rust-d); --x-line: var(--rule); --x-r: 18px; }
+  /* Profile gap additions (shared classes, concept accents) */
+  .exm { color: var(--x-accent); font-weight: 700; margin-left: 2px; text-decoration: none; }
+  .x-facts { margin: 18px 0 0; }
+  .x-row { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 12px; padding: 9px 0; border-top: 1px solid var(--x-line); }
+  .x-row dt { font-weight: 600; font-size: 14px; color: var(--ink-2); }
+  .x-row dd { margin: 0; font-size: 16px; }
+  .x-call { background: var(--x-tint); border-radius: var(--x-r, 12px); padding: 14px 16px; display: grid; gap: 4px; margin-top: 14px; }
+  .x-call b { color: var(--x-call-ink, var(--x-accent)); font-weight: 600; }
+  .x-call span { font-size: 14px; color: var(--ink-2); }
+  .x-notice { margin: 6px 0 0; font-size: 14px; color: var(--ink-2); }
+  .x-next { margin-top: 6px; }
+  .x-h { font-weight: 600; font-size: 14px; margin: 0 0 6px; }
+  .x-next ol { margin: 0; padding-left: 20px; font-size: 14px; color: var(--ink-2); }
+  .x-next li + li { margin-top: 3px; }
+  .x-ask { font: 600 16px var(--sans); min-height: 44px; width: 100%; padding: 0 14px; border: 1.5px dashed #877A6E; background: transparent; border-radius: var(--x-r, 12px); color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+  .x-ask:hover { border-style: solid; }
+  .x-prop { font-size: 12px; font-weight: 600; color: var(--ink-2); border: 1px solid #877A6E; border-radius: 99px; padding: 1px 7px; }
+  .x-note { font-size: 14px; color: var(--ink-2); margin: 6px 0 0; }
+  .x-place { margin-top: 16px; display: grid; gap: 6px; }
+  .x-place p { margin: 0; font-size: 16px; }
+  .x-legend { font-size: 14px; color: var(--ink-2); margin: 32px 0 0; }
+  .x-foot { max-width: 1200px; margin: 0 auto; padding: 28px 20px 48px; border-top: 1px solid var(--x-line); font-size: 14px; color: var(--ink-2); }
+  @media (min-width: 768px) { .x-foot { padding: 28px 40px 48px; } }
+  .x-foot p { margin: 0 0 8px; max-width: 75ch; }
+  .x-crisis { color: var(--ink) !important; font-weight: 600; }
+  .x-hints { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 8px; }
+  .x-hint { font-size: 14px; font-weight: 600; color: var(--x-accent); }
+  :root { --x-pin: #22405C; --x-pin-on: #9B5212; }
+  /* Locations, picker and map (live app: several places per therapist, location-first booking) */
+  .x-map { height: 320px; border-radius: var(--x-r, 12px); overflow: hidden; position: relative; z-index: 0; background: #E9ECE6; }
+  .x-also { margin-top: 20px; }
+  .x-loclist { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 10px; }
+  .x-locitem { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 12px; padding: 10px; border-radius: var(--x-r, 12px); transition: background-color .2s ease-out; }
+  .x-locitem.is-on { background: var(--x-tint); }
+  .x-num { width: 28px; height: 28px; border-radius: 50%; background: var(--x-pin); color: #fff; display: grid; place-items: center; font: 700 13px var(--sans); }
+  .x-locname { margin: 0; font-weight: 600; display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; }
+  .x-tag { font-size: 12px; font-weight: 600; color: var(--x-accent); border: 1px solid currentColor; border-radius: 99px; padding: 1px 8px; }
+  .x-addr { margin: 2px 0 0; font-size: 14px; color: var(--ink-2); }
+  .x-instr { margin: 6px 0 0; }
+  .x-picker { margin: 4px 0 14px; }
+  .x-locs { display: grid; gap: 6px; }
+  .x-loc { font: inherit; font-size: 16px; text-align: left; display: grid; grid-template-columns: 16px 22px minmax(0, 1fr); gap: 8px; align-items: center; min-height: 48px; padding: 6px 10px; border: 1px solid #877A6E; border-radius: var(--x-r, 12px); background: #fff; color: var(--ink); cursor: pointer; }
+  .x-loc:hover { border-color: var(--ink); }
+  .x-loc small { display: block; font-size: 12px; color: var(--ink-2); font-weight: 400; }
+  .x-loc .x-tick { visibility: hidden; width: 16px; height: 16px; }
+  .x-loc .x-n { width: 22px; height: 22px; border-radius: 50%; background: var(--x-pin); color: #fff; display: grid; place-items: center; font: 700 12px var(--sans); }
+  .x-loc[aria-pressed="true"] { border-color: var(--x-pin); background: var(--x-tint); font-weight: 600; }
+  .x-loc[aria-pressed="true"] .x-tick { visibility: visible; }
+  .x-hint-line, .x-none { font-size: 14px; color: var(--ink-2); margin: 6px 0 0; }
+  :root { --rq-ink:#291605;--rq-soft:#70655C;--rq-panel:#EAF1F8;--rq-line:#E7E3EC;--rq-accent:#9B5212;--rq-accent-hover:#6E3A0D;--rq-radius:24px;--rq-serif:'Newsreader',Georgia,serif;--rq-sans:'Inter',system-ui,sans-serif; }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="logo" href="c3-home.html">emu.</a><nav aria-label="Main"><a href="c3-directory.html">Find a therapist</a><a href="#">For therapists</a></nav></div></header>
+<main class="wrap" id="main"></main>
+<div class="dock" aria-label="Booking summary"><p><b data-chosen-mirror>No time chosen</b>$140 per session</p><a class="btn" href="#times-sec" style="display:inline-flex;align-items:center;text-decoration:none">Choose a time</a></div>
+<script>
+  const { icon, mockBar, booking, fullSlot, ex, exm, facts, freeCall, whatNext, placeMore, contact, legend, notice, payLine, crisisFoot, otherLocs, locPicker, wireLocs, mountLocMap, moreLocs } = KIT;
+  mockBar(3, 'Soft app', 'c3-directory.html', 'Directory');
+  const j = EMU.therapists[0], P = EMU.profile, L = P.location;
+  const days = P.availability;
+  const short = d => { const [wd, md] = d.split(', '); return [wd.slice(0, 3), md.split(' ')[1]]; };
+
+  document.getElementById('main').innerHTML = `
+    <a class="back" href="c3-directory.html">${icon('left')}Back to your search</a>
+    <section class="hero" aria-label="Introduction">
+      <img src="${j.photo}" alt="Portrait of ${j.name}">
+      <div class="txt">
+        <h1>${j.name}</h1>
+        <p class="cred">${j.credential} · ${j.city}</p>
+        <span class="ver">${icon('badge')}License verified in ${j.state}</span>
+        <div class="facts">
+          <span class="fact">${icon('leaf')}Meets at ${L.name}${moreLocs()}</span>
+          <span class="fact">$${j.price} per session</span>
+          <span class="fact peach">${icon('cal')}Next opening ${short(j.next).join(', Oct ')}</span>
+        </div>
+      </div>
+    </section>
+    <nav class="tabs" aria-label="On this page"><ul>
+      <li><a href="#about" aria-current="true">About</a></li><li><a href="#where">Where you'll meet</a></li><li><a href="#methods">Methods</a></li><li><a href="#times-sec">Times</a></li>
+    </ul></nav>
+    <div class="layout">
+      <div class="content">
+        <section id="about" aria-labelledby="h-about"><h2 id="h-about">About me</h2><p>${P.about}</p>
+          <div class="tags" aria-label="Specialties">${j.specialties.map(s => `<span class="tag">${s}</span>`).join('')}</div>${facts()}</section>
+        <section aria-labelledby="h-exp"><h2 id="h-exp">What you can expect</h2><div class="bubble"><p>${P.expect}</p></div></section>
+        <section id="where" aria-labelledby="h-where"><h2 id="h-where">Where you'll meet</h2>
+          <div class="meet"><div class="top2"><span class="pl">${icon('leaf')}${L.name}, ${L.type.toLowerCase()}</span><p class="addr">${L.address}</p><p class="say">${L.instructions}</p>${placeMore()}</div>
+          <div class="x-map" id="locmap" role="region" aria-label="Map of Jordan's three meeting places"></div>${otherLocs()}</div></section>
+        <section id="methods" aria-labelledby="h-m"><h2 id="h-m">${EMU.labels.approaches}</h2>
+          <div class="methods">${P.methods.map(([n, d]) => `<div class="method"><span class="dot" aria-hidden="true">${n[0]}</span><div><h3>${n}</h3><p>${d}</p></div></div>`).join('')}</div></section>
+      </div>
+      <aside class="book" id="times-sec" aria-labelledby="h-book">
+        <div class="hd"><h2 id="h-book">Pick a time</h2><p>$${j.price} per session</p>${notice()}${freeCall()}</div>
+        ${locPicker()}<div data-days></div>
+        <div class="ft">
+          <p class="chosen" data-chosen aria-live="polite">No time chosen yet</p>
+          <button class="btn" data-request>Request appointment</button>
+          <p class="fine">${payLine()}</p>${whatNext()}${contact()}
+        </div>
+      </aside>
+    </div>`;
+
+  // Day tabs and times for the chosen location; slots for every day are rendered so selection survives day switches
+  const slot = (day, t) => `<button class="slot" aria-pressed="false" data-t="${fullSlot(day, t)}">${icon('check')}${t}</button>`;
+  const daysHTML = av => `<div class="days" role="group" aria-label="Day" data-toggle-group>${av.map((d, i) => { const [w, n] = short(d.day); return `<button class="dbtn" aria-pressed="${i === 0}" data-day="${i}" aria-label="${d.day}">${w}<b>${n}</b>Oct</button>`; }).join('')}</div>
+    <div class="times">${av.map((d, i) => `
+      <div data-daypanel="${i}" ${i ? 'hidden' : ''}>
+        ${d.morning.length ? `<div class="grp"><h3>Morning</h3><div class="slots" role="group" aria-label="${d.day}, morning">${d.morning.map(t => slot(d.day, t)).join('')}</div></div>` : ''}
+        ${d.afternoon.length ? `<div class="grp"><h3>Afternoon</h3><div class="slots" role="group" aria-label="${d.day}, afternoon">${d.afternoon.map(t => slot(d.day, t)).join('')}</div></div>` : ''}
+      </div>`).join('')}</div>`;
+  document.querySelector('.book').addEventListener('click', e => { const b = e.target.closest('.dbtn'); if (!b) return; document.querySelectorAll('[data-daypanel]').forEach(p => p.hidden = p.dataset.daypanel !== b.dataset.day); });
+  booking(document.querySelector('.book'));
+  wireLocs(document.querySelector('.book'), daysHTML);
+  mountLocMap(document.getElementById('locmap'));
+  document.querySelector('main').insertAdjacentHTML('beforeend', legend());
+  document.querySelector('main').insertAdjacentHTML('afterend', crisisFoot());
+
+  // Highlight current section in the anchor nav
+  const links = [...document.querySelectorAll('.tabs a')];
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) links.forEach(a => a.setAttribute('aria-current', a.getAttribute('href') === '#' + e.target.id)); }), { rootMargin: '-40% 0px -55% 0px' });
+  ['about', 'where', 'methods', 'times-sec'].forEach(id => io.observe(document.getElementById(id)));
+</script>
+</body>
+</html>

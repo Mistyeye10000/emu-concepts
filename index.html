@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Emu concepts</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
+<style>
+  html { scrollbar-gutter: stable; }
+  :root { --ink: #291605; --ink-2: #70655C; --rule: #E3E0DD; --cream: #FCFAF8; --rust: #9B5212; --lilac: #EFD2F9; --lilac-8: #4B2259; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--cream); color: var(--ink); font: 400 16px/1.55 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  :focus-visible { outline: 2px solid var(--rust); outline-offset: 2px; }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
+  @media (min-width: 768px) { .wrap { padding: 0 40px; } }
+  header { padding: 56px 0 32px; }
+  h1 { font: 400 clamp(36px, 5vw, 56px)/1.05 'Newsreader', Georgia, serif; letter-spacing: -0.02em; margin: 0; }
+  header p { margin: 14px 0 0; color: var(--ink-2); max-width: 64ch; }
+  .grid { display: grid; gap: 24px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); }
+  .c { background: #fff; border: 1px solid var(--rule); border-radius: 20px; overflow: hidden; display: grid; }
+  .thumb { position: relative; height: 240px; overflow: hidden; background: #F1F0EE; border-bottom: 1px solid var(--rule); }
+  .thumb iframe { position: absolute; top: 0; left: 0; width: 1280px; height: 800px; border: 0; transform: scale(.3); transform-origin: 0 0; pointer-events: none; }
+  @media (min-width: 400px) { .thumb iframe { transform: scale(.31); } }
+  .body { padding: 20px; display: grid; gap: 6px; }
+  .body h3 { margin: 0; font: 500 26px/1.15 'Newsreader', serif; }
+  .body p { margin: 4px 0 0; color: var(--ink-2); font-size: 15px; }
+  .links { display: flex; gap: 8px; margin-top: 12px; }
+  .links a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px; border-radius: 99px; border: 1.5px solid var(--rust); color: var(--rust); font-weight: 600; font-size: 15px; text-decoration: none; }
+  .links a:hover { background: #FDF7F1; }
+  footer { padding: 48px 0 64px; color: var(--ink-2); font-size: 14px; }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <h1>Emu concepts</h1>
+    <p>Twelve directions for the home page, search results and therapist profile, as one flow. Every concept uses Newsreader with Inter and Emu's base colours, with its own secondary colours and layout. Content is identical across all twelve: Jordan Avery is real test data, the other three therapists are made-up examples.</p>
+  </header>
+  <div id="list"></div>
+  <footer>Local exploration files only. Nothing here is in Rachel's app.</footer>
+</main>
+<script>
+  const C = [
+    [1, 'Field notes', 'Editorial and calm. The search is a sentence you edit, filters live in a quiet sidebar, results are rows that lead with the meeting place. Moss green on warm paper.'],
+    [2, 'Place first', 'Results sit beside a map with numbered pins; the profile opens on where you will meet and Jordan\'s instructions. Plum and sage.'],
+    [3, 'Soft app', 'One search pill, quick filter chips, photo-led cards with the place on the photo. Section tabs and a phone booking bar on the profile. Sky blue and peach.'],
+    [5, 'This week', 'Pick a time before a person. A week grid shows each therapist\'s morning and afternoon openings, with the 72-hour notice shown as days you cannot book. The profile is Jordan\'s week as a calendar.'],
+    [4, 'Nature-led', 'The place leads. Rachel\'s walk photo behind the top of the page, results as place panels colour-coded by type, and the profile opens on the map.'],
+    [6, 'Routes', 'Immersive. Each page opens on a full-width photograph with a route drawing itself across it. Every therapist has a drawn route shaped by their place, which draws in as you scroll; on the profile, Jordan\'s loop is drawn large over the photo, starting at the central fountain.'],
+    [7, 'Photo-pin map', 'The map is the product. Every pin is a round photo of the actual meeting place, and the results float over the map as a panel (a bottom sheet on phones). The landing scatters the same photo pins around the search.'],
+    [8, 'Read, then book', 'Reading comes first. The directory is a reading list with a preview beside it; the profile is one calm column like an article, and booking opens as a side drawer with four steps: place, time, your details, sent.'],
+    [9, 'On foot', 'Immersive. The page is a walk: one trail line draws itself down the landing page as you scroll, through full-width photographs of real meeting places. Each therapist is a full-width scene led by their place; the profile is a walk with Jordan that ends on the green-scarf line.'],
+    [10, 'Out there', 'Built on superpower.com\'s homepage: a rounded photo hero, a floating pill nav, how-it-works cards with little interface previews, and a long section where the photo changes as you scroll through kinds of place. The profile follows superpower\'s membership layout. Emu\'s own content only, no invented reviews or numbers.'],
+  ];
+  const card = ([n, name, idea]) => `
+    <article class="c">
+      <div class="thumb"><iframe src="c${n}-home.html" title="Preview of concept ${n} landing page" loading="lazy" tabindex="-1" aria-hidden="true"></iframe></div>
+      <div class="body">
+        <h3>${n}. ${name}</h3>
+        <p>${idea}</p>
+        <div class="links"><a href="c${n}-home.html">Landing</a><a href="c${n}-directory.html">Directory</a><a href="c${n}-profile.html">Profile</a></div>
+      </div>
+    </article>`;
+  document.getElementById('list').innerHTML =
+    `<div class="grid">${[...C].sort((a, b) => a[0] - b[0]).map(card).join('')}</div>`;
+</script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!doctype html>
+<!-- CONCEPT 10: OUT THERE, directory. Plan is in c10-home.html.
+     Superpower's language carried into results: a rounded photo band holds the search, results are large
+     rounded cards led by the meeting place (with the therapist's portrait over it), the map view is the same
+     rounded stage. The floating pill nav appears once the band scrolls away. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept 10 directory</title>
+<script src="data.js?v=8"></script>
+<script src="kit.js?v=8"></script>
+<script src="map.js?v=8"></script>
+<script src="motion.js?v=2"></script>
+<script>document.write(`<link rel="stylesheet" href="${EMU.brand.fontsHref}">`)</script>
+<link rel="stylesheet" href="c10-base.css?v=1">
+<style>
+  .band { position: relative; margin: 0 12px; min-height: 52vh; border-radius: var(--r); overflow: hidden; background: var(--ink); color: #fff; display: grid; align-items: end; }
+  .band > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.06); transition: transform 1.8s cubic-bezier(.2,.7,.2,1); }
+  .band.ready > img, html.reduce .band > img { transform: scale(1); }
+  .band::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(0deg, rgba(20,12,4,.85) 0%, rgba(20,12,4,.55) 55%, rgba(20,12,4,.25) 100%); }
+  .band .in { min-width: 0; position: relative; z-index: 2; padding: 40px 24px; width: 100%; }
+  @media (min-width: 768px) { .band .in { padding: 56px 56px 48px; } }
+  .band h1 { font: 500 clamp(36px, 5vw, 64px)/1 var(--sans); letter-spacing: -0.04em; margin: 0 0 22px; max-width: 16ch; }
+  .sp { display: flex; gap: 6px; padding: 6px; background: #fff; border-radius: 99px; max-width: 560px; width: 100%; }
+  .sp label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .sp input { flex: 1; min-width: 0; font: 500 16px var(--sans); border: 0; padding: 0 16px; border-radius: 99px; color: var(--ink); background: transparent; min-height: 46px; }
+  .sp input:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--rust); }
+  .sp .pill { background: var(--rust); color: #fff; } .sp .pill:hover { background: var(--rust-d); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; align-items: center; }
+  .row .pill { min-height: 40px; padding: 0 16px; font-size: 14px; }
+  .pill.glass[aria-pressed="true"] { background: #fff; color: var(--ink); }
+  .pill .ic { width: 16px; height: 16px; }
+  .band .credit { position: absolute; right: 16px; top: 14px; z-index: 2; font-size: 12px; opacity: .9; text-shadow: 0 1px 8px rgba(0,0,0,.6); }
+
+  .head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 20px; padding: 56px 0 8px; }
+  .head h2 { font: 500 clamp(28px, 3vw, 40px)/1.1 var(--sans); letter-spacing: -0.03em; margin: 0; }
+  .head p { margin: 0; color: var(--soft); }
+  .chip { font: 600 14px var(--sans); min-height: 36px; padding: 0 8px 0 12px; border: 0; border-radius: 99px; background: var(--lilac); color: var(--plum); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  .chip .ic { width: 14px; height: 14px; }
+
+  .grid { display: grid; gap: 20px; padding: 16px 0 40px; }
+  @media (min-width: 900px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .card { border-radius: var(--r); background: var(--wash); overflow: hidden; display: grid; transition: transform .3s cubic-bezier(.2,.7,.2,1), box-shadow .3s; }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 24px 50px -30px rgba(41,22,5,.45); }
+  html.reduce .card:hover { transform: none; }
+  .card .ph { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: var(--ink); }
+  .card .ph img.pl { width: 100%; height: 100%; object-fit: cover; transition: transform .8s cubic-bezier(.2,.7,.2,1); }
+  .card:hover .ph img.pl { transform: scale(1.05); }
+  .card .ph.fb img.pl { opacity: .5; }
+  .card .ph .big { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; }
+  .card .ph .where { position: absolute; right: 14px; top: 14px; background: #fff; color: var(--ink); border-radius: 99px; padding: 6px 12px; font-size: 14px; font-weight: 500; }
+  .card .ph .ex { position: absolute; left: 14px; top: 14px; background: var(--lilac); color: var(--plum); border-radius: 99px; padding: 4px 10px; font-size: 13px; font-weight: 600; }
+  .card .ph .cr { position: absolute; right: 12px; bottom: 8px; font-size: 11px; color: #fff; text-shadow: 0 1px 6px rgba(0,0,0,.7); }
+  .card .bd { padding: 0 24px 24px; display: grid; gap: 4px; position: relative; }
+  .card .por { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; border: 4px solid var(--wash); margin-top: -44px; position: relative; }
+  .card h3 { font: 500 28px/1.1 var(--sans); letter-spacing: -0.03em; margin: 8px 0 0; }
+  .card h3 a { text-decoration: none; }
+  .card h3 a::after { content: ""; position: absolute; inset: 0; }
+  .card .cred { margin: 0; color: var(--soft); }
+  .ver { display: inline-flex; gap: 6px; align-items: center; font-size: 14px; font-weight: 600; color: var(--plum); }
+  .x-about { font: 400 18px/1.5 var(--serif) !important; opacity: 1 !important; margin-top: 8px !important; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 10px 0 0; }
+  .tags li { font-size: 14px; padding: 4px 10px; border-radius: 99px; background: #fff; }
+  .foot { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; margin-top: 14px; }
+  .foot b { font: 500 20px var(--sans); letter-spacing: -0.02em; }
+  .foot .pill { margin-left: auto; position: relative; z-index: 1; }
+  :root { --x-pin: #291605; --x-pin-on: #9B5212; }
+  .exm { color: var(--plum); font-weight: 700; margin-left: 2px; }
+  .x-hints { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; }
+  .x-hint { font-size: 14px; font-weight: 600; color: var(--plum); }
+  .x-legend { font-size: 14px; color: var(--soft); margin: 0 0 56px; }
+  .stage { margin: 16px 0 40px; border-radius: var(--r); overflow: hidden; display: grid; background: var(--wash); }
+  @media (min-width: 900px) { .stage { grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr); } }
+  .x-map { height: 70vh; min-height: 420px; position: relative; z-index: 0; background: #E6ECE5; }
+  #maplist { padding: 20px; }
+  .x-mapcount { margin: 0 0 8px; font-weight: 600; }
+  .x-maplist { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .x-maplist li { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; padding: 12px; border-radius: 16px; background: #fff; }
+  .x-maplist a { font-weight: 600; }
+  .x-maplist div > span { display: block; font-size: 14px; color: var(--soft); }
+  .x-num { width: 28px; height: 28px; border-radius: 50%; background: var(--x-pin); color: #fff; display: grid; place-items: center; font: 700 13px var(--sans); }
+  .widen { margin: 8px 0 24px; padding: 28px; border-radius: var(--r); background: var(--ink); color: #fff; display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; }
+  .widen p { margin: 0; font: 400 21px/1.4 var(--serif); }
+  dialog.f { border: 0; padding: 0; width: min(560px, 100vw); max-height: 88dvh; border-radius: 24px; box-shadow: 0 30px 80px -20px rgba(41,22,5,.45); color: var(--ink); }
+  dialog.f[open] { animation: dlg .25s cubic-bezier(.2,.7,.2,1); }
+  @keyframes dlg { from { opacity: 0; transform: translateY(14px) scale(.98); } }
+  @media (prefers-reduced-motion: reduce) { dialog.f[open] { animation: none; } }
+  dialog.f::backdrop { background: rgba(20,12,4,.45); backdrop-filter: blur(4px); }
+  .dlg { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; max-height: 88dvh; }
+  .dlg header, .dlg footer { padding: 16px 22px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .dlg header h2 { margin: 0; font: 500 26px var(--sans); letter-spacing: -0.03em; }
+  .dlg .body { overflow-y: auto; padding: 0 22px 20px; }
+  .dlg fieldset { border: 0; margin: 18px 0 0; padding: 0; min-width: 0; }
+  .dlg legend { font-weight: 600; margin-bottom: 8px; padding: 0; }
+  .opts { display: flex; flex-wrap: wrap; gap: 6px; }
+  .opt { font: 500 14px var(--sans); min-height: 38px; padding: 0 14px; border: 0; border-radius: 99px; background: var(--wash); color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: background-color .15s; }
+  .opt .ic { width: 14px; height: 14px; display: none; }
+  .opt:hover { background: #EDE8E3; }
+  .opt[aria-pressed="true"] { background: var(--ink); color: #fff; }
+  .opt[aria-pressed="true"] .ic { display: inline; }
+  .x-btn { width: 44px; height: 44px; border: 0; background: var(--wash); border-radius: 50%; cursor: pointer; display: grid; place-items: center; color: inherit; }
+  .x-foot { max-width: 1240px; margin: 0 auto; padding: 40px 16px 64px; font-size: 14px; color: var(--soft); border-top: 1px solid var(--line); }
+  @media (min-width: 768px) { .x-foot { padding: 40px 32px 64px; } }
+  .x-foot p { margin: 0 0 8px; max-width: 75ch; }
+  .x-crisis { color: var(--ink) !important; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="float" id="float" aria-hidden="true"><a class="logo" href="c10-home.html" tabindex="-1">emu.</a><a class="l" href="#results" tabindex="-1">Results</a><button class="pill light" type="button" id="fopen" tabindex="-1">Filters</button></div>
+<header class="top"><div class="wrap"><nav aria-label="Main"><a href="c10-home.html#how">How it works</a><a href="#">For therapists</a></nav><a class="logo" href="c10-home.html">emu.</a><div class="right"><a class="login" href="#">Log in</a></div></div></header>
+<main id="main"></main>
+<dialog class="f" id="dlg" aria-labelledby="dlg-t">
+  <div class="dlg">
+    <header><h2 id="dlg-t">Filters</h2><button class="x-btn" aria-label="Close filters" id="close"></button></header>
+    <div class="body" id="fbody"></div>
+    <footer><button class="pill light" style="background:var(--wash)" type="button" id="clear">Clear all</button><button class="pill dark" type="button" id="show">Show 4 therapists</button></footer>
+  </div>
+</dialog>
+<script>
+  const { icon, mockBar, excerpt, hints, moreLocs, exm, placeIcon } = KIT;
+  mockBar(10, 'Out there');
+  const T = EMU.therapists, S = EMU.search, PH = EMU.photos;
+  const href = t => t.example ? '#' : 'c10-profile.html';
+  const photoFor = t => /Trail/.test(t.place) ? PH.trailWalk : /Library/.test(t.place) ? PH.library : null;
+
+  document.getElementById('main').innerHTML = `
+    <section class="band" id="band">
+      <img src="${PH.trailCity.src}" alt="${PH.trailCity.alt}">
+      <div class="in">
+        <h1 class="rv">Therapists near ${S.location}</h1>
+        <form class="sp rv" data-d="1" role="search" onsubmit="return false"><label for="loc">City or ZIP code</label><input id="loc" value="${S.location}" autocomplete="address-level2"><button class="pill">Search</button></form>
+        <div class="row rv" data-d="2">
+          <span role="group" aria-label="How far" data-toggle-group id="radius" style="display:contents">${S.radii.map(r => `<button type="button" class="pill glass" aria-pressed="${r === S.radius}" data-r="${r}">${r} miles</button>`).join('')}</span>
+          <button type="button" class="pill glass" id="open">${icon('sliders')}Filters</button>
+          <button type="button" class="pill glass" id="maptoggle" aria-pressed="false">${icon('map')}Map</button>
+        </div>
+      </div>
+      <small class="credit">${PH.trailCity.credit}</small>
+    </section>
+    <div class="wrap">
+      <div class="head" id="results"><h2 id="count">${S.count} therapists within ${S.radius} miles</h2><p>Nearest first.</p><span id="chips"></span></div>
+      <div class="stage" id="mapview" hidden><div class="x-map" id="dirmap" role="region" aria-label="Map of therapists near Philadelphia"></div><div id="maplist"></div></div>
+      <div class="grid" id="grid"></div>
+      <div class="widen rv" id="widen"><p>Emu is new here, so only ${S.count} therapists meet within ${S.radius} miles so far.</p><button type="button" class="pill light" id="wbtn">Search within 25 miles</button></div>
+      <p class="x-legend">${exm} ${EMU.extras.exampleLegend.replace('Jordan has', 'The therapist has')}</p>
+    </div>`;
+
+  document.getElementById('grid').innerHTML = T.map((t, i) => { const ph = photoFor(t); return `
+    <article class="card rv" data-d="${(i % 2) + 1}" aria-labelledby="n-${t.id}">
+      <div class="ph ${ph ? '' : 'fb'}"><img class="pl" src="${ph ? ph.src : EMU.brand.images.textures}" alt="${ph ? ph.alt : ''}" loading="lazy">
+        ${ph ? '' : `<span class="big" aria-hidden="true">${icon(placeIcon(t.placeType)).replace('class="ic"', 'class="ic" style="width:72px;height:72px"')}</span>`}
+        ${t.example ? '<span class="ex">Example</span>' : ''}<span class="where">${t.place}, ${t.distance}</span>${ph ? `<span class="cr">${ph.credit.split('. ').slice(1).join('. ')}</span>` : ''}</div>
+      <div class="bd">
+        <img class="por" src="${t.photo}" alt="Portrait of ${t.name}">
+        <h3 id="n-${t.id}"><a href="${href(t)}">${t.name}</a></h3>
+        <p class="cred">${t.credential}</p>
+        <span class="ver">${icon('badge')}License verified in ${t.state}</span>
+        ${excerpt(t)}
+        <ul class="tags" aria-label="${EMU.labels.focus}">${t.specialties.slice(0, 3).map(s => `<li>${s}</li>`).join('')}</ul>
+        <div class="x-hints">${hints(t.id)}</div>
+        <div class="foot"><b>$${t.price} per session</b><span>Next free ${t.next}${t.id === 'jordan' ? `, ${t.place}${moreLocs()}` : ''}</span><a class="pill dark" href="${href(t)}" tabindex="-1" aria-hidden="true">View profile</a></div>
+      </div>
+    </article>`; }).join('');
+
+  // Filters
+  document.getElementById('close').innerHTML = icon('x');
+  const def = g => g[1].find(x => S.activeFilters.includes(x)) || g[1][0];
+  const state = Object.fromEntries(EMU.filters.map(g => [g[0], def(g)]));
+  const renderBody = () => document.getElementById('fbody').innerHTML = EMU.filters.map(([n, o]) => `<fieldset><legend>${n}</legend><div class="opts">${o.map(x => `<button type="button" class="opt" data-g="${n}" aria-pressed="${x === state[n]}">${icon('check')}${x}</button>`).join('')}</div></fieldset>`).join('');
+  const renderChips = () => document.getElementById('chips').innerHTML = EMU.filters.filter(g => state[g[0]] !== g[1][0]).map(g => `<button type="button" class="chip" data-g="${g[0]}" aria-label="Remove filter: ${state[g[0]]}">${state[g[0]]}${icon('x')}</button>`).join(' ');
+  renderBody(); renderChips();
+  document.getElementById('fbody').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; state[b.dataset.g] = b.textContent.trim(); renderBody(); renderChips(); });
+  document.getElementById('chips').addEventListener('click', e => { const c = e.target.closest('.chip'); if (!c) return; state[c.dataset.g] = EMU.filters.find(g => g[0] === c.dataset.g)[1][0]; renderBody(); renderChips(); });
+  document.getElementById('clear').onclick = () => { EMU.filters.forEach(g => state[g[0]] = g[1][0]); renderBody(); renderChips(); };
+  const dlg = document.getElementById('dlg');
+  document.getElementById('open').onclick = document.getElementById('fopen').onclick = () => dlg.showModal();
+  document.getElementById('close').onclick = document.getElementById('show').onclick = () => dlg.close();
+  document.getElementById('radius').addEventListener('click', e => { const b = e.target.closest('button'); if (b) document.getElementById('count').textContent = `${S.count} therapists within ${b.dataset.r} miles`; });
+  document.getElementById('wbtn').onclick = () => { document.querySelector('#radius [data-r="25"]').click(); document.getElementById('widen').innerHTML = '<p>Now searching within 25 miles. In this mockup the results stay the same.</p>'; };
+
+  // Map
+  document.getElementById('maplist').innerHTML = KIT.dirMapList(href);
+  const mt = document.getElementById('maptoggle');
+  mt.addEventListener('click', () => {
+    const on = mt.getAttribute('aria-pressed') !== 'true'; mt.setAttribute('aria-pressed', on);
+    document.getElementById('mapview').hidden = !on; document.getElementById('grid').hidden = on;
+    if (on) { KIT.mountDirMap(document.getElementById('dirmap'), document.getElementById('maplist'), href); document.getElementById('results').scrollIntoView({ behavior: MOTION.reduce ? 'auto' : 'smooth' }); }
+  });
+
+  // Motion
+  const band = document.getElementById('band'), bi = band.querySelector('img');
+  const ready = () => requestAnimationFrame(() => band.classList.add('ready'));
+  bi.complete ? ready() : bi.addEventListener('load', ready);
+  const fl = document.getElementById('float');
+  MOTION.pillNav(fl, band);
+  new MutationObserver(() => { const on = fl.classList.contains('show'); fl.setAttribute('aria-hidden', !on); fl.querySelectorAll('a,button').forEach(a => a.tabIndex = on ? 0 : -1); }).observe(fl, { attributes: true, attributeFilter: ['class'] });
+  MOTION.watch();
+  document.body.insertAdjacentHTML('beforeend', KIT.crisisFoot());
+</script>
+</body>
+</html>

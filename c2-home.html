@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept 2 home</title>
+<!--
+  Concept 2 home: Place first
+  Memorable moment: the illustrated map of meeting places fills the first screen; pins are labelled by place, and the search sits on a plum panel anchored to the map's corner.
+  Colours: plum #4B2259 (panel, white and lilac text), sage #3B5A45 and sage-50 #E3ECE5, land #EEF1EA, water #C9D8DF, park #D3E2CC, rust #9B5212 action, white.
+  Type: Newsreader 400 for display and place names; Inter for UI.
+  Layout:  [ map full width, plum search panel overlapping lower left ]
+           [ places mosaic: one large trail photo, library and city trail stacked ]
+           [ how it works in a sage band ] [ therapists: plum line with founding offer ]
+  Revised in review: first plan used three equal place cards; replaced with an uneven mosaic so the trail photo can be big.
+-->
+<script src="data.js?v=8"></script>
+<script src="kit.js?v=8"></script>
+<script>document.write(`<link rel="stylesheet" href="${EMU.brand.fontsHref}">`)</script>
+<style>
+  html { scrollbar-gutter: stable; }
+  :root { --ink: #291605; --ink-2: #70655C; --rule: #E3E0DD; --plum: #4B2259; --lilac: #EFD2F9; --lilac-1: #F6E4FC; --sage: #3B5A45; --sage-50: #E3ECE5; --land: #EEF1EA; --water: #C9D8DF; --park: #D3E2CC; --rust: #9B5212; --rust-d: #6E3A0D;
+    --serif: 'Newsreader', Georgia, serif; --sans: 'Inter', system-ui, sans-serif; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #fff; color: var(--ink); font: 400 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  img { display: block; max-width: 100%; }
+  :focus-visible { outline: 2px solid var(--rust); outline-offset: 3px; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 20px; }
+  @media (min-width: 768px) { .wrap { padding: 0 40px; } }
+  header.top { height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; border-bottom: 1px solid var(--rule); }
+  @media (min-width: 768px) { header.top { padding: 0 40px; } }
+  .logo { font: 700 22px/1 var(--sans); letter-spacing: -0.03em; text-decoration: none; }
+  nav a { text-decoration: none; font-weight: 500; padding: 10px 12px; border-radius: 99px; }
+  nav a:hover { background: var(--sage-50); }
+
+  .stage { position: relative; min-height: min(760px, calc(100dvh - 100px)); background: var(--land); overflow: hidden; display: grid; align-items: end; }
+  .stage svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .pin circle { fill: var(--sage); stroke: #fff; stroke-width: .5; }
+  .pin rect { fill: #fff; }
+  .pin text { fill: var(--ink); font: 600 1.5px var(--sans); }
+  .pin .you { fill: var(--plum); }
+  .panel { position: relative; margin: 0 20px 24px; background: var(--plum); color: #fff; border-radius: 24px; padding: 32px 28px; max-width: 620px; box-shadow: 0 30px 60px -30px rgba(75,34,89,.6); }
+  @media (min-width: 768px) { .panel { margin: 0 40px 48px; padding: 44px 44px 40px; } }
+  h1 { font: 400 clamp(40px, 5.4vw, 72px)/1 var(--serif); letter-spacing: -0.025em; margin: 0; color: #fff; text-wrap: balance; }
+  .panel p { margin: 16px 0 0; color: var(--lilac); font-size: 18px; max-width: 40ch; }
+  .panel form { margin-top: 28px; display: grid; gap: 8px; }
+  .panel label { font-weight: 600; font-size: 16px; color: var(--lilac); }
+  .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; }
+  @media (max-width: 480px) { .row { grid-template-columns: 1fr; } }
+  .panel input { font: 500 18px var(--sans); min-height: 54px; padding: 0 18px; border-radius: 99px; border: 0; color: var(--ink); }
+  .panel input:focus-visible, .panel button:focus-visible { outline-color: var(--lilac); }
+  .btn-l { font: 700 18px var(--sans); min-height: 54px; padding: 0 26px; border-radius: 99px; border: 0; background: var(--lilac); color: var(--plum); cursor: pointer; }
+  .btn-l:hover { background: #fff; }
+  .note { position: absolute; right: 16px; bottom: 12px; font: 500 12px var(--sans); color: var(--ink-2); background: rgba(255,255,255,.9); padding: 4px 10px; border-radius: 99px; }
+
+  .places { padding: 80px 0; }
+  .places h2, .how h2 { font: 400 clamp(32px, 3.6vw, 46px)/1.1 var(--serif); letter-spacing: -0.015em; margin: 0; max-width: 18ch; }
+  .places .lede { margin: 14px 0 0; font-size: 18px; color: var(--ink-2); max-width: 56ch; }
+  .mosaic { display: grid; gap: 16px; margin-top: 40px; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 860px) { .mosaic { grid-template-columns: 1.6fr 1fr; grid-template-rows: 1fr 1fr; height: 600px; } .mosaic figure:first-child { grid-row: span 2; } }
+  .mosaic figure { margin: 0; position: relative; border-radius: 22px; overflow: hidden; min-height: 240px; }
+  .mosaic img { width: 100%; height: 100%; object-fit: cover; }
+  .mosaic figcaption { position: absolute; left: 14px; bottom: 14px; right: 14px; display: grid; gap: 2px; justify-items: start; }
+  .mosaic figcaption b { background: #fff; color: var(--ink); font: 500 20px/1.2 var(--serif); padding: 6px 12px; border-radius: 10px; }
+  .mosaic figcaption small { background: rgba(255,255,255,.92); color: var(--ink-2); font-size: 12px; padding: 2px 8px; border-radius: 6px; }
+
+  .how { background: var(--sage-50); padding: 72px 0; }
+  .how ol { list-style: none; margin: 32px 0 0; padding: 0; display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); counter-reset: s; }
+  .how li { counter-increment: s; display: grid; gap: 8px; align-content: start; }
+  .how li::before { content: counter(s); width: 40px; height: 40px; border-radius: 50%; background: var(--sage); color: #fff; display: grid; place-items: center; font: 700 16px var(--sans); }
+  .how h3 { margin: 4px 0 0; font: 400 26px var(--serif); }
+  .how p { margin: 0; }
+
+  .ther { padding: 64px 0; }
+  .ther .box { display: grid; gap: 24px; align-items: center; grid-template-columns: minmax(0, 1fr); border: 2px solid var(--plum); border-radius: 24px; padding: 36px; }
+  @media (min-width: 860px) { .ther .box { grid-template-columns: minmax(0, 1.3fr) auto; padding: 44px 48px; } }
+  .ther h2 { font: 400 clamp(28px, 3vw, 38px)/1.15 var(--serif); margin: 0; color: var(--plum); }
+  .ther p { margin: 8px 0 0; font-size: 18px; }
+  .btn { font: 600 18px var(--sans); min-height: 52px; padding: 0 26px; border-radius: 99px; border: 0; background: var(--rust); color: #fff; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
+  .btn:hover { background: var(--rust-d); }
+
+  footer.end { border-top: 1px solid var(--rule); padding: 40px 0 56px; color: var(--ink-2); font-size: 14px; }
+  footer.end .cols { display: grid; gap: 24px; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 860px) { footer.end .cols { grid-template-columns: 1fr 1.6fr; } }
+  footer.end nav { display: flex; flex-wrap: wrap; margin-left: -12px; }
+  footer.end nav a { font-size: 16px; color: var(--ink); }
+  footer.end p { margin: 0 0 10px; max-width: 70ch; }
+  footer.end .crisis { color: var(--ink); font-weight: 600; }
+</style>
+</head>
+<body>
+<header class="top"><a class="logo" href="c2-home.html">emu.</a><nav aria-label="Main"><a href="c2-directory.html">Find a therapist</a><a href="#">For therapists</a></nav></header>
+<main id="main"></main>
+<footer class="end"><div class="wrap cols" id="foot"></div></footer>
+<script>
+  const { mockBar } = KIT; const H = EMU.home, PH = EMU.photos;
+  mockBar(2, 'Place first');
+  const pins = [[56, 34, 'Rittenhouse Square'], [40, 27, 'Schuylkill River Trail'], [52, 18, 'Parkway Central Library'], [30, 50, 'Clark Park'], [70, 46, 'Washington Square'], [80, 24, 'Penn Treaty Park']];
+  const streets = [...Array(16)].map((_, i) => `<line x1="0" y1="${i * 7}" x2="100" y2="${i * 7 + 3}"/>`).join('') + [...Array(18)].map((_, i) => `<line x1="${i * 6}" y1="0" x2="${i * 6 - 2}" y2="100"/>`).join('');
+  document.getElementById('main').innerHTML = `
+    <section class="stage" aria-labelledby="h1">
+      <svg viewBox="0 0 100 70" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <rect width="100" height="70" fill="var(--land)"/>
+        <g stroke="#fff" stroke-width=".35">${streets}</g>
+        <path d="M30 0 C 36 14, 26 24, 34 36 S 28 56, 36 70 L 41 70 C 33 56, 40 44, 39 36 S 40 14, 36 0 Z" fill="var(--water)"/>
+        <path d="M84 0 C 88 20, 92 40, 100 52 L 100 0 Z" fill="var(--water)"/>
+        <rect x="53" y="31" width="7" height="6" rx="1" fill="var(--park)"/><ellipse cx="29" cy="51" rx="4.5" ry="3" fill="var(--park)"/><path d="M40 4 l14 -4 l8 9 l-12 6 z" fill="var(--park)"/><rect x="68" y="44" width="5" height="5" rx="1" fill="var(--park)"/>
+        ${pins.map(([x, y, n]) => `<g class="pin" transform="translate(${x} ${y})"><rect x="1.8" y="-1.5" width="${n.length * 0.78 + 1.8}" height="3" rx="1.5"/><text x="2.7" y=".55">${n}</text><circle r="1.25"/></g>`).join('')}
+      </svg>
+      <div class="panel">
+        <h1 id="h1">${H.headline}</h1>
+        <p>${H.line}</p>
+        <form action="c2-directory.html" role="search">
+          <label for="loc">City or ZIP code</label>
+          <div class="row"><input id="loc" name="location" autocomplete="address-level2" placeholder="Philadelphia, PA"><button class="btn-l">Show places near me</button></div>
+        </form>
+      </div>
+      <span class="note">Illustrative map of places Emu therapists might choose</span>
+    </section>
+
+    <section class="wrap places" aria-labelledby="h-places">
+      <h2 id="h-places">${H.aboutLine}</h2>
+      <p class="lede">${H.noOffice}</p>
+      <div class="mosaic">
+        <figure><img src="${PH.trailWalk.src}" alt="${PH.trailWalk.alt}" style="object-position:60% 60%"><figcaption><b>River trails</b><small>${PH.trailWalk.credit}</small></figcaption></figure>
+        <figure><img src="${PH.library.src}" alt="${PH.library.alt}"><figcaption><b>Libraries</b><small>${PH.library.credit}</small></figcaption></figure>
+        <figure><img src="${PH.trailCity.src}" alt="${PH.trailCity.alt}" style="object-position:50% 70%"><figcaption><b>Parks and paths in the city</b><small>${PH.trailCity.credit}</small></figcaption></figure>
+      </div>
+    </section>
+
+    <section class="how" aria-labelledby="h-how"><div class="wrap">
+      <h2 id="h-how">How Emu works</h2>
+      <ol>${EMU.howItWorks.map(([t, d]) => `<li><h3>${t}</h3><p>${d}</p></li>`).join('')}</ol>
+    </div></section>
+
+    <section class="wrap ther" aria-labelledby="h-ther"><div class="box">
+      <div><h2 id="h-ther">${H.therapistsTitle}</h2><p>${H.therapistsLine} ${H.founding}</p></div>
+      <a class="btn" href="#">Join as a therapist</a>
+    </div></section>`;
+  document.getElementById('foot').innerHTML = `
+    <nav aria-label="Footer"><a href="c2-directory.html">Find a therapist</a><a href="#">About Emu</a><a href="#">For therapists</a><a href="#">Contact</a><a href="#">Privacy</a><a href="#">Terms</a></nav>
+    <div><p>${H.disclaimer}</p><p class="crisis">${H.crisis}</p></div>`;
+</script>
+</body>
+</html>

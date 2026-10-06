@@ -1,0 +1,212 @@
+<!doctype html>
+<!-- CONCEPT 8: READ, THEN BOOK, directory. Plan is in c8-home.html.
+     A reading list. Choosing an entry opens a preview beside it (Headspace's side panel) so you can read
+     more without losing your place; the map takes the preview's place when you switch to it. On phones
+     the preview is skipped and entries go straight to the profile. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept 8 directory</title>
+<script src="data.js?v=8"></script>
+<script src="kit.js?v=8"></script>
+<script src="map.js?v=8"></script>
+<script>document.write(`<link rel="stylesheet" href="${EMU.brand.fontsHref}">`)</script>
+<style>
+  html { scrollbar-gutter: stable; }
+  :root { --ink: #291605; --soft: #675D55; --line: #E3E0DD; --dusk: #2C4A66; --dusk-50: #E9EFF5; --rust: #9B5212; --rust-d: #6E3A0D;
+    --serif: 'Newsreader', Georgia, serif; --sans: 'Inter', system-ui, sans-serif; }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: #fff; color: var(--ink); font: 400 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: var(--dusk); }
+  :focus-visible { outline: 3px solid var(--rust); outline-offset: 2px; }
+  .ic { width: 18px; height: 18px; flex: none; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+  @media (min-width: 768px) { .wrap { padding: 0 40px; } }
+  header.top .wrap { display: flex; justify-content: space-between; align-items: center; min-height: 72px; }
+  .logo { font: 400 30px/1 var(--serif); text-decoration: none; color: var(--ink); }
+  nav a { text-decoration: none; font-weight: 500; padding: 12px; color: var(--ink); }
+
+  .head { padding: 28px 0 20px; border-bottom: 1px solid var(--line); }
+  .sentence { margin: 0; font: 400 clamp(26px, 3.4vw, 40px)/1.35 var(--serif); display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+  .sentence input { font: inherit; color: var(--dusk); border: 0; border-bottom: 2px solid var(--dusk); background: transparent; padding: 0 2px; width: min(100%, 8.2em); min-height: 50px; }
+  .sentence select { font: inherit; color: var(--dusk); border: 0; border-bottom: 2px solid var(--dusk); background: transparent; min-height: 50px; padding: 0 2px; }
+  .sentence input:focus-visible, .sentence select:focus-visible { outline: none; background: var(--dusk-50); }
+  .tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 18px; }
+  .ghost { font: 600 15px var(--sans); min-height: 44px; padding: 0 16px; border: 1.5px solid var(--dusk); border-radius: 99px; background: #fff; color: var(--dusk); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+  .ghost:hover, .ghost[aria-pressed="true"] { background: var(--dusk); color: #fff; }
+  .chip { font: 600 14px var(--sans); min-height: 36px; padding: 0 8px 0 12px; border: 0; border-radius: 99px; background: var(--dusk-50); color: var(--dusk); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  .chip .ic { width: 14px; height: 14px; }
+  .count { margin: 0 0 0 auto; color: var(--soft); }
+
+  .split { display: grid; gap: 32px; padding: 8px 0 32px; }
+  @media (min-width: 980px) { .split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: start; } }
+  .list { list-style: none; margin: 0; padding: 0; }
+  .entry { border-bottom: 1px solid var(--line); }
+  .entry > button, .entry > a { display: grid; grid-template-columns: minmax(0, 1fr) 64px; gap: 4px 20px; width: 100%; text-align: left; font: inherit; color: inherit; text-decoration: none; background: none; border: 0; padding: 22px 12px 22px 0; cursor: pointer; }
+  .entry > button[aria-expanded="true"] { box-shadow: inset 4px 0 0 var(--dusk); padding-left: 16px; }
+  .entry img { grid-column: 2; grid-row: 1 / span 3; width: 64px; height: 64px; border-radius: 50%; object-fit: cover; }
+  .nm { font: 400 30px/1.1 var(--serif); letter-spacing: -0.01em; }
+  .entry > *:hover .nm { color: var(--dusk); text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 1.5px; }
+  .stand { color: var(--soft); }
+  .stand .exn { color: var(--dusk); font-weight: 600; }
+  .x-about { font: 400 18px/1.5 var(--serif) !important; opacity: 1 !important; color: var(--ink); margin-top: 6px !important; }
+  .meta { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 8px; font-size: 15px; }
+  .meta b { font-weight: 600; }
+
+  .side { position: sticky; top: 16px; }
+  @media (max-width: 979px) { .side .pv { display: none; } }
+  .pv { background: var(--dusk-50); border-radius: 6px; padding: 28px; }
+  .pv .top { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 20px; align-items: center; }
+  .pv img { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; }
+  .pv h2 { font: 400 34px/1.05 var(--serif); margin: 0; letter-spacing: -0.015em; }
+  .pv .cred { margin: 4px 0 0; color: var(--soft); }
+  .ver { display: inline-flex; gap: 6px; align-items: center; font-size: 14px; font-weight: 600; color: var(--dusk); margin-top: 4px; }
+  .pv .ab { font: 400 19px/1.6 var(--serif); margin: 20px 0 0; }
+  .pv dl { margin: 18px 0 0; display: grid; gap: 0; }
+  .pv dl div { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 12px; padding: 10px 0; border-top: 1px solid rgba(44,74,102,.18); }
+  .pv dt { font-weight: 600; font-size: 15px; color: var(--soft); }
+  .pv dd { margin: 0; }
+  .pv .acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+  .btn { font: 600 16px var(--sans); min-height: 48px; padding: 0 22px; border: 0; border-radius: 99px; background: var(--rust); color: #fff; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
+  .btn:hover { background: var(--rust-d); }
+  .pv .read { font-weight: 600; min-height: 48px; display: inline-flex; align-items: center; padding: 0 6px; }
+  .pv .note { margin: 14px 0 0; font-size: 14px; color: var(--soft); }
+
+  :root { --x-accent: var(--dusk); --x-tint: var(--dusk-50); --x-line: var(--line); --x-r: 6px; --x-pin: #2C4A66; --x-pin-on: #9B5212; }
+  .exm { color: var(--dusk); font-weight: 700; margin-left: 2px; }
+  .x-hints { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+  .x-hint { font-size: 14px; font-weight: 600; color: var(--dusk); }
+  .x-legend { font-size: 14px; color: var(--soft); margin: 20px 0 0; }
+  .x-map { height: 420px; border-radius: 6px; overflow: hidden; position: relative; z-index: 0; background: var(--dusk-50); }
+  .x-mapcount { margin: 14px 0 8px; font-weight: 600; }
+  .x-maplist { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+  .x-maplist li { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); }
+  .x-maplist a { font: 400 20px var(--serif); color: var(--ink); }
+  .x-maplist div > span { display: block; font-size: 14px; color: var(--soft); }
+  .x-num { width: 28px; height: 28px; border-radius: 50%; background: var(--x-pin); color: #fff; display: grid; place-items: center; font: 700 13px var(--sans); }
+  .widen { padding: 20px 0 0; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+  .widen p { margin: 0; font: 400 19px/1.5 var(--serif); }
+  dialog.f { border: 0; padding: 0; width: min(560px, 100vw); max-height: 88dvh; border-radius: 8px; box-shadow: 0 30px 80px -20px rgba(41,22,5,.45); color: var(--ink); }
+  dialog.f::backdrop { background: rgba(41,22,5,.4); }
+  .dlg { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; max-height: 88dvh; }
+  .dlg header, .dlg footer { padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .dlg header { border-bottom: 1px solid var(--line); }
+  .dlg header h2 { margin: 0; font: 400 28px var(--serif); }
+  .dlg footer { border-top: 1px solid var(--line); }
+  .dlg .body { overflow-y: auto; padding: 0 20px 20px; }
+  .dlg fieldset { border: 0; margin: 20px 0 0; padding: 0; min-width: 0; }
+  .dlg legend { font-weight: 600; margin-bottom: 8px; padding: 0; }
+  .opts { display: flex; flex-wrap: wrap; gap: 6px; }
+  .opt { font: 500 15px var(--sans); min-height: 38px; padding: 0 12px; border: 1px solid #877A6E; border-radius: 99px; background: #fff; color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+  .opt .ic { width: 14px; height: 14px; display: none; }
+  .opt[aria-pressed="true"] { background: var(--dusk); border-color: var(--dusk); color: #fff; font-weight: 600; }
+  .opt[aria-pressed="true"] .ic { display: inline; }
+  .x-btn { width: 44px; height: 44px; border: 0; background: none; border-radius: 50%; cursor: pointer; display: grid; place-items: center; color: inherit; }
+  .x-foot { max-width: 1200px; margin: 32px auto 0; padding: 28px 16px 48px; border-top: 1px solid var(--line); font-size: 14px; color: var(--soft); }
+  @media (min-width: 768px) { .x-foot { padding: 28px 40px 48px; } }
+  .x-foot p { margin: 0 0 8px; max-width: 75ch; }
+  .x-crisis { color: var(--ink) !important; font-weight: 600; }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="logo" href="c8-home.html">emu.</a><nav aria-label="Main"><a href="#">For therapists</a><a href="#">About</a></nav></div></header>
+<main class="wrap" id="main"></main>
+<dialog class="f" id="dlg" aria-labelledby="dlg-t">
+  <div class="dlg">
+    <header><h2 id="dlg-t">Filters</h2><button class="x-btn" aria-label="Close filters" id="close"></button></header>
+    <div class="body" id="fbody"></div>
+    <footer><button class="ghost" type="button" id="clear">Clear all</button><button class="btn" type="button" id="show">Show 4 therapists</button></footer>
+  </div>
+</dialog>
+<script>
+  const { icon, mockBar, excerpt, hints, moreLocs, exm } = KIT;
+  mockBar(8, 'Read, then book');
+  const T = EMU.therapists, S = EMU.search, P = EMU.profile, X = EMU.extras;
+  const href = t => t.example ? '#' : 'c8-profile.html';
+  const wide = () => matchMedia('(min-width: 980px)').matches;
+
+  document.getElementById('main').innerHTML = `
+    <div class="head">
+      <form class="sentence" role="search" onsubmit="return false">
+        <label for="loc">Therapists near</label><input id="loc" value="${S.location}" autocomplete="address-level2">
+        <label for="rad">within</label><select id="rad">${S.radii.map(r => `<option ${r === S.radius ? 'selected' : ''} value="${r}">${r} miles</option>`).join('')}</select>
+      </form>
+      <div class="tools">
+        <button type="button" class="ghost" id="open">${icon('sliders')}Filters</button>
+        <button type="button" class="ghost" id="maptoggle" aria-pressed="false">${icon('map')}Show the map</button>
+        <span id="chips"></span>
+        <p class="count" id="count">${S.count} therapists, nearest first</p>
+      </div>
+    </div>
+    <div class="split">
+      <div>
+        <ol class="list" id="list"></ol>
+        <div class="widen" id="widen"><p>Emu is new here, so only ${S.count} therapists meet within ${S.radius} miles so far.</p><button type="button" class="ghost" id="wbtn">Search within 25 miles</button></div>
+        <p class="x-legend">${exm} ${X.exampleLegend.replace('Jordan has', 'The therapist has')}</p>
+      </div>
+      <aside class="side">
+        <div class="pv" id="pv" aria-live="polite"></div>
+        <div id="mapview" hidden><div class="x-map" id="dirmap" role="region" aria-label="Map of therapists near Philadelphia"></div><div id="maplist"></div></div>
+      </aside>
+    </div>`;
+
+  document.getElementById('list').innerHTML = T.map((t, i) => {
+    const inner = `<span class="nm">${t.name}</span><img src="${t.photo}" alt="">
+      <span class="stand">${t.credential}. Meets at ${t.place}, ${t.distance} away${t.id === 'jordan' ? moreLocs() : ''}.${t.example ? ' <span class="exn">A made-up example.</span>' : ''}</span>
+      ${excerpt(t).replace('<p', '<span style="display:-webkit-box"').replace('</p>', '</span>')}
+      <span class="meta"><span>${t.specialties.slice(0, 3).join(', ')}</span><b>$${t.price} per session</b><span>Next free ${t.next}</span><span class="x-hints">${hints(t.id)}</span></span>`;
+    return `<li class="entry">${wide() ? `<button type="button" data-i="${i}" aria-expanded="${i === 0}" aria-controls="pv">${inner}</button>` : `<a href="${href(t)}">${inner}</a>`}</li>`;
+  }).join('');
+
+  const preview = i => {
+    const t = T[i], about = t.id === 'jordan' ? P.about : t.about;
+    document.getElementById('pv').innerHTML = `
+      <div class="top"><img src="${t.photo}" alt="Portrait of ${t.name}"><div><h2>${t.name}</h2><p class="cred">${t.credential}</p><span class="ver">${icon('badge')}License verified in ${t.state}</span></div></div>
+      <p class="ab">${about}</p>
+      <dl>
+        <div><dt>${EMU.labels.focus}</dt><dd>${t.specialties.join(', ')}</dd></div>
+        <div><dt>Meets at</dt><dd>${t.id === 'jordan' ? P.locations.map(l => l.name + (l.example ? exm : '')).join(', ') : `${t.place}, ${t.placeType.toLowerCase()}`}</dd></div>
+        <div><dt>Session</dt><dd>$${t.price} per session</dd></div>
+        <div><dt>Next free</dt><dd>${t.next}</dd></div>
+      </dl>
+      <div class="acts">${t.example ? '<a class="btn" href="#" aria-disabled="true">Check times</a>' : '<a class="btn" href="c8-profile.html?book=1">Check times</a>'}<a class="read" href="${href(t)}">Read ${t.name.split(' ')[0]}'s profile</a></div>
+      ${t.example ? '<p class="note">A made-up example. Only Jordan has a full profile in this mockup.</p>' : ''}`;
+  };
+  if (wide()) preview(0);
+  document.getElementById('list').addEventListener('click', e => {
+    const b = e.target.closest('button[data-i]'); if (!b) return;
+    document.querySelectorAll('.entry > button').forEach(x => x.setAttribute('aria-expanded', x === b));
+    preview(+b.dataset.i);
+  });
+
+  // Filters
+  document.getElementById('close').innerHTML = icon('x');
+  const def = g => g[1].find(x => S.activeFilters.includes(x)) || g[1][0];
+  const state = Object.fromEntries(EMU.filters.map(g => [g[0], def(g)]));
+  const renderBody = () => document.getElementById('fbody').innerHTML = EMU.filters.map(([n, o]) => `<fieldset><legend>${n}</legend><div class="opts">${o.map(x => `<button type="button" class="opt" data-g="${n}" aria-pressed="${x === state[n]}">${icon('check')}${x}</button>`).join('')}</div></fieldset>`).join('');
+  const renderChips = () => document.getElementById('chips').innerHTML = EMU.filters.filter(g => state[g[0]] !== g[1][0]).map(g => `<button type="button" class="chip" data-g="${g[0]}" aria-label="Remove filter: ${state[g[0]]}">${state[g[0]]}${icon('x')}</button>`).join(' ');
+  renderBody(); renderChips();
+  document.getElementById('fbody').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; state[b.dataset.g] = b.textContent.trim(); renderBody(); renderChips(); });
+  document.getElementById('chips').addEventListener('click', e => { const c = e.target.closest('.chip'); if (!c) return; state[c.dataset.g] = EMU.filters.find(g => g[0] === c.dataset.g)[1][0]; renderBody(); renderChips(); });
+  document.getElementById('clear').onclick = () => { EMU.filters.forEach(g => state[g[0]] = g[1][0]); renderBody(); renderChips(); };
+  const dlg = document.getElementById('dlg');
+  document.getElementById('open').onclick = () => dlg.showModal();
+  document.getElementById('close').onclick = document.getElementById('show').onclick = () => dlg.close();
+
+  document.getElementById('wbtn').onclick = () => { document.getElementById('rad').value = '25'; document.getElementById('widen').innerHTML = '<p>Now searching within 25 miles. In this mockup the results stay the same.</p>'; };
+
+  // Map takes the preview's place
+  document.getElementById('maplist').innerHTML = KIT.dirMapList(href);
+  const mt = document.getElementById('maptoggle');
+  mt.addEventListener('click', () => {
+    const on = mt.getAttribute('aria-pressed') !== 'true'; mt.setAttribute('aria-pressed', on);
+    mt.lastChild.textContent = on ? 'Hide the map' : 'Show the map';
+    document.getElementById('mapview').hidden = !on; document.getElementById('pv').hidden = on;
+    if (on) KIT.mountDirMap(document.getElementById('dirmap'), document.getElementById('maplist'), href);
+  });
+  document.body.insertAdjacentHTML('beforeend', KIT.crisisFoot());
+</script>
+</body>
+</html>

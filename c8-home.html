@@ -1,0 +1,104 @@
+<!doctype html>
+<!--
+CONCEPT 8: READ, THEN BOOK. Plan.
+Idea (Mobbin: Headspace's side preview, Fiverr's booking drawer, Walmart's step bar): choosing a therapist is
+reading about a person, so reading comes first and booking never interrupts it. The directory is a reading
+list with a preview beside it. The profile is a single calm column, like an article; a quiet bar at the bottom
+opens booking as a drawer with four real steps: Place, Time, Your details, Sent.
+Colours: white page; ink #291605; soft #675D55; dusk blue #2C4A66 (8.9:1) for links, step markers and
+structure; dusk tint #E9EFF5 for the bar and drawer header; rust #9B5212 only on the one action.
+Type: Newsreader is the reading face (19px/1.65 body on profiles, 400 headlines, large); Inter for controls.
+Review: first draft gave the landing page a big photo hero like every other concept. Now the landing is a
+sentence you complete ("near ___") and the photo sits lower, as an illustration to the text.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept 8 landing</title>
+<script src="data.js?v=8"></script>
+<script src="kit.js?v=8"></script>
+<script>document.write(`<link rel="stylesheet" href="${EMU.brand.fontsHref}">`)</script>
+<style>
+  html { scrollbar-gutter: stable; }
+  :root { --ink: #291605; --soft: #675D55; --line: #E3E0DD; --dusk: #2C4A66; --dusk-50: #E9EFF5; --rust: #9B5212; --rust-d: #6E3A0D;
+    --serif: 'Newsreader', Georgia, serif; --sans: 'Inter', system-ui, sans-serif; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #fff; color: var(--ink); font: 400 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: var(--dusk); }
+  :focus-visible { outline: 3px solid var(--rust); outline-offset: 2px; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+  @media (min-width: 768px) { .wrap { padding: 0 40px; } }
+  header.top .wrap { display: flex; justify-content: space-between; align-items: center; min-height: 72px; }
+  .logo { font: 400 30px/1 var(--serif); text-decoration: none; color: var(--ink); }
+  nav a { text-decoration: none; font-weight: 500; padding: 12px; color: var(--ink); }
+  nav a:hover { color: var(--dusk); text-decoration: underline; text-underline-offset: 4px; }
+
+  .lead { padding: 64px 0 56px; max-width: 820px; }
+  @media (min-width: 900px) { .lead { padding: 104px 0 80px; } }
+  h1 { font: 400 clamp(44px, 7vw, 88px)/1 var(--serif); letter-spacing: -0.03em; margin: 0; }
+  .sub { font: 400 clamp(20px, 2.4vw, 26px)/1.45 var(--serif); color: var(--soft); margin: 24px 0 0; max-width: 34ch; }
+
+  /* The sentence search */
+  .sentence { margin: 48px 0 0; font: 400 clamp(24px, 3.2vw, 36px)/1.5 var(--serif); display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
+  .sentence label { white-space: nowrap; }
+  .sentence input { font: inherit; color: var(--dusk); border: 0; border-bottom: 2px solid var(--dusk); background: transparent; padding: 0 2px; width: min(100%, 8.2em); min-height: 52px; }
+  .sentence input:focus-visible { outline: none; background: var(--dusk-50); }
+  .btn { font: 600 17px var(--sans); min-height: 52px; padding: 0 26px; border: 0; border-radius: 99px; background: var(--rust); color: #fff; cursor: pointer; align-self: center; }
+  .btn:hover { background: var(--rust-d); }
+  .hint { margin: 12px 0 0; color: var(--soft); }
+
+  .essay { display: grid; gap: 32px; padding: 40px 0 72px; border-top: 1px solid var(--line); }
+  @media (min-width: 900px) { .essay { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 64px; align-items: start; } }
+  .essay figure { margin: 0; }
+  .essay img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; border-radius: 4px; }
+  .essay figcaption { font-size: 13px; color: var(--soft); margin-top: 8px; }
+  .essay .txt p { font: 400 21px/1.6 var(--serif); margin: 0 0 18px; max-width: 36ch; }
+  .essay .txt p.big { font-size: clamp(26px, 3vw, 34px); line-height: 1.3; }
+
+  .how { padding: 56px 0; border-top: 1px solid var(--line); }
+  .how h2, .ther h2 { font: 400 clamp(30px, 3.6vw, 40px)/1.1 var(--serif); margin: 0 0 28px; letter-spacing: -0.015em; }
+  .how ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 28px; counter-reset: s; }
+  @media (min-width: 760px) { .how ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .how li { counter-increment: s; border-top: 2px solid var(--dusk); padding-top: 14px; }
+  .how li::before { content: counter(s); font: 400 28px/1 var(--serif); color: var(--dusk); }
+  .how h3 { font: 600 18px var(--sans); margin: 10px 0 4px; }
+  .how p { margin: 0; color: var(--soft); }
+  .ther { margin: 0 0 72px; padding: 36px 0 0; border-top: 1px solid var(--line); display: grid; gap: 12px 40px; }
+  @media (min-width: 860px) { .ther { grid-template-columns: minmax(0, 1fr) auto; align-items: end; } }
+  .ther h2 { margin: 0; }
+  .ther p { margin: 8px 0 0; font: 400 20px/1.5 var(--serif); color: var(--soft); max-width: 44ch; }
+  .ther a { font-weight: 600; min-height: 44px; display: inline-flex; align-items: center; }
+  footer.end { background: var(--dusk-50); padding: 32px 0 56px; font-size: 15px; color: var(--soft); }
+  footer.end p { margin: 0 0 8px; max-width: 75ch; }
+  footer.end .crisis { color: var(--ink); font-weight: 600; }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="logo" href="c8-home.html">emu.</a><nav aria-label="Main"><a href="c8-directory.html">Find a therapist</a><a href="#">For therapists</a></nav></div></header>
+<main id="main"></main>
+<footer class="end"><div class="wrap" id="foot"></div></footer>
+<script>
+  const { mockBar } = KIT; const H = EMU.home, PH = EMU.photos;
+  mockBar(8, 'Read, then book');
+  document.getElementById('main').innerHTML = `
+    <section class="wrap"><div class="lead">
+      <h1>${H.headline}</h1>
+      <p class="sub">${H.aboutLine}</p>
+      <form class="sentence" action="c8-directory.html" role="search">
+        <label for="loc">I'd like to meet a therapist near</label>
+        <input id="loc" name="location" value="Philadelphia, PA" autocomplete="address-level2">
+        <button class="btn">Search</button>
+      </form>
+      <p class="hint">${H.line}</p>
+    </div></section>
+    <section class="wrap essay" aria-label="Why Emu">
+      <figure><img src="${PH.library.src}" alt="${PH.library.alt}"><figcaption>${PH.library.credit}</figcaption></figure>
+      <div class="txt"><p class="big">${H.noOffice}</p><p>${H.walk}</p></div>
+    </section>
+    <section class="wrap how" aria-labelledby="h-how"><h2 id="h-how">How Emu works</h2><ol>${EMU.howItWorks.map(([t, d]) => `<li><h3>${t}</h3><p>${d}</p></li>`).join('')}</ol></section>
+    <section class="wrap"><div class="ther"><div><h2>${H.therapistsTitle}</h2><p>${H.therapistsLine} ${H.founding}</p></div><a href="#">Join as a therapist</a></div></section>`;
+  document.getElementById('foot').innerHTML = `<p>${H.disclaimer}</p><p class="crisis">${H.crisis}</p>`;
+</script>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!doctype html>
+<!-- CONCEPT 10: OUT THERE, profile. Plan is in c10-home.html.
+     Laid out like superpower's membership section: a large rounded image with small facts on it and the three
+     places as thumbnails below; beside it the name, price, what's included and the booking, in the flow (not
+     pinned). Then a sticky story through Jordan's three places, the photo changing as you scroll, then the
+     reading, questions and a closing photo. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept 10 profile</title>
+<script src="data.js?v=8"></script>
+<script src="kit.js?v=8"></script>
+<script src="map.js?v=8"></script>
+<script src="request.js?v=8"></script>
+<script src="motion.js?v=2"></script>
+<script>document.write(`<link rel="stylesheet" href="${EMU.brand.fontsHref}">`)</script>
+<link rel="stylesheet" href="c10-base.css?v=1">
+<style>
+  .back { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; font-weight: 500; text-decoration: none; }
+  .top2 { display: grid; gap: 32px; padding: 8px 0 96px; }
+  @media (min-width: 980px) { .top2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; align-items: start; } }
+  .gal .main { position: relative; aspect-ratio: 4 / 5; border-radius: var(--r); overflow: hidden; background: var(--wash); }
+  .gal .main img { width: 100%; height: 100%; object-fit: cover; transition: opacity .4s; }
+  .gal .chip { position: absolute; left: 16px; display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,.94); border-radius: 14px; padding: 10px 14px; font-weight: 500; box-shadow: 0 10px 30px -14px rgba(0,0,0,.4); }
+  .gal .chip.a { top: 16px; } .gal .chip.b { bottom: 16px; }
+  .gal .chip b { font: 500 26px/1 var(--sans); letter-spacing: -0.03em; }
+  .gal .chip .ic { color: var(--plum); }
+  .gal .chip small { display: block; font-size: 13px; color: var(--soft); font-weight: 400; }
+  .thumbs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+  .thumb { position: relative; aspect-ratio: 4 / 3; border-radius: 14px; overflow: hidden; border: 2px solid transparent; padding: 0; cursor: pointer; background: var(--ink); color: #fff; transition: border-color .2s, transform .2s; }
+  .thumb:hover { transform: translateY(-2px); }
+  html.reduce .thumb:hover { transform: none; }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .thumb.fb img { opacity: .5; }
+  .thumb span { position: absolute; left: 6px; right: 6px; bottom: 6px; background: rgba(255,255,255,.94); color: var(--ink); border-radius: 8px; font-size: 12px; font-weight: 600; padding: 4px 6px; text-align: left; line-height: 1.25; }
+  .thumb[aria-pressed="true"] { border-color: var(--ink); }
+
+  h1 { font: 500 clamp(44px, 5vw, 68px)/1 var(--sans); letter-spacing: -0.045em; margin: 0; }
+  .cred { margin: 10px 0 0; color: var(--soft); font-size: 17px; }
+  .ver { display: inline-flex; gap: 6px; align-items: center; font-size: 14px; font-weight: 600; color: var(--plum); margin-top: 6px; }
+  .lede { font: 400 21px/1.5 var(--serif); margin: 18px 0 0; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 14px 0 0; }
+  .tags li { font-size: 14px; padding: 5px 12px; border-radius: 99px; background: var(--wash); }
+  .price { display: flex; align-items: baseline; gap: 8px; margin: 28px 0 0; }
+  .price b { font: 500 52px/1 var(--sans); letter-spacing: -0.045em; }
+  .price span { color: var(--soft); }
+  ul.incl { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 10px; }
+  ul.incl li { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 10px; align-items: start; }
+  ul.incl li .ic { width: 20px; height: 20px; margin-top: 2px; color: var(--plum); }
+  .bookcard { margin-top: 28px; border-radius: var(--r); background: var(--wash); padding: 24px; }
+  .bookcard h2 { font: 500 26px/1.1 var(--sans); letter-spacing: -0.03em; margin: 0 0 12px; }
+  .dayblk + .dayblk { margin-top: 14px; }
+  .dayblk h4 { margin: 0 0 6px; font: 600 15px var(--sans); }
+  .per { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 8px; align-items: start; }
+  .per + .per { margin-top: 6px; }
+  .per > span { font-size: 14px; color: var(--soft); padding-top: 9px; }
+  .slots { display: flex; flex-wrap: wrap; gap: 6px; }
+  .slot { font: 500 15px var(--sans); font-variant-numeric: tabular-nums; min-height: 40px; padding: 0 14px; border: 0; border-radius: 99px; background: #fff; color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: background-color .15s, transform .15s; }
+  .slot .ic { width: 14px; height: 14px; display: none; }
+  .slot:hover { background: var(--lilac); }
+  .slot[aria-pressed="true"] { background: var(--ink); color: #fff; }
+  .slot[aria-pressed="true"] .ic { display: inline; }
+  html:not(.reduce) .slot[aria-pressed="true"] { animation: pop .25s cubic-bezier(.2,.7,.2,1); }
+  @keyframes pop { 50% { transform: scale(1.07); } }
+  .chosen { margin: 16px 0 10px; font-weight: 600; }
+  .chosen.is-error { color: #B42318; }
+  .go { width: 100%; min-height: 54px; font-size: 16px; }
+  .fine { margin: 10px 0 0; font-size: 14px; color: var(--soft); }
+
+  /* Places story */
+  .story { position: relative; margin: 0 12px; }
+  .story .stage { position: sticky; top: 12px; z-index: 1; height: calc(100svh - 24px); min-height: 560px; border-radius: var(--r); overflow: hidden; background: var(--ink); color: #fff; }
+  .story .ph { position: absolute; inset: 0; opacity: 0; transition: opacity .8s ease, transform 1.6s cubic-bezier(.2,.7,.2,1); transform: scale(1.06); }
+  .story .ph.on { opacity: 1; transform: scale(1); }
+  html.reduce .story .ph { transition: none; transform: none; }
+  .story .ph img { width: 100%; height: 100%; object-fit: cover; }
+  .story .ph.fb img { opacity: .45; }
+  .story .ph .big { position: absolute; right: 12%; top: 50%; transform: translateY(-50%); color: #fff; }
+  .story .stage::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(20,12,4,.85) 0%, rgba(20,12,4,.55) 50%, rgba(20,12,4,.15) 100%); }
+  .story .copy { position: absolute; z-index: 2; left: 24px; right: 24px; bottom: 32px; max-width: 540px; display: none; }
+  .story .copy.on { display: block; }
+  html:not(.reduce) .story .copy.on { animation: rise .5s cubic-bezier(.2,.7,.2,1); }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+  @media (min-width: 768px) { .story .copy { left: 56px; bottom: 56px; } }
+  .story .copy .k { font-size: 14px; opacity: .85; margin: 0 0 8px; }
+  .story h3 { font: 500 clamp(34px, 4vw, 56px)/1.02 var(--sans); letter-spacing: -0.04em; margin: 0 0 12px; }
+  .story .copy .ins { font: 400 22px/1.4 var(--serif); margin: 0 0 14px; }
+  .story .copy .ad { margin: 0 0 14px; opacity: .9; }
+  .story details { background: rgba(255,255,255,.12); backdrop-filter: blur(8px); border-radius: 14px; margin-top: 8px; border: 1px solid rgba(255,255,255,.18); }
+  .story summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 14px 16px; font-weight: 500; min-height: 48px; }
+  .story summary::-webkit-details-marker { display: none; }
+  .pm { width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,.2); display: grid; place-items: center; flex: none; transition: transform .25s; }
+  details[open] > summary .pm { transform: rotate(45deg); }
+  .story details p { margin: 0; padding: 0 16px 16px; color: #EFE9E3; }
+  .story .exm { color: var(--lilac); }
+  .story .idx { position: absolute; z-index: 2; right: 24px; top: 50%; transform: translateY(-50%); list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; text-align: right; }
+  .story .idx li { font-size: 15px; opacity: .55; transition: opacity .3s; display: flex; gap: 12px; justify-content: flex-end; align-items: center; }
+  .story .idx li span { font-size: 13px; }
+  .story .idx li.on { opacity: 1; font-weight: 600; }
+  .story .idx li.on::before { content: ""; width: 24px; height: 2px; background: var(--lilac); }
+  .story .track { position: relative; pointer-events: none; }
+  .story .track > div { height: 100svh; }
+  .story .cr { position: absolute; z-index: 2; right: 16px; bottom: 12px; font-size: 12px; opacity: .85; }
+  @media (max-width: 900px) {
+    .story .stage { position: relative; height: auto; min-height: 0; background: none; color: var(--ink); border-radius: 0; overflow: visible; }
+    .story .stage::before, .story .idx, .story .track, .story .cr { display: none; }
+    .story .ph { position: relative; opacity: 1; transform: none; border-radius: 20px; overflow: hidden; height: 260px; margin-top: 32px; }
+    .story .copy { position: static; max-width: none; display: block !important; }
+    .story details { background: var(--wash); border-color: var(--line); }
+    .story details p { color: var(--soft); }
+    .pm { background: #fff; }
+    .story .exm { color: var(--plum); }
+  }
+  .mapsec { padding: 40px 0 0; }
+  .x-map { height: 420px; border-radius: var(--r); overflow: hidden; position: relative; z-index: 0; background: #E6ECE5; }
+
+  .read { padding: 112px 0 40px; display: grid; gap: 40px; }
+  @media (min-width: 900px) { .read { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 64px; } }
+  .read h2, .faq h2 { font: 500 clamp(30px, 3.2vw, 44px)/1.05 var(--sans); letter-spacing: -0.035em; margin: 0 0 14px; }
+  .read p { margin: 0; font: 400 21px/1.55 var(--serif); }
+  .faq { padding: 64px 0 112px; display: grid; gap: 40px; }
+  @media (min-width: 900px) { .faq { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); } }
+  .faq details { border-bottom: 1px solid var(--line); }
+  .faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 18px 0; font: 500 19px var(--sans); min-height: 56px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq .pm { background: var(--wash); }
+  .faq details > div { padding: 0 0 18px; color: var(--soft); }
+  .faq dl.methods { margin: 0; }
+  .faq .methods dt { font-weight: 600; color: var(--ink); margin-top: 10px; }
+  .faq .methods dd { margin: 2px 0 0; }
+  .close { position: relative; margin: 0 12px; min-height: 64svh; border-radius: var(--r); overflow: hidden; background: var(--ink); color: #fff; display: grid; align-items: end; }
+  .close > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .close::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(0deg, rgba(20,12,4,.85) 0%, rgba(20,12,4,.35) 60%, rgba(20,12,4,.1) 100%); }
+  .close .in { position: relative; z-index: 2; padding: 32px 24px 56px; }
+  @media (min-width: 768px) { .close .in { padding: 64px; } }
+  .close h2 { font: 500 clamp(36px, 5vw, 68px)/1 var(--sans); letter-spacing: -0.04em; margin: 0 0 22px; max-width: 16ch; }
+  .close .credit { position: absolute; right: 16px; bottom: 12px; z-index: 2; font-size: 12px; opacity: .85; }
+
+  :root { --x-accent: var(--plum); --x-tint: var(--lilac); --x-line: var(--line); --x-r: 14px; --x-pin: #291605; --x-pin-on: #9B5212; }
+  .exm { color: var(--plum); font-weight: 700; margin-left: 2px; }
+  .x-facts { margin: 0; }
+  .x-row { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 12px; padding: 12px 0; border-top: 1px solid var(--x-line); }
+  .x-row dt { font-weight: 600; color: var(--ink); }
+  .x-row dd { margin: 0; }
+  .x-notice { margin: 0 0 12px; color: var(--soft); }
+  .x-h { font-weight: 600; margin: 0 0 6px; }
+  .x-next { margin-top: 18px; }
+  .x-next ol { margin: 0; padding-left: 20px; color: var(--soft); }
+  .x-ask { font: 600 15px var(--sans); min-height: 48px; width: 100%; padding: 0 16px; border: 1.5px dashed #B8AEA6; background: transparent; border-radius: 99px; color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-top: 16px; }
+  .x-prop { font-size: 12px; font-weight: 600; color: var(--soft); border: 1px solid #B8AEA6; border-radius: 99px; padding: 1px 7px; }
+  .x-note { font-size: 14px; color: var(--soft); margin: 6px 0 0; }
+  .x-picker .x-h { margin-bottom: 8px; }
+  .x-locs { display: grid; gap: 8px; }
+  .x-loc { font: inherit; text-align: left; display: grid; grid-template-columns: 16px 26px minmax(0, 1fr); gap: 10px; align-items: center; min-height: 56px; padding: 8px 14px; border: 0; border-radius: 16px; background: #fff; color: var(--ink); cursor: pointer; transition: box-shadow .15s; }
+  .x-loc:hover { box-shadow: inset 0 0 0 1.5px var(--ink); }
+  .x-loc small { display: block; font-size: 13px; color: var(--soft); font-weight: 400; }
+  .x-loc .x-tick { visibility: hidden; width: 16px; height: 16px; }
+  .x-loc .x-n { width: 26px; height: 26px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; font: 700 12px var(--sans); }
+  .x-loc[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--ink); font-weight: 600; }
+  .x-loc[aria-pressed="true"] .x-tick { visibility: visible; }
+  .x-hint-line, .x-none { font-size: 14px; color: var(--soft); margin: 8px 0 14px; }
+  .x-moredates { color: var(--plum); }
+  .x-legend { font-size: 14px; color: var(--soft); margin: 40px 0 0; }
+  .x-foot { max-width: 1240px; margin: 0 auto; padding: 40px 16px 64px; font-size: 14px; color: var(--soft); }
+  @media (min-width: 768px) { .x-foot { padding: 40px 32px 64px; } }
+  .x-foot p { margin: 0 0 8px; max-width: 75ch; }
+  .x-crisis { color: var(--ink) !important; font-weight: 600; }
+  :root { --rq-ink:#291605;--rq-soft:#6B6159;--rq-panel:#F7F5F3;--rq-line:#ECE8E4;--rq-accent:#291605;--rq-accent-hover:#000;--rq-radius:24px;--rq-btn-radius:99px;--rq-title-font:500 28px/1.1 'Inter',system-ui,sans-serif;--rq-sans:'Inter',system-ui,sans-serif; }
+</style>
+</head>
+<body>
+<div class="float" id="float" aria-hidden="true"><a class="logo" href="c10-home.html" tabindex="-1">emu.</a><a class="l" href="#places" tabindex="-1">Places</a><a class="pill light" href="#book" tabindex="-1">Check times</a></div>
+<header class="top"><div class="wrap"><nav aria-label="Main"><a href="c10-directory.html">Find a therapist</a><a href="#">For therapists</a></nav><a class="logo" href="c10-home.html">emu.</a><div class="right"><a class="login" href="#">Log in</a></div></div></header>
+<main id="main"></main>
+<script>
+  const { icon, mockBar, booking, fullSlot, facts, freeCall, whatNext, contact, legend, notice, payLine, crisisFoot, locPicker, wireLocs, mountLocMap, exm, placeIcon } = KIT;
+  mockBar(10, 'Out there');
+  const j = EMU.therapists[0], P = EMU.profile, PH = EMU.photos, L = P.locations, X = EMU.extras;
+  const photoFor = l => l.id === 'trail' ? PH.trailWalk : l.id === 'library' ? PH.library : null;
+  const slot = (d, t) => `<button class="slot" aria-pressed="false" data-t="${fullSlot(d, t)}">${icon('check')}${t}</button>`;
+  const per = (lab, d, ts) => ts.length ? `<div class="per"><span>${lab}</span><div class="slots" role="group" aria-label="${d}, ${lab.toLowerCase()}">${ts.map(t => slot(d, t)).join('')}</div></div>` : '';
+  const daysHTML = av => av.map(d => `<div class="dayblk"><h4>${d.day}</h4>${per('Morning', d.day, d.morning)}${per('Afternoon', d.day, d.afternoon)}</div>`).join('');
+  const plus = '<span class="pm" aria-hidden="true">+</span>';
+  const bigIcon = (t, s) => icon(placeIcon(t)).replace('class="ic"', `class="ic" style="width:${s}px;height:${s}px"`);
+
+  document.getElementById('main').innerHTML = `
+    <div class="wrap">
+      <a class="back" href="c10-directory.html">${icon('left')}Back to results</a>
+      <section class="top2">
+        <div class="gal rv">
+          <div class="main"><img src="${j.photo}" alt="Portrait of ${j.name}">
+            <span class="chip a">${icon('badge')}License verified in ${j.state}</span>
+            <span class="chip b"><b>${j.distance}</b><small>from you, at ${L[0].name}</small></span></div>
+          <div class="thumbs" role="group" aria-label="Jordan's meeting places">${L.map((l, i) => { const ph = photoFor(l); return `<button type="button" class="thumb ${ph ? '' : 'fb'}" data-loc="${l.id}" aria-pressed="${i === 0}"><img src="${ph ? ph.src : EMU.brand.images.textures}" alt="" loading="lazy"><span>${l.name}${l.example ? ' (example)' : ''}</span></button>`; }).join('')}</div>
+        </div>
+        <div>
+          <h1 class="rv">${j.name}</h1>
+          <p class="cred rv" data-d="1">${j.credential}, ${j.city}</p>
+          <span class="ver rv" data-d="1">${icon('badge')}License verified in ${j.state}</span>
+          <p class="lede rv" data-d="2">${j.about}</p>
+          <ul class="tags rv" data-d="2" aria-label="${EMU.labels.focus}">${j.specialties.map(s => `<li>${s}</li>`).join('')}</ul>
+          <p class="price rv" data-d="3"><b>$${j.price}</b><span>per session</span></p>
+          <ul class="incl rv" data-d="3">
+            <li>${icon('check')}<span>${X.notice.text}</span></li>
+            <li>${icon('check')}<span>${X.freeCall.text}${exm}</span></li>
+            <li>${icon('check')}<span>${X.payment.text}</span></li>
+          </ul>
+          <div class="bookcard rv" id="book">
+            <h2>Choose a place and a time</h2>
+            ${notice()}${locPicker()}<div data-days></div>
+            <p class="chosen" data-chosen aria-live="polite">No time chosen yet</p>
+            <button class="pill dark go" data-request>Request appointment</button>
+            <p class="fine">${payLine()}</p>
+            ${whatNext()}${contact()}
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="story" id="places" aria-label="Where you'll meet">
+      <div class="stage">
+        ${L.map((l, i) => { const ph = photoFor(l); return `
+          <div class="ph ${ph ? '' : 'fb'} ${i ? '' : 'on'}" data-i="${i}"><img src="${ph ? ph.src : EMU.brand.images.textures}" alt="${ph ? ph.alt : ''}" loading="${i ? 'lazy' : 'eager'}">${ph ? '' : `<span class="big" aria-hidden="true">${bigIcon(l.tags[0], 160)}</span>`}</div>
+          <div class="copy ${i ? '' : 'on'}" data-i="${i}">
+            <p class="k">Place ${i + 1} of ${L.length}, ${l.tags.join(', ').toLowerCase()}</p>
+            <h3>${l.name}${l.example ? exm : ''}</h3>
+            <p class="ins">${l.instructions}${l.example ? exm : ''}</p>
+            <p class="ad">${l.address}</p>
+            ${i === 0 ? `<details><summary>Getting there${plus}</summary><p>${X.place.access}${exm}</p></details><details><summary>If it rains${plus}</summary><p>${X.place.weather}${exm}</p></details>` : ''}
+            ${ph ? `<small style="display:block;margin-top:10px;font-size:12px;opacity:.8">${ph.credit}</small>` : ''}
+          </div>`; }).join('')}
+        <ol class="idx" aria-hidden="true">${L.map((l, i) => `<li data-i="${i}" class="${i ? '' : 'on'}">${l.name}<span>0${i + 1}</span></li>`).join('')}</ol>
+      </div>
+      <div class="track" aria-hidden="true">${L.map((l, i) => `<div data-step="${i}"></div>`).join('')}</div>
+    </section>
+    <div class="wrap mapsec"><div class="x-map rv" id="locmap" role="region" aria-label="Map of Jordan's three meeting places"></div></div>
+
+    <div class="wrap">
+      <section class="read"><div class="rv"><h2>About me</h2><p>${P.about}</p></div><div class="rv" data-d="1"><h2>What you can expect</h2><p>${P.expect}</p></div></section>
+      <section class="faq">
+        <h2 class="rv">More about Jordan</h2>
+        <div class="rv" data-d="1">
+          <details><summary>${EMU.labels.approaches}${plus}</summary><div><dl class="methods">${P.methods.map(([n, d]) => `<dt>${n}</dt><dd>${d}</dd>`).join('')}</dl></div></details>
+          <details><summary>Good to know${plus}</summary><div>${facts()}</div></details>
+          <details><summary>${EMU.labels.focus}${plus}</summary><div>${j.specialties.join(', ')}</div></details>
+        </div>
+      </section>
+      ${legend()}
+    </div>
+    <section class="close" aria-labelledby="h-close" style="margin-top:64px">
+      <img src="${PH.trailCity.src}" alt="${PH.trailCity.alt}" loading="lazy">
+      <div class="in"><h2 class="rv" id="h-close">Meet Jordan outside.</h2><a class="pill light rv" data-d="1" href="#book">Check times</a></div>
+      <small class="credit">${PH.trailCity.credit}</small>
+    </section>`;
+
+  const root = document.getElementById('book');
+  booking(root); wireLocs(root, daysHTML);
+  mountLocMap(document.getElementById('locmap'));
+  // Thumbnails choose the place too, and the main image shows that place
+  const mainImg = document.querySelector('.gal .main img');
+  document.querySelector('.thumbs').addEventListener('click', e => {
+    const b = e.target.closest('.thumb'); if (!b) return;
+    root.querySelector(`.x-loc[data-loc="${b.dataset.loc}"]`).click();
+  });
+  root.addEventListener('click', e => {
+    const b = e.target.closest('.x-loc'); if (!b) return;
+    document.querySelectorAll('.thumb').forEach(t => t.setAttribute('aria-pressed', t.dataset.loc === b.dataset.loc));
+  });
+
+  // Sticky places story
+  const steps = [...document.querySelectorAll('[data-step]')];
+  const setStep = i => ['.story .ph', '.story .copy', '.story .idx li'].forEach(sel => document.querySelectorAll(sel).forEach(p => p.classList.toggle('on', +p.dataset.i === i)));
+  let cur = 0;
+  addEventListener('scroll', () => { let i = 0; steps.forEach((s, k) => { if (s.getBoundingClientRect().top < innerHeight * .55) i = k; }); if (i !== cur) { cur = i; setStep(i); } }, { passive: true });
+  const fit = () => { const st = document.querySelector('.story .stage'), tr = document.querySelector('.story .track'); tr.style.marginTop = matchMedia('(max-width: 900px)').matches ? '' : `-${st.offsetHeight}px`; };
+  fit(); addEventListener('resize', fit);
+
+  const fl = document.getElementById('float');
+  MOTION.pillNav(fl, document.querySelector('.top2'));
+  new MutationObserver(() => { const on = fl.classList.contains('show'); fl.setAttribute('aria-hidden', !on); fl.querySelectorAll('a').forEach(a => a.tabIndex = on ? 0 : -1); }).observe(fl, { attributes: true, attributeFilter: ['class'] });
+  MOTION.watch();
+  document.body.insertAdjacentHTML('beforeend', crisisFoot());
+</script>
+</body>
+</html>

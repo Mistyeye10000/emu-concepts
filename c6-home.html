@@ -1,0 +1,370 @@
+<!doctype html>
+<!--
+CONCEPT 6: ROUTES, home. Version 2: immersive.
+
+Idea (kept from v1): a walk and talk session is a route. Every therapist has a drawn route
+shaped by their place: a loop for a park, a line along a trail, a short walk to a library,
+each with a start marker. Version 2 puts the photographs on the stage and draws the routes
+over them.
+
+Colours
+  paper      #FFFFFF  page, and the only surface text sits on when over a photo
+  ink        #291605  text, 16.9:1 on paper; also the solid tab behind photo credits
+  soft       #5F5347  secondary text, 7.46:1 on paper
+  path       #9B5212  the route line and the one action colour, 5.82:1 on paper
+  start      #4B2259  start markers; plum on lilac 9.12:1
+  lilac      #EFD2F9  start labels
+  contour    #DCE1D8  decorative contour lines, never under text
+  Photos carry the colour. Text never sits on a photo without a solid panel.
+
+Type
+  Newsreader 500 for the headline, clamp(40px, 5.4vw, 72px), -0.015em, and for section
+  titles. Inter 400 16px body, 600 for labels and buttons.
+
+Layout (1280)
+  +---------------------------------------------------------------------------+
+  | Emu                                   Find a therapist   For therapists   |
+  |###########################################################################|
+  |##  full-bleed trail photo, a route drawing itself across it             ##|
+  |##  [paper panel]                                                        ##|
+  |##  | Therapy that meets you where you are.   |                          ##|
+  |##  | Tell us where to look...                |     (o)~~~~~~~~~~~       ##|
+  |##  | [City or ZIP] [Distance] [Find]         |                 [credit] ##|
+  |###########################################################################|
+  | How it works: (o)Search ~~~~~ (o)Choose ~~~~~ (o)Meet   (draws on scroll) |
+  |###########################################################################|
+  |##  full-bleed boardwalk photo  [panel: "Sometimes it's easier..."]      ##|
+  |###########################################################################|
+  | [photo + loop ] [photo + line ] [photo + library]  three kinds of route  |
+  |###########################################################################|
+  |##  Rachel's walk banner  [panel: Build an office-free private practice] ##|
+  |###########################################################################|
+  | Not an office. Not a screen. Another option. / footer                    |
+  +---------------------------------------------------------------------------+
+  At 375 the panel drops below each photo on paper, the photo keeps a 46svh stage,
+  and the route is drawn in the part of the photo that survives the crop.
+
+Motion (all gated on html.js, all off under prefers-reduced-motion)
+  1. Hero: the route draws itself in (stroke-dashoffset, 1.6s), the start marker settles
+     (scale, 0.4s) and pulses once. The one authored moment on the page.
+  2. Panels and sections reveal on entry (opacity and 14px rise, 0.5s, IntersectionObserver).
+  3. The How it works route and the three kinds draw in when they enter the viewport.
+  4. Hover on a kind re-traces its route and lifts the start marker (0.3s).
+  Nothing animates layout. If JS never runs, nothing is hidden.
+
+Plan review: first draft put the headline straight on the photo with a scrim; the panel is
+solid paper instead so contrast is not a guess. First draft also animated every paragraph
+in; now only the stage panels and the route drawings move, the prose just appears.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept 6 home</title>
+<script src="data.js?v=8"></script>
+<script>document.documentElement.classList.add('js'); document.write(`<link rel="stylesheet" href="${EMU.brand.fontsHref}">`)</script>
+<style>
+  html { scrollbar-gutter: stable; }
+  :root {
+    --paper: #FFFFFF; --ink: #291605; --soft: #5F5347; --rule: #E3E0DD; --contour: #DCE1D8;
+    --path: #9B5212; --path-d: #6E3A0D; --start: #4B2259; --lilac: #EFD2F9;
+    --serif: 'Newsreader', Georgia, serif; --sans: 'Inter', system-ui, sans-serif;
+    --ease: cubic-bezier(.2, .7, .2, 1);
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--paper); }
+  body { margin: 0; color: var(--ink); font: 400 16px/1.55 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  a { color: inherit; }
+  img { max-width: 100%; height: auto; display: block; }
+  :focus-visible { outline: 3px solid var(--path); outline-offset: 3px; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+  @media (min-width: 768px) { .wrap { padding: 0 40px; } }
+  header.top .wrap { display: flex; align-items: center; justify-content: space-between; min-height: 64px; }
+  .logo { font: 500 26px/1 var(--serif); text-decoration: none; }
+  nav a { text-decoration: none; padding: 10px 12px; min-height: 44px; display: inline-flex; align-items: center; }
+  nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  @media (max-width: 480px) { nav a { padding: 10px 8px; } }
+
+  /* The stage: a full-bleed photograph with a route drawn over it. Text sits on a solid paper panel. */
+  .stage { position: relative; background: var(--ink); overflow: hidden; }
+  .stage > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .stage > svg.over { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .credit { position: absolute; right: 0; bottom: 0; margin: 0; background: var(--ink); color: #fff; font-size: 13px; line-height: 1.35; padding: 6px 12px; max-width: min(100%, 60ch); }
+  /* Under 760px the photo keeps a 46svh stage and the panel sits below it on paper. */
+  @media (max-width: 759px) {
+    .split { --ph: 46svh; min-height: 0; }
+    .split > img, .split > svg.over { height: var(--ph); }
+    .split > .panel { margin-top: var(--ph); }
+    .split > .credit { bottom: auto; top: var(--ph); transform: translateY(-100%); }
+  }
+  .panel { background: var(--paper); color: var(--ink); padding: 28px 24px 24px; }
+  @media (min-width: 760px) { .panel { padding: 36px 36px 32px; } }
+
+  .hero { min-height: 46svh; }
+  .hero .panel { position: relative; }
+  @media (min-width: 760px) {
+    .hero { min-height: min(86svh, 920px); display: grid; align-items: end; }
+    .hero .panel { position: relative; width: min(560px, 48%); margin: 0 0 48px 40px; }
+  }
+  @media (min-width: 1280px) { .hero .panel { margin-left: calc((100% - 1200px) / 2 + 40px); } }
+  h1 { font: 500 clamp(40px, 5.4vw, 72px)/1.0 var(--serif); letter-spacing: -0.015em; margin: 0 0 14px; text-wrap: balance; }
+  .hero .line { margin: 0; font-size: 18px; color: var(--soft); max-width: 40ch; }
+  form.search { display: grid; gap: 12px; margin-top: 22px; grid-template-columns: 1fr; }
+  @media (min-width: 560px) { form.search { grid-template-columns: minmax(160px, 1fr) minmax(150px, auto); align-items: end; } form.search .btn { grid-column: 1 / -1; justify-self: start; } }
+  .field label { display: block; font-weight: 600; margin-bottom: 6px; }
+  .field input, .field select { width: 100%; min-height: 48px; font: 400 16px var(--sans); color: var(--ink); background: var(--paper); border: 1.5px solid var(--ink); border-radius: 6px; padding: 0 12px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 22px; font: 600 16px var(--sans); color: #fff; background: var(--path); border: 0; border-radius: 6px; cursor: pointer; text-decoration: none; transition: background .15s ease-out, transform .15s ease-out; }
+  .btn:hover { background: var(--path-d); }
+  .btn:active { transform: scale(.98); }
+  .hero .after { margin: 14px 0 0; color: var(--soft); max-width: 44ch; font-size: 15px; }
+  .hero .after i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; background: var(--start); border: 2px solid #fff; box-shadow: 0 0 0 1px var(--start); vertical-align: -1px; margin-right: 6px; }
+
+  h2 { font: 500 clamp(30px, 3.4vw, 40px)/1.12 var(--serif); margin: 0 0 8px; letter-spacing: -0.008em; }
+  .how { padding: 56px 0 64px; }
+  .how > p { margin: 0 0 8px; color: var(--soft); max-width: 50ch; }
+  .how .h { display: none; }
+  .how ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 28px; grid-template-columns: minmax(0, 1fr); }
+  .how li h3 { margin: 0 0 4px; font: 500 28px/1.15 var(--serif); }
+  .how li p { margin: 0; color: var(--soft); max-width: 34ch; }
+  .startlabel { display: inline-flex; align-items: center; gap: 10px; background: var(--lilac); color: var(--start); font-weight: 600; padding: 4px 12px 4px 8px; border-radius: 999px; margin-bottom: 10px; font-size: 15px; }
+  .startlabel i { width: 12px; height: 12px; border-radius: 50%; background: var(--start); border: 2px solid #fff; }
+  @media (min-width: 760px) {
+    .how .v { display: none; }
+    .how .h { display: block; width: 100%; height: auto; margin: 8px 0 0; }
+    .how ol { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
+  }
+  @media (max-width: 759px) { .how .wrapv { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 16px; } .how .v { width: 72px; height: 100%; } }
+
+  .band { min-height: 46svh; }
+  .band .panel { position: relative; }
+  @media (min-width: 760px) {
+    .band { min-height: min(64svh, 640px); display: grid; align-items: center; }
+    .band .panel { width: min(520px, 46%); margin: 56px 0 56px 40px; }
+  }
+  @media (min-width: 1280px) { .band .panel { margin-left: calc((100% - 1200px) / 2 + 40px); } }
+  .band .big { margin: 0; font: 400 clamp(26px, 3vw, 36px)/1.25 var(--serif); letter-spacing: -0.005em; max-width: 20ch; text-wrap: balance; }
+  .band p + p { margin: 14px 0 0; color: var(--soft); max-width: 40ch; }
+
+  .kinds { padding: 56px 0 0; }
+  .kinds .wrap > p { margin: 0 0 24px; color: var(--soft); max-width: 56ch; }
+  .kinds .row { display: grid; gap: 6px; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 760px) { .kinds .row { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .kind { margin: 0; min-height: 420px; display: grid; align-items: end; }
+  @media (min-width: 760px) { .kind { min-height: 520px; } }
+  .kind .panel { position: relative; margin: 16px; padding: 18px 20px 20px; display: grid; gap: 4px 16px; grid-template-columns: 88px minmax(0, 1fr); align-items: center; transition: transform .3s var(--ease); }
+  @media (min-width: 760px) { .kind .panel { margin: 0 24px 48px 24px; } }
+  .kind svg.rt { width: 88px; aspect-ratio: 1; display: block; grid-row: span 2; }
+  .kind b { display: block; font: 500 24px/1.15 var(--serif); }
+  .kind span { display: block; color: var(--soft); margin-top: 4px; font-size: 15px; line-height: 1.45; }
+  .kind .credit { top: 0; bottom: auto; font-size: 12px; max-width: 100%; }
+  .kind:hover .panel, .kind:focus-within .panel { transform: translateY(-4px); }
+
+  .pros { min-height: 46svh; }
+  .pros .panel { position: relative; display: grid; gap: 10px; justify-items: start; }
+  @media (min-width: 760px) {
+    .pros { min-height: min(60svh, 600px); display: grid; align-items: center; justify-items: end; }
+    .pros .panel { width: min(520px, 46%); margin: 56px 40px; }
+  }
+  @media (min-width: 1280px) { .pros .panel { margin-right: calc((100% - 1200px) / 2 + 40px); } }
+  .pros h2 { margin: 0; }
+  .pros p { margin: 0; }
+  .pros .found { font: 400 22px/1.3 var(--serif); }
+  .pros .btn { margin-top: 8px; }
+
+  .about { padding-top: 56px; padding-bottom: 24px; }
+  .about .big { font: 400 clamp(26px, 3vw, 36px)/1.25 var(--serif); max-width: 22ch; margin: 0 0 14px; letter-spacing: -0.005em; }
+  .about p { margin: 0; max-width: 52ch; }
+  .about p + p { margin-top: 10px; color: var(--soft); }
+
+  footer { padding-top: 36px; padding-bottom: 72px; border-top: 1px solid var(--rule); margin-top: 40px; }
+  footer p { margin: 0 0 12px; max-width: 78ch; }
+  footer .credits { font-size: 14px; color: var(--soft); display: grid; gap: 2px; margin-top: 20px; max-width: 90ch; }
+  footer .small { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 24px; }
+  footer .small a { min-height: 32px; display: inline-flex; align-items: center; }
+
+  /* Motion. Gated on html.js so nothing is hidden without it; off entirely under reduced motion. */
+  html.js .rv { opacity: 0; transform: translateY(14px); }
+  html.js .rv.in { opacity: 1; transform: none; transition: opacity .5s var(--ease), transform .5s var(--ease); }
+  html.js .rt .dr { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  html.js .rt.in .dr { stroke-dashoffset: 0; transition: stroke-dashoffset var(--dur, 1s) cubic-bezier(.3, .5, .2, 1); }
+  html.js .rt .dots { opacity: 0; }
+  html.js .rt.in .dots { opacity: 1; transition: opacity .4s ease-out var(--dur, 1s); }
+  html.js .rt .st { transform-box: fill-box; transform-origin: center; transform: scale(.4); opacity: 0; }
+  html.js .rt.in .st { transform: scale(1); opacity: 1; transition: transform .4s cubic-bezier(.2, .7, .2, 1) calc(var(--dur, 1s) - .15s), opacity .25s ease-out calc(var(--dur, 1s) - .15s); }
+  html.js .rt .pl { transform-box: fill-box; transform-origin: center; opacity: 0; }
+  html.js .rt.in .pl { animation: pulse .7s ease-out calc(var(--dur, 1s) + .15s) 1; }
+  html.js .kind:hover svg.rt.in .st, html.js .kind:focus-within svg.rt.in .st { transform: translateY(-3px) scale(1.2); transition: transform .25s var(--ease); }
+  @keyframes pulse { 0% { transform: scale(.6); opacity: .7; } 100% { transform: scale(2.6); opacity: 0; } }
+  .hero.rt { --dur: 1.6s; }
+  .kind svg.rt { --dur: .8s; }
+  @media (prefers-reduced-motion: reduce) {
+    html.js .rv, html.js .rt .dr, html.js .rt .dots, html.js .rt .st { opacity: 1; transform: none; stroke-dashoffset: 0; transition: none !important; animation: none !important; }
+    html.js .rt .pl { opacity: 0 !important; animation: none !important; }
+    .btn, .kind .panel { transition: none !important; }
+    .kind:hover .panel, .kind:focus-within .panel { transform: none; }
+  }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="logo" href="c6-home.html" aria-label="Emu home">Emu</a>
+  <nav aria-label="Site"><a href="c6-directory.html">Find a therapist</a><a href="#therapists">For therapists</a></nav>
+</div></header>
+
+<main>
+  <section class="hero stage rt split" id="hero" aria-labelledby="h1">
+    <div class="panel rv">
+      <h1 id="h1"></h1>
+      <p class="line" id="line"></p>
+      <form class="search" action="c6-directory.html" method="get">
+        <div class="field"><label for="loc">City or ZIP code</label><input id="loc" name="location" type="text" placeholder="Philadelphia, PA" autocomplete="postal-code"></div>
+        <div class="field"><label for="rad">Distance</label><select id="rad" name="radius"></select></div>
+        <button class="btn" type="submit">Find therapists</button>
+      </form>
+      <p class="after"><i aria-hidden="true"></i>Every listing shows the shape of the therapist's route, where it starts and how far that is from you.</p>
+    </div>
+  </section>
+
+  <section class="how" aria-labelledby="howh">
+    <div class="wrap">
+      <h2 id="howh">How it works</h2>
+      <p>Three steps, one route. You start at the search.</p>
+      <div class="wrapv">
+        <svg class="v rt" viewBox="0 0 72 520" aria-hidden="true" id="routev"></svg>
+        <div>
+          <svg class="h rt" viewBox="0 0 1120 140" aria-hidden="true" id="routeh"></svg>
+          <ol id="how"></ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band stage rt split" id="band" aria-label="Walking and talking"></section>
+
+  <section class="kinds" aria-labelledby="kh">
+    <div class="wrap"><h2 id="kh">Three kinds of route</h2><p>Every therapist's listing is drawn as one of these. The start marker is where you meet.</p></div>
+    <div class="row" id="kinds"></div>
+  </section>
+
+  <section class="pros stage split" id="therapists" aria-labelledby="proh"></section>
+
+  <section class="about wrap" aria-label="What Emu is">
+    <p class="big" id="about"></p>
+    <p id="noOffice"></p>
+  </section>
+</main>
+
+<footer class="wrap">
+  <p id="disclaimer"></p>
+  <p id="crisis"></p>
+  <div class="credits" id="credits"></div>
+  <div class="small"><a href="c6-directory.html">Find a therapist</a><a href="#therapists">For therapists</a></div>
+</footer>
+
+<script>
+(function () {
+  const E = window.EMU, H = E.home, P = E.photos, B = E.brand.images;
+  const bar = document.createElement('div');
+  bar.setAttribute('role', 'region'); bar.setAttribute('aria-label', 'Mockup controls');
+  bar.style.cssText = 'background:#1C1A18;color:#fff;font:500 13px/1.4 Inter,system-ui,sans-serif;padding:8px 16px;display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center';
+  const pill = 'color:#fff;border:1px solid rgba(255,255,255,.5);border-radius:3px;padding:3px 10px;text-decoration:none';
+  bar.innerHTML = `<strong>Concept 6: Routes</strong><span style="opacity:.85">Jordan Avery is real. Therapists marked as examples are made up. Distances and times are examples.</span><span style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap"><a href="c6-home.html" style="${pill}">Landing</a><a href="c6-directory.html" style="${pill}">Directory</a><a href="c6-profile.html" style="${pill}">Profile</a><a href="index.html" style="${pill}">All concepts</a></span>`;
+  document.body.prepend(bar);
+
+  document.getElementById('h1').textContent = H.headline;
+  document.getElementById('line').textContent = H.line;
+  const sel = document.getElementById('rad');
+  E.search.radii.forEach(r => { const o = document.createElement('option'); o.value = r; o.textContent = `within ${r} miles`; if (r === E.search.radius) o.selected = true; sel.append(o); });
+
+  // Same spline and generator as the directory so the drawings match.
+  const hash = s => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
+  const rng = s => { let h = hash(s); return () => { h = (h * 1664525 + 1013904223) >>> 0; return h / 4294967296; }; };
+  const spline = (pts, closed) => {
+    const n = pts.length, Pt = i => pts[(i + n) % n]; let d = `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+    for (let i = 0; i < (closed ? n : n - 1); i++) {
+      const p0 = closed ? Pt(i - 1) : pts[Math.max(i - 1, 0)], p1 = pts[i], p2 = Pt(i + 1), p3 = closed ? Pt(i + 2) : pts[Math.min(i + 2, n - 1)];
+      d += ` C${(p1[0] + (p2[0] - p0[0]) / 6).toFixed(1)} ${(p1[1] + (p2[1] - p0[1]) / 6).toFixed(1)}, ${(p2[0] - (p3[0] - p1[0]) / 6).toFixed(1)} ${(p2[1] - (p3[1] - p1[1]) / 6).toFixed(1)}, ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+    }
+    return d + (closed ? ' Z' : '');
+  };
+  // Small route drawing (the directory's signature mark). The line draws itself, the start settles and pulses once.
+  function route(seed, placeType, S) {
+    const r = rng(seed), c = S / 2, contours = [];
+    for (let k = 0; k < 3; k++) { const pts = []; const rad = S * (0.18 + k * 0.14); for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; const rr = rad * (0.8 + r() * 0.4); pts.push([c + Math.cos(a) * rr + (r() - .5) * 10, c + Math.sin(a) * rr + (r() - .5) * 10]); } contours.push(`<path d="${spline(pts, true)}" fill="none" stroke="#DCE1D8" stroke-width="1"/>`); }
+    let path, start, extra = '';
+    if (placeType === 'Library') {
+      const pts = [[S * 0.12, S * 0.82], [S * 0.3, S * 0.6 + r() * 10], [S * 0.5, S * 0.5], [S * 0.62, S * 0.36]];
+      path = spline(pts, false); start = pts[0];
+      const b = S * 0.14; extra = `<rect x="${S * 0.62}" y="${S * 0.36 - b}" width="${b * 1.6}" height="${b}" fill="none" stroke="#291605" stroke-width="1.5"/><path d="M${S * 0.62} ${S * 0.36 - b} l${b * 0.8} -${b * 0.5} l${b * 0.8} ${b * 0.5}" fill="none" stroke="#291605" stroke-width="1.5"/>`;
+    } else if (placeType === 'Walk and talk') {
+      const pts = []; for (let i = 0; i < 6; i++) pts.push([S * 0.1 + i * S * 0.16, S * 0.3 + r() * S * 0.4]);
+      path = spline(pts, false); start = pts[0];
+      extra = `<path d="M${S * 0.05} ${S * 0.9} C ${S * 0.3} ${S * 0.7}, ${S * 0.6} ${S * 0.95}, ${S * 0.95} ${S * 0.75}" fill="none" stroke="#C9D9E3" stroke-width="3"/>`;
+    } else {
+      const pts = []; const n = 9; for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2 + r() * 0.3; const rr = S * (0.22 + r() * 0.16); pts.push([c + Math.cos(a) * rr, c + Math.sin(a) * rr]); }
+      path = spline(pts, true); start = pts[0];
+    }
+    const sx = start[0].toFixed(1), sy = start[1].toFixed(1);
+    return `<svg class="rt" viewBox="0 0 ${S} ${S}" aria-hidden="true">${contours.join('')}${extra}<path class="dr" pathLength="1" d="${path}" fill="none" stroke="#9B5212" stroke-width="2.5" stroke-linecap="round"/><circle class="pl" cx="${sx}" cy="${sy}" r="${S * 0.045}" fill="none" stroke="#4B2259" stroke-width="1.5"/><circle class="st" cx="${sx}" cy="${sy}" r="${S * 0.045}" fill="#4B2259" stroke="#fff" stroke-width="2"/></svg>`;
+  }
+  // A route drawn over a photograph. The viewBox is the photo's own size and the SVG crops exactly as the photo does.
+  function over(w, h, pts, closed) {
+    const d = spline(pts, closed), [sx, sy] = pts[0];
+    return `<svg class="over" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <path class="dr" pathLength="1" d="${d}" fill="none" stroke="#fff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/>
+      <path class="dr" pathLength="1" d="${d}" fill="none" stroke="#9B5212" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      <path class="dots" d="${d}" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-dasharray="0 22" opacity=".9"/>
+      <circle class="pl" cx="${sx}" cy="${sy}" r="24" fill="none" stroke="#fff" stroke-width="5"/>
+      <circle class="st" cx="${sx}" cy="${sy}" r="20" fill="#4B2259" stroke="#fff" stroke-width="6"/>
+    </svg>`;
+  }
+  const credit = ph => `<p class="credit">${ph.credit}</p>`;
+
+  // Hero: the trail walkers, with a line route drawn in the part of the photo that survives every crop.
+  const hero = document.getElementById('hero');
+  hero.insertAdjacentHTML('afterbegin', `<img src="${P.trailWalk.src}" alt="${P.trailWalk.alt}" width="1920" height="1440" fetchpriority="high">${over(1920, 1440, [[1060, 1010], [1180, 880], [1240, 720], [1410, 580], [1480, 420], [1580, 270]], false)}`);
+  hero.insertAdjacentHTML('beforeend', credit(P.trailWalk));
+
+  // How it works as one route with three waypoints (the one sequence on the page).
+  const hp = [[40, 90], [200, 50], [420, 100], [560, 60], [800, 95], [940, 55], [1080, 85]];
+  const line = d => `<path d="${d}" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/><path class="dr" pathLength="1" d="${d}" fill="none" stroke="#9B5212" stroke-width="2.5" stroke-linecap="round"/><path class="dots" d="${d}" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="0 9"/>`;
+  const way = (x, y, first) => `${first ? `<circle class="pl" cx="${x}" cy="${y}" r="9" fill="none" stroke="#4B2259" stroke-width="2"/>` : ''}<circle class="${first ? 'st' : ''}" cx="${x}" cy="${y}" r="9" fill="#4B2259" stroke="#fff" stroke-width="2.5"/>`;
+  document.getElementById('routeh').innerHTML = `<path d="M0 120 C 200 60, 420 160, 640 90 S 1000 20, 1120 110" fill="none" stroke="#DCE1D8" stroke-width="1"/><path d="M0 30 C 240 110, 500 0, 760 70 S 1000 140, 1120 40" fill="none" stroke="#DCE1D8" stroke-width="1"/>${line(spline(hp, false))}${way(40, 90, true)}${way(420, 100)}${way(800, 95)}`;
+  const vp = [[36, 30], [40, 120], [30, 230], [44, 330], [34, 430], [40, 500]];
+  document.getElementById('routev').innerHTML = `${line(spline(vp, false))}${way(36, 30, true)}${way(30, 230)}${way(34, 430)}`;
+  document.getElementById('how').innerHTML = E.howItWorks.map(([h, d], i) => `<li>${i === 0 ? '<span class="startlabel"><i aria-hidden="true"></i>Start here</span><br>' : ''}<h3>${h}</h3><p>${d}</p></li>`).join('');
+
+  // The walk line on the boardwalk photo.
+  document.getElementById('band').innerHTML = `<img src="${P.trailCity.src}" alt="${P.trailCity.alt}" width="1920" height="1440" loading="lazy">${over(1920, 1440, [[560, 1180], [760, 1040], [1000, 980], [1180, 820], [1360, 760], [1540, 640]], false)}
+    <div class="panel rv"><p class="big">${H.walk}</p><p>Walk and talk sessions happen on a route like this one, side by side, at your pace.</p></div>${credit(P.trailCity)}`;
+
+  const kinds = [
+    { seed: 'Jordan Avery', type: 'Outdoor', ph: P.trailCity, name: 'A loop around a park', note: 'Rittenhouse Square or Clark Park. You walk a lap, or sit on a bench along the way.' },
+    { seed: 'Maya Okafor', type: 'Walk and talk', ph: P.trailWalk, name: 'A line along a trail', note: 'The Schuylkill River Trail. You walk one way and back, at your pace.' },
+    { seed: 'Priya Natarajan', type: 'Library', ph: P.library, name: 'A short walk to a library', note: 'Parkway Central Library. You walk to it and sit at a quiet table.' },
+  ];
+  document.getElementById('kinds').innerHTML = kinds.map(k => `<figure class="kind stage">
+      <img src="${k.ph.src}" alt="${k.ph.alt}" width="1920" height="${k.ph === P.library ? 1280 : 1440}" loading="lazy">
+      <figcaption class="panel rv">${route(k.seed, k.type, 148)}<b>${k.name}</b><span>${k.note}</span></figcaption>
+      ${credit(k.ph)}
+    </figure>`).join('');
+
+  document.getElementById('therapists').innerHTML = `<img src="${B.walkBanner}" alt="Emu's walk and talk image: a person walking away through a sunlit field of tall grass" width="1264" height="848" loading="lazy">
+    <div class="panel rv"><h2 id="proh">${H.therapistsTitle}</h2><p>${H.therapistsLine}</p><p class="found">${H.founding}</p><a class="btn" href="#">Join as a therapist</a></div>`;
+
+  document.getElementById('about').textContent = H.aboutLine;
+  document.getElementById('noOffice').textContent = H.noOffice;
+  document.getElementById('disclaimer').textContent = H.disclaimer;
+  document.getElementById('crisis').textContent = H.crisis;
+  document.getElementById('credits').innerHTML = `<span>Photographs: ${P.trailWalk.credit}</span><span>${P.trailCity.credit}</span><span>${P.library.credit}</span><span>Walk and talk illustration: Emu.</span>`;
+
+  // Reveals. Routes draw and panels rise as they enter the viewport; without IntersectionObserver everything simply shows.
+  const els = document.querySelectorAll('.rv, .rt');
+  if (!('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('in')); return; }
+  const io = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: 0.15 });
+  const first = document.querySelector('.stage'); // the opening stage draws on load, not on scroll
+  els.forEach(e => { if (e.closest('.stage') === first) setTimeout(() => e.classList.add('in'), 40); else io.observe(e); });
+})();
+</script>
+</body>
+</html>

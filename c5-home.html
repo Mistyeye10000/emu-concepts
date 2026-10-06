@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept 5 home</title>
+<!--
+  Concept 5 home: This week
+  Memorable moment: a strip of the coming week near you. Each day shows morning and afternoon openings as warm and cool blocks with the faces of who is free; the first days are hatched for the 72-hour notice.
+  Colours: white, bark #291605, morning amber #FFF1CC (text #5C3D00), afternoon blue #E3EEF6 (text #1F4560), hatch #F1F0EE, rust #9B5212 action, lilac #EFD2F9.
+  Type: Newsreader 500 for the headline and day numbers; Inter for labels and counts (tabular figures).
+  Layout:  [ headline, line, search ]   [ photo of the trail in morning light ]
+           [ the week strip, seven columns, scrolls sideways on phones ]
+           [ how it works ]  [ for therapists ]
+  Revised in review: the strip first showed bare numbers (hero-metric risk); faces of who is free now carry the meaning, numbers are secondary.
+-->
+<script src="data.js?v=8"></script>
+<script src="kit.js?v=8"></script>
+<script>document.write(`<link rel="stylesheet" href="${EMU.brand.fontsHref}">`)</script>
+<style>
+  html { scrollbar-gutter: stable; }
+  :root { --ink: #291605; --ink-2: #70655C; --line: #E3E0DD; --am: #FFF1CC; --am-t: #5C3D00; --pm: #E3EEF6; --pm-t: #1F4560; --hatch: #F1F0EE; --rust: #9B5212; --rust-d: #6E3A0D;
+    --serif: 'Newsreader', Georgia, serif; --sans: 'Inter', system-ui, sans-serif; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #fff; color: var(--ink); font: 400 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  img { display: block; max-width: 100%; }
+  :focus-visible { outline: 2px solid var(--rust); outline-offset: 3px; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 20px; }
+  @media (min-width: 768px) { .wrap { padding: 0 40px; } }
+  header.top .wrap { display: flex; justify-content: space-between; align-items: center; min-height: 72px; }
+  .logo { font: 700 22px/1 var(--sans); letter-spacing: -0.03em; text-decoration: none; }
+  nav a { text-decoration: none; font-weight: 500; padding: 10px 12px; border-radius: 8px; }
+  nav a:hover { background: #F6F5F3; }
+
+  .hero { display: grid; gap: 40px; padding: 24px 0 56px; grid-template-columns: minmax(0, 1fr); align-items: center; }
+  @media (min-width: 960px) { .hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 64px; } }
+  h1 { font: 500 clamp(42px, 5.8vw, 76px)/1.02 var(--serif); letter-spacing: -0.03em; margin: 0; text-wrap: balance; }
+  .hero .line { margin: 18px 0 0; font-size: 18px; color: var(--ink-2); max-width: 38ch; }
+  form.s { margin-top: 28px; display: grid; gap: 6px; max-width: 480px; }
+  form.s label { font: 600 14px var(--sans); }
+  .row { display: flex; gap: 8px; }
+  .row input { flex: 1; min-width: 0; font: 400 18px var(--sans); min-height: 52px; padding: 0 16px; border: 1px solid #877A6E; border-radius: 8px; }
+  .btn { font: 600 18px var(--sans); min-height: 52px; padding: 0 22px; border-radius: 8px; border: 0; background: var(--rust); color: #fff; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
+  .btn:hover { background: var(--rust-d); }
+  .photo { margin: 0; position: relative; }
+  .photo img { width: 100%; aspect-ratio: 5 / 4; object-fit: cover; object-position: 55% 55%; border-radius: 14px; }
+  .photo .tag { position: absolute; left: 14px; top: 14px; background: var(--am); color: var(--am-t); font: 600 14px var(--sans); padding: 6px 12px; border-radius: 8px; }
+  .photo figcaption { font-size: 12px; color: var(--ink-2); margin-top: 8px; }
+
+  .week { padding: 8px 0 72px; }
+  .week .head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 20px; margin-bottom: 16px; }
+  .week h2 { font: 500 clamp(28px, 3vw, 36px)/1.15 var(--serif); margin: 0; }
+  .week .head p { margin: 0; color: var(--ink-2); }
+  .strip { display: grid; grid-template-columns: repeat(7, minmax(132px, 1fr)); gap: 8px; overflow-x: auto; padding-bottom: 8px; }
+  .day { border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: grid; gap: 8px; align-content: start; min-height: 230px; text-decoration: none; transition: border-color .15s; }
+  a.day:hover { border-color: var(--ink); }
+  .day .d { display: flex; align-items: baseline; gap: 8px; }
+  .day .d b { font: 500 34px/1 var(--serif); }
+  .day .d span { font: 600 14px var(--sans); color: var(--ink-2); }
+  .day.soon { background: repeating-linear-gradient(135deg, var(--hatch) 0 6px, #fff 6px 12px); color: var(--ink-2); }
+  .day.soon p { margin: 0; font-size: 14px; }
+  .blk { border-radius: 8px; padding: 8px 10px; display: grid; gap: 6px; }
+  .blk.am { background: var(--am); color: var(--am-t); }
+  .blk.pm { background: var(--pm); color: var(--pm-t); }
+  .blk .t { font: 600 12px var(--sans); display: flex; justify-content: space-between; }
+  .faces { display: flex; }
+  .faces img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; margin-right: -6px; }
+  .none { font-size: 14px; color: var(--ink-2); }
+  .week .fine { margin: 12px 0 0; font-size: 14px; color: var(--ink-2); }
+
+  .lower { display: grid; gap: 56px; padding: 72px 0; border-top: 1px solid var(--line); grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 960px) { .lower { grid-template-columns: 1.3fr 1fr; gap: 80px; } }
+  .lower h2 { font: 500 clamp(28px, 3vw, 38px)/1.15 var(--serif); margin: 0; }
+  .steps { list-style: none; margin: 24px 0 0; padding: 0; display: grid; gap: 20px; counter-reset: s; }
+  .steps li { counter-increment: s; display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 2px 14px; }
+  .steps li::before { content: counter(s); grid-row: span 2; width: 44px; height: 44px; border-radius: 10px; background: var(--am); color: var(--am-t); display: grid; place-items: center; font: 500 22px var(--serif); }
+  .steps li:nth-child(2)::before { background: var(--pm); color: var(--pm-t); }
+  .steps li:nth-child(3)::before { background: #EFD2F9; color: #4B2259; }
+  .steps h3 { margin: 4px 0 0; font: 600 18px var(--sans); }
+  .steps p { margin: 0; color: var(--ink-2); }
+  .ther p { margin: 12px 0 0; font-size: 18px; }
+  .ther .btn { margin-top: 20px; }
+
+  footer.end { border-top: 1px solid var(--line); padding: 36px 0 56px; color: var(--ink-2); font-size: 14px; }
+  footer.end .cols { display: grid; gap: 24px; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 860px) { footer.end .cols { grid-template-columns: 1fr 1.6fr; } }
+  footer.end nav { display: flex; flex-wrap: wrap; margin-left: -12px; }
+  footer.end nav a { font-size: 16px; color: var(--ink); }
+  footer.end p { margin: 0 0 10px; max-width: 70ch; }
+  footer.end .crisis { color: var(--ink); font-weight: 600; }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="logo" href="c5-home.html">emu.</a><nav aria-label="Main"><a href="c5-directory.html">Find a therapist</a><a href="#">For therapists</a></nav></div></header>
+<main id="main"></main>
+<footer class="end"><div class="wrap cols" id="foot"></div></footer>
+<script>
+  const { mockBar } = KIT; const H = EMU.home, PH = EMU.photos, T = EMU.therapists;
+  mockBar(5, 'This week');
+  // Same openings as the directory: Jordan's are real, the others are made up.
+  const open = { jordan: { 6: [4, 0], 8: [3, 3] }, maya: { 7: [2, 1] }, priya: { 9: [1, 2] }, daniel: { 8: [1, 2] } };
+  const days = [...Array(7)].map((_, i) => new Date(2026, 9, 3 + i));
+  const strip = days.map(d => {
+    const n = d.getDate(), wd = d.toLocaleDateString('en-US', { weekday: 'short' }), long = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    if (n < 6) return `<div class="day soon"><div class="d"><b>${n}</b><span>${wd}</span></div><p>Too soon to book</p></div>`;
+    const am = T.filter(p => open[p.id][n]?.[0]), pm = T.filter(p => open[p.id][n]?.[1]);
+    const cnt = (arr, k) => arr.reduce((s, p) => s + open[p.id][n][k], 0);
+    const blk = (arr, k, cls, lab) => arr.length ? `<div class="blk ${cls}"><span class="t">${lab}<span>${cnt(arr, k)}</span></span><span class="faces">${arr.map(p => `<img src="${p.photo}" alt="">`).join('')}</span></div>` : '';
+    const body = blk(am, 0, 'am', 'Morning') + blk(pm, 1, 'pm', 'Afternoon') || '<span class="none">No openings yet</span>';
+    const label = `${long}: ${cnt(am, 0) || 0} morning and ${cnt(pm, 1) || 0} afternoon openings`;
+    return `<a class="day" href="c5-directory.html" aria-label="${label}"><div class="d"><b>${n}</b><span>${wd}</span></div>${body}</a>`;
+  }).join('');
+  document.getElementById('main').innerHTML = `
+    <section class="wrap hero">
+      <div>
+        <h1>${H.headline}</h1>
+        <p class="line">${H.line}</p>
+        <form class="s" action="c5-directory.html" role="search"><label for="loc">City or ZIP code</label><div class="row"><input id="loc" name="location" value="Philadelphia, PA" autocomplete="address-level2"><button class="btn">See this week</button></div></form>
+      </div>
+      <figure class="photo"><img src="${PH.trailWalk.src}" alt="${PH.trailWalk.alt}"><span class="tag">Morning, along the river</span><figcaption>${PH.trailWalk.credit}</figcaption></figure>
+    </section>
+    <section class="wrap week" aria-labelledby="h-week">
+      <div class="head"><h2 id="h-week">This week near Philadelphia</h2><p>Week of October 3. Choose a day to see who is free.</p></div>
+      <div class="strip" role="list">${strip.replace(/<(a|div) class="day/g, '<$1 role="listitem" class="day')}</div>
+      <p class="fine">Therapists ask for at least 72 hours' notice. Jordan Avery's openings are real; the others are made-up examples.</p>
+    </section>
+    <section class="wrap lower">
+      <div aria-labelledby="h-how"><h2 id="h-how">How Emu works</h2><ol class="steps">${EMU.howItWorks.map(([t, d]) => `<li><h3>${t}</h3><p>${d}</p></li>`).join('')}</ol></div>
+      <aside class="ther" aria-labelledby="h-t"><h2 id="h-t">${H.therapistsTitle}</h2><p>${H.therapistsLine}</p><p><b>${H.founding}</b></p><a class="btn" href="#">Join as a therapist</a></aside>
+    </section>`;
+  document.getElementById('foot').innerHTML = `
+    <nav aria-label="Footer"><a href="c5-directory.html">Find a therapist</a><a href="#">About Emu</a><a href="#">For therapists</a><a href="#">Contact</a><a href="#">Privacy</a><a href="#">Terms</a></nav>
+    <div><p>${H.disclaimer}</p><p class="crisis">${H.crisis}</p></div>`;
+</script>
+</body>
+</html>

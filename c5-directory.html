@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept 5 directory</title>
+<!--
+  Concept 5: This week
+  Idea: outdoor sessions live in daylight and in real weeks. Most people pick a time before they pick a person.
+  Memorable element: a week grid, therapists down the side and days across, morning and afternoon openings in each cell.
+  Rachel's 72-hour notice is visible: the first days are greyed with the reason.
+  Colours: white #FFFFFF, bark #291605, morning amber #FFF1CC (text #5C3D00), afternoon blue #E3EEF6 (text #1F4560), rust #9B5212 actions, lilac #EFD2F9 selection, hatch #F1F0EE for days too soon.
+  Type: Inter for the grid (tabular figures), Newsreader 500 for names and the title. Scale 13 / 14 / 16 / 22 / 44.
+  Layout: one table. Sticky first column with person and place; seven day columns; week switcher above.
+  Revised in review: first plan showed every time as a chip inside each cell; too dense on a phone. Cells now show how many morning and afternoon openings, and the times live on the profile.
+-->
+<script src="data.js?v=8"></script>
+<script src="kit.js?v=8"></script>
+<script src="map.js?v=8"></script>
+<script>document.write(`<link rel="stylesheet" href="${EMU.brand.fontsHref}">`)</script>
+<style>
+  html { scrollbar-gutter: stable; }
+  :root { --ink: #291605; --ink-2: #70655C; --line: #E3E0DD; --am: #FFF1CC; --am-t: #5C3D00; --pm: #E3EEF6; --pm-t: #1F4560; --hatch: #F1F0EE; --rust: #9B5212; --rust-d: #6E3A0D; --lilac: #EFD2F9; --lilac-7: #6A307E; --lilac-8: #4B2259;
+    --serif: 'Newsreader', Georgia, serif; --sans: 'Inter', system-ui, sans-serif; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #fff; color: var(--ink); font: 400 16px/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--rust); outline-offset: 2px; }
+  .ic { width: 18px; height: 18px; flex: none; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
+  @media (min-width: 768px) { .wrap { padding: 0 40px; } }
+  header.top .wrap { display: flex; justify-content: space-between; align-items: center; min-height: 72px; }
+  .logo { font: 700 22px/1 var(--sans); letter-spacing: -0.03em; text-decoration: none; }
+  nav a { text-decoration: none; font-weight: 500; padding: 10px 12px; border-radius: 8px; }
+  nav a:hover { background: #F6F5F3; }
+
+  .top-row { display: flex; flex-wrap: wrap; gap: 20px 32px; align-items: end; justify-content: space-between; margin-top: 24px; }
+  h1 { font: 500 clamp(32px, 4.6vw, 44px)/1.08 var(--serif); letter-spacing: -0.02em; margin: 0; }
+  .sub { margin: 8px 0 0; color: var(--ink-2); }
+  form.s { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
+  .f { display: grid; gap: 6px; }
+  .f label { font: 600 14px var(--sans); }
+  .f input, .f select { font: 400 16px var(--sans); min-height: 44px; padding: 0 12px; border: 1px solid #877A6E; border-radius: 8px; color: var(--ink); background: #fff; }
+  .f input { width: 200px; }
+  .ghost { font: 600 16px var(--sans); min-height: 44px; padding: 0 14px; border: 1px solid var(--ink); border-radius: 8px; background: #fff; color: var(--ink); cursor: pointer; display: inline-flex; gap: 8px; align-items: center; }
+  .ghost .n { background: var(--lilac); color: var(--lilac-8); border-radius: 6px; padding: 0 6px; font-size: 14px; }
+  .ghost:hover { background: #F6F5F3; }
+
+  .weekbar { display: flex; align-items: center; gap: 12px; margin: 32px 0 12px; flex-wrap: wrap; }
+  .weekbar h2 { font: 600 18px var(--sans); margin: 0 8px 0 0; }
+  .nav { width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--line); background: #fff; cursor: pointer; display: grid; place-items: center; color: var(--ink); }
+  .nav[disabled] { color: #C9C3BD; cursor: not-allowed; }
+  .key { margin-left: auto; display: flex; gap: 14px; font-size: 14px; color: var(--ink-2); }
+  .key span { display: inline-flex; align-items: center; gap: 6px; }
+  .key i { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
+
+  .scroller { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+  table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 980px; }
+  th, td { border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td, tr:last-child th { border-bottom: 0; }
+  thead th { font: 600 14px var(--sans); text-align: left; padding: 12px 10px; background: #FBFAF9; position: sticky; top: 0; }
+  thead th small { display: block; font-weight: 400; color: var(--ink-2); }
+  thead th.soon { color: var(--ink-2); }
+  .who { position: sticky; left: 0; z-index: 1; background: #fff; width: 290px; min-width: 260px; padding: 16px; border-right: 1px solid var(--line); text-align: left; font-weight: 400; }
+  thead .who { background: #FBFAF9; z-index: 2; }
+  .who .p { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 12px; align-items: start; }
+  .who img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; }
+  .who h3 { margin: 0; font: 500 22px/1.15 var(--serif); }
+  .who h3 a { text-decoration: none; }
+  .who h3 a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .who .m { margin: 2px 0 0; font-size: 14px; color: var(--ink-2); }
+  .who .pl { margin: 8px 0 0; font-size: 14px; }
+  .who .pl b { font-weight: 600; }
+  .who .ver { display: inline-flex; align-items: center; gap: 4px; font: 600 14px var(--sans); color: var(--lilac-7); margin-top: 4px; }
+  .who .ver .ic { width: 14px; height: 14px; }
+  .who .ex { font: italic 400 14px var(--sans); color: var(--ink-2); display: block; margin-top: 4px; }
+  .who .sp { margin: 6px 0 0; font-size: 14px; color: var(--ink-2); }
+  td { padding: 10px 8px; min-width: 96px; }
+  td.soon { background: repeating-linear-gradient(135deg, var(--hatch) 0 6px, #fff 6px 12px); }
+  .slotbtn { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 6px; font: 600 14px var(--sans); min-height: 34px; padding: 0 10px; border-radius: 6px; border: 0; cursor: pointer; text-decoration: none; }
+  .slotbtn + .slotbtn { margin-top: 6px; }
+  .slotbtn.am { background: var(--am); color: var(--am-t); }
+  .slotbtn.pm { background: var(--pm); color: var(--pm-t); }
+  .slotbtn:hover { box-shadow: inset 0 0 0 1.5px currentColor; }
+  .slotbtn span { font-weight: 500; }
+  td .none { font-size: 14px; color: #9A928B; }
+  td .price { display: none; }
+  .soon-note { font-size: 12px; color: var(--ink-2); line-height: 1.3; display: block; padding-top: 4px; }
+
+  @media (max-width: 600px) { .who { width: 170px; min-width: 170px; padding: 12px; } .who .p { grid-template-columns: 1fr; gap: 8px; } .who img { width: 40px; height: 40px; } .who h3 { font-size: 19px; } .who .sp { display: none; } .f input { width: 100%; } form.s, .f { width: 100%; } .key { margin-left: 0; } }
+  .after { margin: 20px 0 96px; color: var(--ink-2); font-size: 16px; max-width: 72ch; }
+
+  dialog { border: 0; padding: 0; width: min(560px, 100vw); max-height: 88dvh; border-radius: 12px; box-shadow: 0 30px 80px -20px rgba(41,22,5,.45); color: var(--ink); }
+  dialog::backdrop { background: rgba(41,22,5,.4); }
+  .dlg { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; max-height: 88dvh; }
+  .dlg header, .dlg footer { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; }
+  .dlg header { border-bottom: 1px solid var(--line); }
+  .dlg header h2 { margin: 0; font: 500 24px var(--serif); }
+  .dlg footer { border-top: 1px solid var(--line); }
+  .dlg .body { overflow-y: auto; padding: 0 20px 20px; }
+  fieldset { border: 0; margin: 20px 0 0; padding: 0; min-width: 0; }
+  legend { font-weight: 600; margin-bottom: 8px; padding: 0; }
+  .opts { display: flex; flex-wrap: wrap; gap: 6px; }
+  .opt { font: 500 16px var(--sans); min-height: 38px; padding: 0 12px; border: 1px solid #877A6E; border-radius: 8px; background: #fff; color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+  .opt .ic { width: 14px; height: 14px; display: none; }
+  .opt[aria-pressed="true"] { background: var(--lilac); border-color: var(--lilac-7); color: var(--lilac-8); font-weight: 600; }
+  .opt[aria-pressed="true"] .ic { display: inline; }
+  .btn { font: 600 16px var(--sans); min-height: 46px; padding: 0 18px; border-radius: 8px; border: 0; background: var(--rust); color: #fff; cursor: pointer; }
+  .x { width: 44px; height: 44px; border: 0; background: none; border-radius: 8px; cursor: pointer; display: grid; place-items: center; }
+  .quiet { font: 600 16px var(--sans); background: none; border: 0; min-height: 44px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+:root { --x-accent: var(--pm-t); --x-tint: var(--am); --x-call-ink: var(--am-t); --x-line: var(--line); --x-r: 10px; }
+  .exm { color: var(--x-accent); font-weight: 700; margin-left: 2px; }
+  .x-hints { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; }
+  .x-hint { font-size: 14px; font-weight: 600; color: var(--x-accent); }
+  .x-legend { font-size: 14px; color: var(--ink-2); }
+  :root { --x-pin: #1F4560; --x-pin-on: #9B5212; }
+  [hidden] { display: none !important; }
+  /* Map view and small-cohort widening */
+  .x-mapview { display: grid; gap: 20px; margin: 24px 0; }
+  .x-mapview[hidden] { display: none; }
+  @media (min-width: 900px) { .x-mapview { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); align-items: start; } }
+  .x-map { height: 440px; border-radius: var(--x-r, 12px); overflow: hidden; position: relative; z-index: 0; background: #E9ECE6; }
+  @media (max-width: 600px) { .x-map { height: 340px; } }
+  .x-maplist { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .x-maplist li { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; padding: 12px; border: 1px solid var(--x-line); border-radius: var(--x-r, 12px); background: #fff; }
+  .x-maplist a { font-weight: 600; color: var(--ink); }
+  .x-maplist div > span { display: block; font-size: 14px; color: var(--ink-2); }
+  .x-num { width: 28px; height: 28px; border-radius: 50%; background: var(--x-pin); color: #fff; display: grid; place-items: center; font: 700 13px var(--sans); }
+  .x-more { margin: 24px 0 0; color: var(--ink-2); }
+  .x-widen { font: 600 16px var(--sans); color: var(--ink); background: #fff; border: 1.5px solid var(--ink); border-radius: var(--x-r, 12px); min-height: 44px; padding: 0 16px; margin-left: 8px; cursor: pointer; }
+  .x-widen:hover { background: var(--x-tint); }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a class="logo" href="c5-home.html">emu.</a><nav aria-label="Main"><a href="#">For therapists</a><a href="#">About</a></nav></div></header>
+
+<main class="wrap">
+  <div class="top-row">
+    <div>
+      <h1>When can you meet?</h1>
+      <p class="sub">4 therapists within 10 miles of Philadelphia, PA, self-pay only.</p>
+    </div>
+    <form class="s" role="search" onsubmit="return false">
+      <div class="f"><label for="loc">City or ZIP code</label><input id="loc" value="Philadelphia, PA" autocomplete="address-level2"></div>
+      <div class="f"><label for="rad">Distance</label><select id="rad"><option>5 miles</option><option selected>10 miles</option><option>25 miles</option><option>50 miles</option></select></div>
+      <button type="button" class="ghost" id="open"></button><button type="button" class="ghost" id="maptoggle" aria-pressed="false">Map</button>
+    </form>
+  </div>
+
+  <div class="weekbar">
+    <h2 id="wk" aria-live="polite"></h2>
+    <button class="nav" id="prev" aria-label="Previous week"></button>
+    <button class="nav" id="next" aria-label="Next week"></button>
+    <div class="key"><span><i style="background:var(--am)"></i>Morning</span><span><i style="background:var(--pm)"></i>Afternoon</span><span><i style="background:repeating-linear-gradient(135deg,var(--hatch) 0 3px,#fff 3px 6px);border:1px solid var(--line)"></i>Too soon to book</span></div>
+  </div>
+  <div class="scroller" role="region" aria-labelledby="wk" tabindex="0"><table id="grid"></table></div>
+  <div class="x-mapview" id="mapview" hidden><div class="x-map" id="dirmap" role="region" aria-label="Map of therapists near Philadelphia"></div><div id="maplist"></div></div><p class="x-more">Want more choice? <button type="button" class="x-widen">Search within 25 miles</button></p><p class="after">Every therapist asks for at least 72 hours' notice, so the next few days can't be booked. Choose an opening to see exact times on the therapist's profile.</p>
+</main>
+
+<dialog id="dlg" aria-labelledby="dlg-t">
+  <div class="dlg">
+    <header><h2 id="dlg-t">Filters</h2><button class="x" aria-label="Close" id="close"></button></header>
+    <div class="body" id="fbody"></div>
+    <footer><button class="quiet" type="button">Clear all</button><button class="btn" type="button" id="show">Show 4 therapists</button></footer>
+  </div>
+</dialog>
+
+<script>
+  const { icon, mockBar } = KIT;
+  mockBar(5, 'This week', 'c5-profile.html', 'Profile');
+  document.getElementById('open').innerHTML = icon('sliders') + 'Filters <span class="n">1</span><span class="sr"> active: Self-pay</span>';
+  document.getElementById('close').innerHTML = icon('x');
+  document.getElementById('prev').innerHTML = icon('left');
+  document.getElementById('next').innerHTML = icon('right');
+
+  // Two weeks starting Saturday, October 3 (today). Days before Oct 6 are inside the 72-hour notice.
+  const days = [...Array(14)].map((_, i) => { const d = new Date(2026, 9, 3 + i); return { d, key: d.getDate(), wd: d.toLocaleDateString('en-US', { weekday: 'short' }), long: d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) }; });
+  // Jordan's real openings. The others are made up for the mockup.
+  const open = {
+    jordan: { 6: [4, 0], 8: [3, 3], 13: [4, 0] },
+    maya: { 7: [2, 1], 10: [3, 0], 14: [2, 2] },
+    priya: { 9: [1, 2], 12: [0, 3], 15: [2, 0] },
+    daniel: { 8: [1, 2], 11: [2, 0], 16: [0, 2] },
+  };
+  let week = 0;
+  function render() {
+    const ds = days.slice(week * 7, week * 7 + 7);
+    document.getElementById('wk').textContent = `Week of ${ds[0].d.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}`;
+    document.getElementById('prev').disabled = week === 0;
+    document.getElementById('next').disabled = week === 1;
+    const head = `<thead><tr><th class="who" scope="col">Therapist</th>${ds.map(x => `<th scope="col" class="${x.key < 6 && x.d.getMonth() === 9 && x.key >= 3 && week === 0 ? 'soon' : ''}">${x.wd}<small>Oct ${x.key}</small></th>`).join('')}</tr></thead>`;
+    const rows = EMU.therapists.map(p => {
+      const href = p.example ? '#' : 'c5-profile.html';
+      const cells = ds.map(x => {
+        const soon = week === 0 && x.key < 6;
+        if (soon) return `<td class="soon"><span class="soon-note">Too soon</span></td>`;
+        const o = open[p.id][x.key];
+        if (!o) return `<td><span class="none" aria-label="No openings">None</span></td>`;
+        const [am, pm] = o;
+        return `<td>${am ? `<a class="slotbtn am" href="${href}" aria-label="${p.name}, ${x.long}, ${am} morning openings">Morning <span>${am}</span></a>` : ''}${pm ? `<a class="slotbtn pm" href="${href}" aria-label="${p.name}, ${x.long}, ${pm} afternoon openings">Afternoon <span>${pm}</span></a>` : ''}</td>`;
+      }).join('');
+      return `<tr><th class="who" scope="row"><div class="p"><img src="${p.photo}" alt="Portrait of ${p.name}"><div>
+        <h3><a href="${href}">${p.name}</a></h3>
+        <p class="m">${p.credential}</p>
+        <span class="ver">${icon('badge')}License verified in ${p.state}</span>
+        <p class="pl"><b>${p.place}</b>${p.id === 'jordan' ? KIT.moreLocs() : ''}, ${p.placeType.toLowerCase()}, ${p.distance} away. $${p.price} per session.</p>
+        ${KIT.excerpt(p)}
+        <p class="sp">Helps with ${p.specialties.slice(0, 3).join(', ').toLowerCase().replace('adhd', 'ADHD')}</p><div class="x-hints">${KIT.hints(p.id)}</div>
+        ${p.example ? '<span class="ex">Made-up example</span>' : ''}
+      </div></div></th>${cells}</tr>`;
+    }).join('');
+    document.getElementById('grid').innerHTML = head + `<tbody>${rows}</tbody>`;
+  }
+  render();
+  document.getElementById('prev').onclick = () => { week = 0; render(); };
+  document.getElementById('next').onclick = () => { week = 1; render(); };
+
+  document.getElementById('fbody').innerHTML = EMU.filters.map(([n, o]) => `<fieldset><legend>${n}</legend><div class="opts" data-toggle-group>${o.map(x => `<button type="button" class="opt" aria-pressed="${x === ((o.find(x => EMU.search.activeFilters.includes(x)) || o[0]))}">${icon('check')}${x}</button>`).join('')}</div></fieldset>`).join('');
+  const dlg = document.getElementById('dlg');
+  document.getElementById('open').onclick = () => dlg.showModal();
+  document.getElementById('close').onclick = document.getElementById('show').onclick = () => dlg.close();
+  document.querySelector('main').insertAdjacentHTML('beforeend', `<p class="x-legend" style="padding:0 20px 40px;max-width:1200px;margin:0 auto">${KIT.exm} Example details for this mockup. Therapists haven't entered these yet.</p>`);
+
+  // Map view
+  const hrefFor = t => t.example ? '#' : 'c5-profile.html';
+  document.getElementById('maplist').innerHTML = KIT.dirMapList(hrefFor);
+  const showMap = on => { document.getElementById('mapview').hidden = !on; document.querySelector('.scroller').hidden = on; if (on) KIT.mountDirMap(document.getElementById('dirmap'), document.getElementById('maplist'), hrefFor); };
+  const mt = document.getElementById('maptoggle'); mt.addEventListener('click', () => { const on = mt.getAttribute('aria-pressed') !== 'true'; mt.setAttribute('aria-pressed', on); mt.textContent = on ? 'Week' : 'Map'; showMap(on); });
+</script>
+</body>
+</html>

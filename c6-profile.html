@@ -1,0 +1,394 @@
+<!doctype html>
+<!--
+CONCEPT 6: ROUTES, profile. Version 2: immersive. Plan and colours are in c6-home.html.
+
+Jordan's loop is drawn large over a full-bleed photograph, with the start marker labelled
+"Start: the central fountain" (plum on lilac, 9.12:1). Jordan's name, credential and
+portrait sit on a solid paper panel over the photo. The three meeting places sit beside the
+real map underneath, so the drawing never has to pretend to be a map.
+
+Booking stays practical: price, the 45-minute notice, the free call, then the place (the
+start of the route) and that place's times. The request column scrolls with the page; it is
+not sticky, because time slots hid behind sticky panels on short windows.
+
+Motion
+  1. The header loop draws in on load (1.6s), the start settles and pulses once, then the
+     label and its leader fade in.
+  2. Content panels rise on entry (0.5s).
+  3. Choosing a place pops its marker (0.3s) and the times fade up (0.35s). Choosing a time
+     pops its dot. The summary line fades when it changes.
+  4. Request sent: a tick draws itself in the summary (0.35s), the panel border turns plum.
+  Everything off under prefers-reduced-motion; nothing hidden without JS.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept 6 profile</title>
+<script src="data.js?v=8"></script>
+<script src="request.js?v=8"></script>
+<script src="map.js?v=8"></script>
+<script>document.documentElement.classList.add('js'); document.write(`<link rel="stylesheet" href="${EMU.brand.fontsHref}">`)</script>
+<style>
+  html { scrollbar-gutter: stable; }
+  :root {
+    --paper: #FFFFFF; --ink: #291605; --soft: #5F5347; --rule: #E3E0DD; --contour: #DCE1D8;
+    --path: #9B5212; --path-d: #6E3A0D; --start: #4B2259; --lilac: #EFD2F9;
+    --serif: 'Newsreader', Georgia, serif; --sans: 'Inter', system-ui, sans-serif;
+    --ease: cubic-bezier(.2, .7, .2, 1);
+    /* Request form (request.js) */ --rq-ink: var(--ink); --rq-soft: var(--soft); --rq-bg: var(--paper); --rq-panel: var(--contour); --rq-line: var(--ink); --rq-accent: var(--path); --rq-accent-ink: #fff; --rq-accent-hover: var(--path-d); --rq-error: #B42318; --rq-radius: 6px; --rq-btn-radius: 6px; --rq-serif: var(--serif); --rq-sans: var(--sans); --rq-title-font: 500 26px/1.15 var(--serif);
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--paper); }
+  body { margin: 0; color: var(--ink); font: 400 16px/1.55 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  a { color: inherit; }
+  img { max-width: 100%; height: auto; display: block; }
+  :focus-visible { outline: 3px solid var(--path); outline-offset: 3px; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+  @media (min-width: 768px) { .wrap { padding: 0 40px; } }
+  header.top .wrap { display: flex; align-items: center; justify-content: space-between; min-height: 64px; }
+  .logo { font: 500 26px/1 var(--serif); text-decoration: none; }
+  nav a { text-decoration: none; padding: 10px 12px; min-height: 44px; display: inline-flex; align-items: center; }
+  nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+  .stage { position: relative; background: var(--ink); overflow: hidden; }
+  .stage > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .stage > svg.over { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .credit { position: absolute; right: 0; bottom: 0; margin: 0; background: var(--ink); color: #fff; font-size: 13px; line-height: 1.35; padding: 6px 12px; max-width: min(100%, 60ch); }
+  /* Under 760px the photo keeps a 46svh stage and the panel sits below it on paper. */
+  @media (max-width: 759px) {
+    .split { --ph: 46svh; min-height: 0; }
+    .split > img, .split > svg.over { height: var(--ph); }
+    .split > .panel { margin-top: var(--ph); }
+    .split > .credit { bottom: auto; top: var(--ph); transform: translateY(-100%); }
+  }
+  .panel { position: relative; background: var(--paper); padding: 24px 24px 24px; }
+  .head { min-height: 44svh; }
+  @media (min-width: 760px) {
+    .head { min-height: min(70svh, 720px); display: grid; align-items: end; }
+    .head .panel { width: min(560px, 48%); margin: 0 0 44px 40px; padding: 32px 36px 30px; }
+  }
+  @media (min-width: 1280px) { .head .panel { margin-left: calc((100% - 1200px) / 2 + 40px); } }
+  @media (max-width: 759px) { .over .lbl { display: none; } }
+  .back { position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin: 0 0 8px; text-decoration: underline; text-underline-offset: 4px; }
+  .back svg { width: 14px; height: 14px; }
+  .who { display: grid; gap: 4px 20px; grid-template-columns: 88px minmax(0, 1fr); align-items: center; }
+  .who img { width: 88px; height: 88px; object-fit: cover; border-radius: 6px; grid-row: span 3; align-self: start; }
+  h1 { margin: 0; font: 500 clamp(36px, 4.8vw, 56px)/1.0 var(--serif); letter-spacing: -0.015em; }
+  .who p { margin: 0; }
+  .verified { display: inline-flex; align-items: center; gap: 8px; color: var(--soft); }
+  .verified svg { width: 18px; height: 18px; color: var(--start); flex: none; }
+  .startlabel { display: inline-flex; align-items: center; gap: 10px; background: var(--lilac); color: var(--start); font-weight: 600; padding: 6px 14px 6px 10px; border-radius: 999px; margin: 18px 0 0; }
+  .startlabel i { width: 14px; height: 14px; border-radius: 50%; background: var(--start); border: 2px solid #fff; box-shadow: 0 0 0 1px var(--start); }
+  .head .quote { margin: 12px 0 0; font: 400 clamp(20px, 2vw, 24px)/1.3 var(--serif); max-width: 26ch; }
+  .capline { margin: 10px 0 0; color: var(--soft); font-size: 15px; max-width: 80ch; }
+
+  h2 { margin: 0 0 12px; font: 500 30px/1.15 var(--serif); letter-spacing: -0.008em; }
+  .prose { display: grid; gap: 28px 40px; grid-template-columns: minmax(0, 1fr); padding: 40px 0 36px; }
+  @media (min-width: 900px) { .prose { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .prose p { margin: 0; max-width: 60ch; }
+  .prose dl { margin: 0; display: grid; gap: 12px; }
+  .prose dt { font-weight: 600; }
+  .prose dd { margin: 2px 0 0; color: var(--soft); }
+  .facts { display: grid; gap: 10px 32px; grid-template-columns: minmax(0, 1fr); margin: 0; padding: 20px 0 0; border-top: 1px solid var(--rule); }
+  @media (min-width: 760px) { .facts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .facts div { display: grid; gap: 2px; }
+  .facts dt { font-weight: 600; }
+  .facts dd { margin: 0; }
+
+  .routeblock { display: grid; gap: 28px 48px; grid-template-columns: minmax(0, 1fr); padding: 36px 0 40px; border-top: 1px solid var(--rule); }
+  @media (min-width: 900px) { .routeblock { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+  .map { width: 100%; height: 360px; border: 1px solid var(--rule); display: block; border-radius: 6px; background: var(--contour); }
+  @media (min-width: 900px) { .map { height: 100%; min-height: 420px; } }
+  .maplink { display: inline-block; margin-top: 8px; text-decoration: underline; text-underline-offset: 4px; }
+  .mapnote { margin: 6px 0 0; color: var(--soft); }
+  .wps { margin: 0; padding: 0; list-style: none; display: grid; }
+  .wps li { position: relative; padding: 0 0 22px 40px; }
+  .wps li .n { position: absolute; left: 0; top: 2px; width: 28px; height: 28px; border-radius: 50%; background: var(--start); color: #fff; font: 600 14px/28px var(--sans); text-align: center; }
+  .wps li:not(:last-child)::after { content: ""; position: absolute; left: 13px; top: 32px; bottom: -2px; border-left: 2px dotted var(--path); }
+  .wps li:last-child { padding-bottom: 0; }
+  .wps .pname { margin: 0; font: 500 22px/1.25 var(--serif); display: flex; align-items: baseline; flex-wrap: wrap; }
+  .wps .pname .wp { margin-left: 8px; }
+  .wps .how { margin: 6px 0 8px; font: 400 clamp(18px, 2vw, 22px)/1.35 var(--serif); max-width: 30ch; display: flex; align-items: baseline; }
+  .addr { display: grid; gap: 2px; }
+  .wps .notes { margin: 10px 0 0; display: grid; gap: 8px; }
+  .wps .notes div { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 10px; }
+  .wps .notes dt { font-weight: 600; }
+  .wps .notes dd { margin: 0; }
+
+  /* Booking starts with the place. Pressed markers are filled with a dot, so the state is not colour alone. */
+  .book { display: grid; gap: 24px 56px; grid-template-columns: minmax(0, 1fr); padding: 36px 0 96px; border-top: 1px solid var(--rule); }
+  @media (min-width: 900px) { .book { grid-template-columns: minmax(0, 1fr) 320px; align-items: start; } }
+  .price { font: 500 24px/1.2 var(--serif); margin: 0 0 18px; }
+  .before { margin: 0 0 24px; padding: 14px 0; border-top: 1.5px solid var(--ink); border-bottom: 1px solid var(--rule); display: grid; gap: 8px; max-width: 62ch; }
+  .before .call { margin: 0; font: 500 22px/1.3 var(--serif); display: flex; align-items: baseline; }
+  .before dl { margin: 0; display: grid; gap: 6px; }
+  .before dl div { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 10px; }
+  .before dt { font-weight: 600; }
+  .before dd { margin: 0; }
+  .book h3.sub { margin: 0 0 10px; font: 600 16px/1.4 var(--sans); }
+  .places { display: grid; gap: 8px; margin: 0 0 10px; }
+  @media (min-width: 640px) { .places { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .placebtn { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 2px 10px; align-items: center; min-height: 56px; padding: 10px 12px; font: 400 16px/1.3 var(--sans); color: var(--ink); background: var(--paper); border: 1.5px solid var(--ink); border-radius: 6px; cursor: pointer; text-align: left; transition: background .15s ease-out, color .15s ease-out, border-color .15s ease-out; }
+  .placebtn:hover { background: var(--lilac); }
+  .placebtn .n { width: 28px; height: 28px; border-radius: 50%; background: var(--start); color: #fff; font: 600 14px/28px var(--sans); text-align: center; grid-row: span 2; }
+  .placebtn b { font-weight: 600; display: flex; align-items: baseline; flex-wrap: wrap; }
+  .placebtn small { font-size: 16px; color: var(--soft); }
+  .placebtn[aria-pressed="true"] { background: var(--start); border-color: var(--start); color: #fff; }
+  .placebtn[aria-pressed="true"] small { color: var(--lilac); }
+  .placebtn[aria-pressed="true"] .n { background: #fff; color: var(--start); animation: pop .3s var(--ease); }
+  .placebtn[aria-pressed="true"] .wp { border-color: #fff; }
+  .placebtn[aria-pressed="true"] b::after { content: "Start here"; font-weight: 400; margin-left: 8px; color: var(--lilac); }
+  .placenote { margin: 0 0 18px; color: var(--soft); }
+  .notice { margin: 0 0 18px; font-weight: 600; }
+  .day { display: grid; gap: 8px 20px; grid-template-columns: 1fr; padding: 16px 0; border-top: 1px solid var(--rule); }
+  @media (min-width: 640px) { .day { grid-template-columns: 180px 1fr; } }
+  .day h3 { margin: 0; font: 500 20px/1.3 var(--serif); }
+  .part { display: grid; grid-template-columns: 90px 1fr; gap: 8px; align-items: start; margin-bottom: 8px; }
+  .part span { font-weight: 600; line-height: 36px; }
+  .part .none { font-weight: 400; color: var(--soft); }
+  .slots { display: flex; flex-wrap: wrap; gap: 8px; }
+  .slot { min-height: 36px; min-width: 64px; padding: 0 12px; font: 500 16px var(--sans); color: var(--ink); background: var(--paper); border: 1.5px solid var(--ink); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: background .15s ease-out, color .15s ease-out, border-color .15s ease-out; }
+  .slot:hover { background: var(--lilac); }
+  .slot[aria-pressed="true"] { background: var(--start); border-color: var(--start); color: #fff; }
+  .slot[aria-pressed="true"]::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: pop .3s var(--ease); }
+  .moredates { display: inline-flex; align-items: center; min-height: 44px; margin-top: 8px; padding: 0 2px; font: 500 16px var(--sans); color: var(--ink); background: none; border: 0; border-top: 1px solid var(--rule); width: 100%; justify-content: flex-start; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+  .moredates:hover { color: var(--path-d); }
+  html.js #days.swap { animation: fadeup .35s var(--ease); }
+  /* The request column scrolls with the page; nothing here is sticky. */
+  .summary { border: 1.5px solid var(--ink); border-radius: 6px; padding: 20px; display: grid; gap: 12px; transition: border-color .3s ease-out; }
+  .summary.sent { border-color: var(--start); }
+  .summary h3 { margin: 0; font: 500 24px/1.2 var(--serif); }
+  .summary p { margin: 0; }
+  .summary .line { font-weight: 500; }
+  html.js .summary .line.flash { animation: fadeup .3s var(--ease); }
+  .summary .line svg { width: 22px; height: 22px; vertical-align: -5px; margin-right: 6px; color: var(--start); }
+  html.js .summary .line svg .tick { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .35s ease-out .1s forwards; }
+  .summary .prompt { color: var(--path-d); font-weight: 600; }
+  .summary .prompt:empty { display: none; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 20px; font: 600 16px var(--sans); color: #fff; background: var(--path); border: 0; border-radius: 6px; cursor: pointer; transition: background .15s ease-out, transform .15s ease-out; }
+  .btn:hover { background: var(--path-d); }
+  .btn:active { transform: scale(.98); }
+  .summary small { font-size: 16px; color: var(--soft); }
+  .summary h4 { margin: 6px 0 0; font: 600 16px/1.4 var(--sans); }
+  .waypoints { margin: 0; padding: 0; list-style: none; display: grid; counter-reset: wp; }
+  .waypoints li { position: relative; padding: 0 0 14px 34px; counter-increment: wp; }
+  .waypoints li::before { content: counter(wp); position: absolute; left: 0; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--start); color: #fff; font: 600 14px/24px var(--sans); text-align: center; }
+  .waypoints li:not(:last-child)::after { content: ""; position: absolute; left: 11px; top: 26px; bottom: -2px; border-left: 2px dotted var(--path); }
+  .waypoints li:last-child { padding-bottom: 0; }
+  .ask { margin-top: 6px; padding-top: 14px; border-top: 1px solid var(--rule); display: grid; gap: 8px; }
+  .ask button { display: inline-flex; align-items: center; min-height: 44px; padding: 0 2px; font: 500 16px var(--sans); color: var(--ink); background: none; border: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; justify-self: start; }
+  .ask button:hover { color: var(--path-d); }
+  .ask .proposed { color: var(--soft); display: flex; align-items: baseline; }
+  .ask .note { margin: 0; color: var(--soft); }
+  .ask .note[hidden] { display: none; }
+  /* Hollow waypoint: a value not yet surveyed. The start marker is filled; example values are hollow. */
+  .wp { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--soft); vertical-align: -1px; margin-right: 7px; flex: none; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  footer.foot { padding: 28px 0 80px; border-top: 1px solid var(--rule); display: grid; gap: 10px; max-width: 72ch; }
+  footer.foot p { margin: 0; }
+  footer.foot .crisis { font-weight: 600; }
+  footer.foot .legend { color: var(--soft); display: flex; align-items: baseline; }
+
+  /* Motion. Gated on html.js; off under reduced motion. */
+  html.js .rv { opacity: 0; transform: translateY(14px); }
+  html.js .rv.in { opacity: 1; transform: none; transition: opacity .5s var(--ease), transform .5s var(--ease); }
+  html.js .rt .dr { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  html.js .rt.in .dr { stroke-dashoffset: 0; transition: stroke-dashoffset var(--dur, 1s) cubic-bezier(.3, .5, .2, 1); }
+  html.js .rt .dots, html.js .rt .lbl { opacity: 0; }
+  html.js .rt.in .dots { opacity: 1; transition: opacity .4s ease-out var(--dur, 1s); }
+  html.js .rt.in .lbl { opacity: 1; transition: opacity .4s ease-out calc(var(--dur, 1s) + .3s); }
+  html.js .rt .st { transform-box: fill-box; transform-origin: center; transform: scale(.4); opacity: 0; }
+  html.js .rt.in .st { transform: scale(1); opacity: 1; transition: transform .4s cubic-bezier(.2, .7, .2, 1) calc(var(--dur, 1s) - .15s), opacity .25s ease-out calc(var(--dur, 1s) - .15s); }
+  html.js .rt .pl { transform-box: fill-box; transform-origin: center; opacity: 0; }
+  html.js .rt.in .pl { animation: pulse .7s ease-out calc(var(--dur, 1s) + .15s) 1; }
+  @keyframes pulse { 0% { transform: scale(.6); opacity: .7; } 100% { transform: scale(2.6); opacity: 0; } }
+  @keyframes pop { 0% { transform: scale(.5); } 60% { transform: scale(1.18); } 100% { transform: scale(1); } }
+  @keyframes fadeup { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .head.rt { --dur: 1.6s; }
+  @media (prefers-reduced-motion: reduce) {
+    html.js .rv, html.js .rt .dr, html.js .rt .dots, html.js .rt .lbl, html.js .rt .st { opacity: 1; transform: none; stroke-dashoffset: 0; transition: none !important; animation: none !important; }
+    html.js .rt .pl { opacity: 0 !important; animation: none !important; }
+    html.js .summary .line svg .tick { stroke-dashoffset: 0; animation: none; }
+    .placebtn[aria-pressed="true"] .n, .slot[aria-pressed="true"]::before, html.js #days.swap, html.js .summary .line.flash { animation: none !important; }
+    .btn, .placebtn, .slot, .summary { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="logo" href="c6-home.html" aria-label="Emu home">Emu</a>
+  <nav aria-label="Site"><a href="c6-directory.html">Browse</a><a href="#">For therapists</a></nav>
+</div></header>
+
+<main>
+  <section class="head stage rt split" id="head" aria-labelledby="h1"></section>
+  <div class="wrap"><p class="capline" id="capline"></p></div>
+
+  <div class="wrap">
+    <section class="prose rv">
+      <div><h2>About me</h2><p id="about"></p></div>
+      <div><h2>What you can expect</h2><p id="expect"></p></div>
+      <div><h2 id="approachesh">Treatment approaches</h2><dl id="methods"></dl></div>
+      <dl class="facts" id="facts" style="grid-column: 1 / -1"></dl>
+    </section>
+
+    <section class="routeblock rv" aria-labelledby="wh">
+      <div>
+        <h2 id="wh">Where you'll meet</h2>
+        <ol class="wps" id="wps"></ol>
+      </div>
+      <div>
+        <div class="map" id="map" role="region" aria-label="Map of Jordan's three meeting places, numbered to match the list"></div>
+        <a class="maplink" href="https://www.openstreetmap.org/?mlat=39.9496&mlon=-75.1718#map=16/39.9496/-75.1718" target="_blank" rel="noopener">Open the map in a new tab</a>
+        <p class="mapnote">Places 2 and 3 are examples for this mockup.</p>
+      </div>
+    </section>
+
+    <section class="book" aria-labelledby="bookh">
+      <div><h2 id="bookh">Book a session</h2><p class="price" id="price"></p>
+        <div class="before" id="before"></div>
+        <h3 class="sub" id="placesh">Where does the route start?</h3>
+        <div class="places" id="places" role="group" aria-labelledby="placesh"></div>
+        <p class="placenote" id="placenote"></p>
+        <h3 class="sub">When?</h3>
+        <p class="notice" id="notice"></p>
+        <div id="days"></div>
+        <button type="button" class="moredates" id="moredates">See more available dates</button></div>
+      <aside class="summary" id="summary">
+        <h3>Your request</h3>
+        <div aria-live="polite"><p class="line" id="line">No time chosen yet.</p>
+        <p class="prompt" id="prompt"></p></div>
+        <button class="btn" type="button" id="req">Request this time</button>
+        <small id="pay"></small>
+        <h4>What happens next</h4>
+        <ol class="waypoints" id="steps"></ol>
+        <div class="ask" id="ask"></div>
+      </aside>
+    </section>
+    <footer class="foot" id="foot"></footer>
+  </div>
+</main>
+
+<script>
+(function () {
+  const E = window.EMU, J = E.therapists[0], P = E.profile, X = E.extras, PH = E.photos;
+  const ex = legend => `<span class="wp" ${legend ? 'aria-hidden="true"' : ''}>${legend ? '' : '<span class="sr">Example: </span>'}</span>`;
+  const bar = document.createElement('div');
+  bar.setAttribute('role', 'region'); bar.setAttribute('aria-label', 'Mockup controls');
+  bar.style.cssText = 'background:#1C1A18;color:#fff;font:500 13px/1.4 Inter,system-ui,sans-serif;padding:8px 16px;display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center';
+  const pill = 'color:#fff;border:1px solid rgba(255,255,255,.5);border-radius:3px;padding:3px 10px;text-decoration:none';
+  bar.innerHTML = `<strong>Concept 6: Routes</strong><span style="opacity:.85">Jordan Avery is real. Therapists marked as examples are made up. Distances and times are examples.</span><span style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap"><a href="c6-home.html" style="${pill}">Landing</a><a href="c6-directory.html" style="${pill}">Directory</a><a href="c6-profile.html" style="${pill}">Profile</a><a href="index.html" style="${pill}">All concepts</a></span>`;
+  document.body.prepend(bar);
+
+  // Same generator as the directory, seeded by name so the loop matches the list, then scaled onto the photograph.
+  const hash = s => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
+  const rng = s => { let h = hash(s); return () => { h = (h * 1664525 + 1013904223) >>> 0; return h / 4294967296; }; };
+  const spline = (pts, closed) => {
+    const n = pts.length, Pt = i => pts[(i + n) % n]; let d = `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+    for (let i = 0; i < (closed ? n : n - 1); i++) {
+      const p0 = closed ? Pt(i - 1) : pts[Math.max(i - 1, 0)], p1 = pts[i], p2 = Pt(i + 1), p3 = closed ? Pt(i + 2) : pts[Math.min(i + 2, n - 1)];
+      d += ` C${(p1[0] + (p2[0] - p0[0]) / 6).toFixed(1)} ${(p1[1] + (p2[1] - p0[1]) / 6).toFixed(1)}, ${(p2[0] - (p3[0] - p1[0]) / 6).toFixed(1)} ${(p2[1] - (p3[1] - p1[1]) / 6).toFixed(1)}, ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+    }
+    return d + (closed ? ' Z' : '');
+  };
+  const r = rng(J.name), S = 148, c = S / 2;
+  for (let k = 0; k < 3; k++) for (let i = 0; i < 8; i++) { r(); r(); r(); } // skip the contour draws so the loop matches the list
+  const K = 6.5, CX = 1250, CY = 770;
+  const pts = []; for (let i = 0; i < 9; i++) { const a = i / 9 * Math.PI * 2 + r() * 0.3; const rr = S * (0.22 + r() * 0.16); pts.push([CX + Math.cos(a) * rr * K, CY + Math.sin(a) * rr * K]); }
+  const st = pts[0], d = spline(pts, true);
+  const lw = 560, lh = 58, lx = CX - lw / 2, ly = 300;
+  document.getElementById('head').innerHTML = `<img src="${PH.trailWalk.src}" alt="${PH.trailWalk.alt}" width="1920" height="1440" fetchpriority="high">
+    <svg class="over" viewBox="0 0 1920 1440" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <path class="dr" pathLength="1" d="${d}" fill="none" stroke="#fff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/>
+      <path class="dr" pathLength="1" d="${d}" fill="none" stroke="#9B5212" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      <path class="dots" d="${d}" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-dasharray="0 22" opacity=".9"/>
+      <g class="lbl"><path d="M${st[0].toFixed(1)} ${st[1].toFixed(1)} L${CX} ${ly + lh}" fill="none" stroke="#4B2259" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"/>
+        <rect x="${lx}" y="${ly}" width="${lw}" height="${lh}" rx="29" fill="#EFD2F9"/>
+        <text x="${CX}" y="${ly + 39}" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="30" font-weight="600" fill="#4B2259">Start: the central fountain</text></g>
+      <circle class="pl" cx="${st[0].toFixed(1)}" cy="${st[1].toFixed(1)}" r="24" fill="none" stroke="#fff" stroke-width="5"/>
+      <circle class="st" cx="${st[0].toFixed(1)}" cy="${st[1].toFixed(1)}" r="20" fill="#4B2259" stroke="#fff" stroke-width="6"/>
+    </svg>
+    <div class="panel rv">
+      <a class="back" href="c6-directory.html"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M9 2L4 7l5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>Back to your search</a>
+      <div class="who"><img src="${J.photo}" alt="Portrait of ${J.name}" width="320" height="320">
+        <h1 id="h1">${J.name}</h1><p>${J.credential}, ${J.city}</p>
+        <p class="verified"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M5 9.5l2.6 2.5L13 6.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>License verified in ${J.state}</p></div>
+      <span class="startlabel"><i aria-hidden="true"></i>Start: the central fountain</span>
+      <p class="quote">${P.location.instructions}</p>
+    </div>
+    <p class="credit">${PH.trailWalk.credit}</p>`;
+  document.getElementById('capline').textContent = `Jordan's loop around ${P.location.name}, drawn on a photograph of the Schuylkill River Trail, another of Jordan's starting places. The drawing is not to scale.`;
+
+  document.getElementById('about').textContent = P.about;
+  document.getElementById('expect').textContent = P.expect;
+  document.getElementById('approachesh').textContent = E.labels.approaches;
+  document.getElementById('methods').innerHTML = P.methods.map(([n, dd]) => `<div><dt>${n}</dt><dd>${dd}</dd></div>`).join('');
+  document.getElementById('facts').innerHTML = `<div><dt>${E.labels.focus}</dt><dd>${J.specialties.join(', ')}</dd></div><div><dt>Languages</dt><dd>${ex()}${X.languages.items.join(', ')}</dd></div><div><dt>${E.labels.who}</dt><dd>${ex()}${X.ageGroups.items.join(', ')}</dd></div>`;
+
+  const L = P.locations, near = L[0]; // Rittenhouse Square: real, and the nearest
+  document.getElementById('wps').innerHTML = L.map((l, i) => `<li><span class="n" aria-hidden="true">${i + 1}</span>
+      <p class="pname">${l.name}${l.example ? ex() : ''}</p>
+      <p class="how">${l.example ? ex() : ''}<span>${l.instructions}</span></p>
+      <div class="addr"><span>${l.tags.join(', ')}</span><span>${l.address}</span></div>
+      ${i === 0 ? `<dl class="notes"><div><dt>Access</dt><dd>${ex()}${X.place.access}</dd></div><div><dt>If it rains</dt><dd>${ex()}${X.place.weather}</dd></div></dl>` : ''}
+    </li>`).join('');
+  let mapApi = null;
+  EMU_MAP.mount(document.getElementById('map'), { pins: L.map((l, i) => ({ lat: l.lat, lng: l.lng, n: i + 1, label: l.name })), pin: { bg: '#4B2259', fg: '#fff' }, activeBg: '#9B5212' }).then(m => { mapApi = m; m.map.getPane('tilePane').style.filter = 'saturate(.6)'; m.focus(1); });
+
+  document.getElementById('price').textContent = `$${J.price} per session`;
+  document.getElementById('notice').textContent = X.notice.text;
+  document.getElementById('before').innerHTML = `<p class="call">${ex()}<span>${X.freeCall.text}</span></p><dl><div><dt>Sliding scale</dt><dd>${ex()}${X.slidingScale.text}</dd></div><div><dt>Pay by</dt><dd>${ex()}${X.paymentOptions.items.join(', ')}</dd></div></dl>`;
+  document.getElementById('pay').textContent = `Jordan will reply to confirm. ${X.payment.text}`;
+  document.getElementById('steps').innerHTML = X.whatNext.steps.map(s => `<li>${s}</li>`).join('');
+  document.getElementById('ask').innerHTML = `<button type="button" id="askbtn" aria-expanded="false" aria-controls="asknote">${X.contact.label}</button><span class="proposed">${ex()}Proposed feature, not yet decided</span><p class="note" id="asknote" hidden>${X.contact.note} Nothing is sent from this mockup.</p>`;
+  document.getElementById('askbtn').addEventListener('click', e => { const n = document.getElementById('asknote'); n.hidden = !n.hidden; e.currentTarget.setAttribute('aria-expanded', !n.hidden); });
+  document.getElementById('foot').innerHTML = `<p>${E.home.disclaimer}</p><p class="crisis">${E.home.crisis}</p><p class="legend">${ex(true)}Hollow marker: ${X.exampleLegend}</p>`;
+
+  // Booking: the start of the route first, then a time from that place
+  const days = document.getElementById('days'), line = document.getElementById('line'), prompt = document.getElementById('prompt'), summary = document.getElementById('summary');
+  const places = document.getElementById('places'), placenote = document.getElementById('placenote');
+  let loc = near, chosen = null;
+  const replay = (el, cls) => { el.classList.remove(cls); void el.getBoundingClientRect(); el.classList.add(cls); };
+  const say = html => { line.innerHTML = html; replay(line, 'flash'); };
+  const tick = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.8"/><path class="tick" pathLength="1" d="M7 12.5l3.2 3L17 8.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  places.innerHTML = L.map((l, i) => `<button type="button" class="placebtn" aria-pressed="${l === near}" data-i="${i}"><span class="n" aria-hidden="true">${i + 1}</span><b>${l.example ? ex() : ''}${l.name}</b><small>${l.tags.join(', ')}${i === 0 ? ', nearest to you' : ''}</small></button>`).join('');
+  const part = (label, lst, day, ap) => `<div class="part"><span${lst.length ? '' : ' class="none"'}>${label}</span>${lst.length ? `<div class="slots">${lst.map(t => `<button type="button" class="slot" aria-pressed="false" data-day="${day}" data-time="${t} ${ap}">${t}</button>`).join('')}</div>` : '<div class="none">No ' + label.toLowerCase() + ' times</div>'}</div>`;
+  function renderDays(animate) {
+    days.innerHTML = loc.availability.map(dd => `<div class="day"><h3>${dd.day}</h3><div>${part('Morning', dd.morning, dd.day, 'AM')}${part('Afternoon', dd.afternoon, dd.day, 'PM')}</div></div>`).join('');
+    if (animate) replay(days, 'swap');
+    placenote.textContent = loc === near ? `${near.name} is the nearest start to you, so its times are showing. Pick another start to see its times.` : `Times at ${loc.name}.${loc.example ? ' These times are examples for this mockup.' : ''}`;
+    chosen = null; summary.classList.remove('sent'); say(`No time chosen yet at ${loc.name}.`); prompt.textContent = '';
+  }
+  renderDays(false);
+  places.addEventListener('click', e => {
+    const b = e.target.closest('.placebtn'); if (!b) return;
+    places.querySelectorAll('.placebtn').forEach(p => p.setAttribute('aria-pressed', p === b));
+    loc = L[+b.dataset.i]; renderDays(true); if (mapApi) mapApi.focus(+b.dataset.i + 1);
+  });
+  days.addEventListener('click', e => {
+    const b = e.target.closest('.slot'); if (!b) return;
+    days.querySelectorAll('.slot').forEach(s => s.setAttribute('aria-pressed', s === b));
+    chosen = { day: b.dataset.day, time: b.dataset.time }; summary.classList.remove('sent');
+    say(`${chosen.day} at ${chosen.time} at ${loc.example ? ex() : ''}${loc.name} with ${J.name}, $${J.price} per session.`); prompt.textContent = '';
+  });
+  const sent = when => { summary.classList.add('sent'); say(`${tick}Request sent for ${when} at ${loc.name}. Jordan will reply to confirm.`); };
+  document.getElementById('req').addEventListener('click', () => {
+    if (!chosen) { prompt.textContent = 'Choose a time above first.'; days.querySelector('.slot').focus(); return; }
+    prompt.textContent = ''; EMU_REQ.open({ therapist: J, when: `${chosen.day} at ${chosen.time}`, place: loc.name, address: loc.address, onDone: () => sent(`${chosen.day} at ${chosen.time}`) });
+  });
+  document.getElementById('moredates').addEventListener('click', () => {
+    prompt.textContent = ''; EMU_CAL.open({ therapist: J, place: loc.name, address: loc.address, onDone: when => sent(when) });
+  });
+
+  // Reveals: the header loop draws in, sections rise as they enter the viewport.
+  const els = document.querySelectorAll('.rv, .rt');
+  if (!('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('in')); return; }
+  const io = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: 0.1 });
+  const first = document.querySelector('.stage'); // the opening stage draws on load, not on scroll
+  els.forEach(e => { if (e.closest('.stage') === first) setTimeout(() => e.classList.add('in'), 40); else io.observe(e); });
+})();
+</script>
+</body>
+</html>
