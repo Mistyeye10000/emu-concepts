@@ -78,3 +78,14 @@ footer.end :focus-visible, .pillnav :focus-visible { outline-color: var(--lilac)
 .leaflet-bar a { width: 36px !important; height: 36px !important; color: var(--ink) !important; background: var(--card) !important; border-bottom-color: var(--rule) !important; font: 400 20px/36px var(--sans) !important; }
 .leaflet-bar a:hover { background: var(--paper-2) !important; }
 .leaflet-control-attribution { font-size: 10px; background: rgba(255,253,249,.8) !important; }
+
+/* Page transitions between home, directory and profile (browsers with cross-document view transitions; others just load normally).
+   The page fades and lifts gently, the floating nav stays in place, and Jordan's photo travels from the directory to the profile. */
+@view-transition { navigation: auto; }
+.pillnav { view-transition-name: pillnav; }
+::view-transition-old(root) { animation: vt-out .22s ease both; }
+::view-transition-new(root) { animation: vt-in .42s cubic-bezier(.2,.7,.2,1) .06s both; }
+::view-transition-group(therapist-photo) { animation-duration: .5s; animation-timing-function: cubic-bezier(.3,.7,.2,1); }
+@keyframes vt-out { to { opacity: 0; transform: translateY(-10px); } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(14px); } }
+@media (prefers-reduced-motion: reduce) { ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; } }

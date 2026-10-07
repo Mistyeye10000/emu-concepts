@@ -14,7 +14,7 @@
 <script src="map.js?v=15"></script>
 <script src="motion.js?v=2"></script>
 <script>document.write(`<link rel="stylesheet" href="${EMU.brand.fontsHref}">`)</script>
-<link rel="stylesheet" href="site.css?v=2">
+<link rel="stylesheet" href="site.css?v=3">
 <style>
   .lede { padding: 24px 0 36px; }
   .sentence { font: 400 clamp(30px, 4.4vw, 52px)/1.18 var(--serif); letter-spacing: -0.015em; margin: 0; text-wrap: balance; }
@@ -316,7 +316,7 @@
   document.getElementById('results').innerHTML = T.map(p => `
     <li class="row rv">
       <div class="place"><span class="where">${icon(placeIcon(p.placeType))}${p.place}</span>${p.id === 'jordan' ? `<span class="sub">${moreLocs().replace(' and ', 'And ')}</span>` : ''}<span class="sub">${p.placeType}, ${p.distance} away</span></div>
-      <div class="person"><img src="${p.photo}" alt="Portrait of ${p.name}"><div>
+      <div class="person"><img src="${p.photo}" alt="Portrait of ${p.name}"${p.example ? '' : ' style="view-transition-name: therapist-photo"'}><div>
         <h2 class="name"><a href="${href(p)}">${p.name}</a>${p.example ? '<span class="example">Example</span>' : ''}</h2>
         <p class="cred">${p.credential}</p><span class="verified">${icon('badge')}License verified in ${p.state}</span>
         ${excerpt(p)}
@@ -389,6 +389,13 @@
   document.getElementById('foot').innerHTML = `
     <div><a class="logo" href="index.html">emu.</a><nav aria-label="Footer"><a href="directory.html">Find a therapist</a><a href="#">About Emu</a><a href="index.html#therapists">For therapists</a><a href="#">Contact</a><a href="#">Privacy</a><a href="#">Terms</a></nav></div>
     <div><p>${H.disclaimer}</p><p class="crisis">${H.crisis}</p></div>`;
+  // Page transition: the photo of the therapist you clicked travels to their profile (only one photo can carry the name at a time)
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a[href="profile.html"]'); if (!a) return;
+    const img = a.closest('li, .row')?.querySelector('img'); if (!img) return;
+    document.querySelectorAll('img').forEach(i => i.style.viewTransitionName = '');
+    img.style.viewTransitionName = 'therapist-photo';
+  });
   MOTION.watch();
 </script>
 </body>

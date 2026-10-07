@@ -16,7 +16,7 @@
 <script src="request.js?v=9"></script>
 <script src="motion.js?v=2"></script>
 <script>document.write(`<link rel="stylesheet" href="${EMU.brand.fontsHref}">`)</script>
-<link rel="stylesheet" href="site.css?v=2">
+<link rel="stylesheet" href="site.css?v=3">
 <style>
   /* A light line between the booking bar and the footer, both pine */
   footer.end { border-top: 1px solid rgba(255,255,255,.6); }
@@ -260,7 +260,7 @@
   document.getElementById('art').innerHTML = `
     <div class="two"><aside class="side">
     <a class="back" href="directory.html">${icon('left')}Back to your search</a>
-    <div class="who rv"><img src="${j.photo}" alt="Portrait of ${j.name}"><div><h1>${j.name}</h1><p class="cred">${j.credential}, ${j.city}</p><span class="verified">${icon('badge')}License verified in ${j.state}</span></div></div>
+    <div class="who rv"><img src="${j.photo}" alt="Portrait of ${j.name}" style="view-transition-name: therapist-photo"><div><h1>${j.name}</h1><p class="cred">${j.credential}, ${j.city}</p><span class="verified">${icon('badge')}License verified in ${j.state}</span></div></div>
     <ul class="tags rv" data-d="1" aria-label="${EMU.labels.focus}">${j.specialties.map(s => `<li>${s}</li>`).join('')}</ul>
     </aside><div class="main">
     <div class="fee rv" data-d="2">
@@ -417,6 +417,8 @@
     drawer.showModal();
   });
   if (new URLSearchParams(location.search).get('book')) { go(1); drawer.showModal(); }
+  // Arriving with a page transition: show the header straight away so the travelling photo lands on a visible spot
+  addEventListener('pagereveal', e => { if (e.viewTransition) document.querySelectorAll('.who, .tags, .back').forEach(el => el.classList.add('in')); });
   MOTION.watch();
 </script>
 </body>
