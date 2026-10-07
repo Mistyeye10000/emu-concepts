@@ -126,6 +126,11 @@
   .stage { position: fixed; inset: 0; z-index: 80; display: grid; grid-template-rows: minmax(0, 1fr); background: var(--paper); }
   .stage[hidden] { display: none; }
   html.maplock { overflow: hidden; }
+  /* The floating nav stays on top of the map view; the panel and map controls start below it */
+  body.mapmode .navwrap { position: fixed; top: 12px; left: 0; right: 0; z-index: 90; }
+  #mpanel { padding-top: 84px; }
+  .stage .leaflet-top { top: 72px; }
+  @media (max-width: 899px) { #mpanel { padding-top: 18px; } #mview { top: 72px !important; } }
   .mfil { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-bottom: 14px; margin-bottom: 14px; border-bottom: 1px solid var(--rule); }
   /* The search sentence moves into the panel in map view, set smaller */
   .msearch { margin: 0 0 28px; }
@@ -341,7 +346,8 @@
   // The List/Map toggle and the search sentence are the same components in both views: they move into the map layer and back
   const viewEl = document.querySelector('.bar .view'), viewHome = viewEl.nextSibling, viewParent = viewEl.parentNode;
   const formEl = document.querySelector('.lede form'), formHome = formEl.nextSibling, formParent = formEl.parentNode;
-  const bg = [document.querySelector('.navwrap'), document.getElementById('main'), document.querySelector('footer.end')];
+  // The floating nav stays usable in map view (Rachel: nobody should feel lost); only the page behind the map is set aside
+  const bg = [document.getElementById('main'), document.querySelector('footer.end')];
   // Toggle animation: a pine thumb slides to the chosen button, then the map grows out of the Map button (and shrinks back into the toggle)
   const thumb = document.createElement('span'); thumb.className = 'thumb'; thumb.setAttribute('aria-hidden', 'true'); viewEl.prepend(thumb);
   const placeThumb = instant => {
