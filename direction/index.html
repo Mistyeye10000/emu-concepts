@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Emu</title>
+<!--
+  Concept 1, version 2 (Rachel's direction, 7 Oct 2026)
+  Kept from concept 1: the warm beige, Newsreader with Inter, the rust action, the sentence search, the notebook spread of places.
+  Added: a full-width hero image (two people on a park walk, images/hero-park-walk.jpg; reads as anywhere, not Philadelphia),
+  concept 10's floating pill nav, concept 9's How Emu works (a route that draws as you scroll) and therapist band, and concept 9's deep green.
+  The hero takes a video later: set EMU.brand.heroVideo and the page swaps it in, with the image as the poster.
+-->
+<script src="data.js?v=9"></script>
+<script src="kit.js?v=10"></script>
+<script src="motion.js?v=2"></script>
+<script>document.write(`<link rel="stylesheet" href="${EMU.brand.fontsHref}">`)</script>
+<link rel="stylesheet" href="site.css?v=2">
+<style>
+  /* Hero */
+  .hero { position: relative; min-height: 100svh; display: grid; align-items: end; overflow: hidden; background: var(--pine); color: #fff; }
+  .hero .media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 62%; }
+  html:not(.reduce) .hero video.media { animation: drift 24s ease-out both; }
+  /* Slides crossfade over about 2 seconds; the one showing drifts slowly closer */
+  .slides img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 2s ease; }
+  .slides img.on { opacity: 1; }
+  html:not(.reduce) .slides img.on { animation: drift 9s ease-out both; }
+  .slidebar { display: flex; align-items: center; gap: 14px; margin-top: 26px; color: #F4ECE2; font-size: 15px; }
+  .slidebar .where { display: inline-flex; align-items: center; gap: 8px; min-width: 120px; font: italic 400 19px var(--serif); transition: opacity .5s; }
+  .slidebar .where .ic { width: 20px; height: 20px; }
+  .slidebar .dots { display: flex; gap: 6px; }
+  .slidebar .dots i { width: 6px; height: 6px; border-radius: 99px; background: rgba(255,255,255,.45); transition: width .4s, background-color .4s; }
+  .slidebar .dots i.on { width: 22px; background: #fff; }
+  .slpause { width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255,255,255,.5); background: rgba(255,255,255,.08); color: #fff; display: grid; place-items: center; cursor: pointer; }
+  .slpause:hover { background: rgba(255,255,255,.18); }
+  .slpause svg { width: 14px; height: 14px; }
+  html.reduce .slidebar .dots, html.reduce .slpause { display: none; }
+  @keyframes drift { from { transform: scale(1.1); } to { transform: scale(1); } }
+  .hero::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(0deg, rgba(25,14,4,.78) 0%, rgba(25,14,4,.42) 42%, rgba(25,14,4,.08) 70%), linear-gradient(90deg, rgba(25,14,4,.35), rgba(25,14,4,0) 60%); }
+  /* Phones: the photo sits in the top part and fades into green, so the headline and search sit below the people, not on them */
+  @media (max-width: 959px) {
+    .hero { min-height: 0; }
+    .hero .media { height: 58svh; }
+    .hero::before { background: linear-gradient(180deg, rgba(18,48,42,0) calc(58svh - 160px), var(--pine) 58svh); }
+    body .hero .hin { padding-top: calc(58svh - 40px); }
+  }
+  .hero .hin { position: relative; z-index: 2; width: 100%; padding-top: 120px; padding-bottom: 44px; display: grid; gap: 28px; }
+  @media (min-width: 960px) { .hero .hin { grid-template-columns: minmax(0, 1.2fr) minmax(360px, .8fr); align-items: end; padding-bottom: 64px; } }
+  .hero h1 { font: 400 clamp(44px, 5.6vw, 84px)/.98 var(--serif); letter-spacing: -0.03em; margin: 0; text-wrap: balance; max-width: 13ch; }
+  .hero .line { margin: 18px 0 0; font: 400 clamp(19px, 1.8vw, 22px)/1.45 var(--serif); color: #F4ECE2; max-width: 30ch; }
+  .ask { background: var(--paper); color: var(--ink); border-radius: 4px 72px 4px 4px; padding: 28px 30px 26px; box-shadow: 0 30px 80px -30px rgba(0,0,0,.6); }
+  .ask p { margin: 0; font: 400 clamp(24px, 2.4vw, 32px)/1.3 var(--serif); }
+  .ask .slot { display: inline-flex; border-bottom: 2px solid var(--rust); max-width: 100%; }
+  .ask input { font: italic 400 1em/1.2 var(--serif); color: var(--rust); background: transparent; border: 0; width: 8.4em; max-width: 100%; padding: 0 2px; min-height: 44px; }
+  .ask input::placeholder { color: #A0673A; }
+  /* Focus: the underline thickens and the field gets a soft tint, instead of a box (same as the directory) */
+  .ask .slot { border-radius: 6px 6px 0 0; transition: background-color .15s; }
+  .ask .slot:focus-within { background: var(--paper-2); box-shadow: inset 0 -2px 0 var(--rust); }
+  .ask input:focus-visible { outline: none; }
+  .ask .go { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; }
+  .ask .go span { color: var(--ink-2); font-size: 15px; }
+  .tag { position: absolute; right: 12px; bottom: 10px; z-index: 2; font-size: 12px; color: var(--ink); background: rgba(245,239,230,.92); border-radius: 99px; padding: 4px 10px; max-width: calc(100% - 24px); }
+  @media (max-width: 959px) { .tag { position: static; justify-self: start; } }
+
+  /* Places spread (concept 1) */
+  .places { padding: 104px 0 96px; }
+  .places h2, .how h2 { font: 400 clamp(34px, 4vw, 52px)/1.06 var(--serif); letter-spacing: -0.02em; margin: 0; max-width: 18ch; }
+  .places h2 { max-width: none; }
+  .places .lead { margin: 16px 0 0; color: var(--ink-2); max-width: 52ch; font: 400 21px/1.5 var(--serif); }
+  .spread { display: grid; gap: 28px; margin-top: 48px; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 860px) { .spread { grid-template-columns: 1.3fr 1fr .8fr; align-items: start; } .spread figure:nth-child(2) { margin-top: 72px; } .spread figure:nth-child(3) { margin-top: 24px; } }
+  figure { margin: 0; }
+  .spread .ph { overflow: hidden; border-radius: 4px; }
+  .spread figure:nth-child(1) .ph { border-radius: 4px 96px 4px 4px; }
+  .spread img { width: 100%; object-fit: cover; transition: transform .9s cubic-bezier(.2,.7,.2,1); }
+  .spread figure:hover img { transform: scale(1.04); }
+  html.reduce .spread figure:hover img { transform: none; }
+  .spread figure:nth-child(1) img { aspect-ratio: 4 / 3; }
+  .spread figure:nth-child(2) img { aspect-ratio: 1; object-position: 30% 50%; }
+  .spread figure:nth-child(3) img { aspect-ratio: 3 / 4; }
+  figcaption { font-size: 14px; color: var(--ink-2); margin-top: 12px; line-height: 1.45; }
+  figcaption em { font: italic 500 28px/1.2 var(--serif); color: var(--pine); display: block; margin-bottom: 4px; }
+
+  /* How Emu works (concept 9): three stops on a route that draws as you scroll */
+  /* How Emu works: the steps sit along one winding footpath; a walker follows the reader and leaves footprints (lab concept 1) */
+  .how { padding: 96px 0 120px; border-top: 1px solid var(--rule); }
+  .how h2 { margin: 0 auto 24px; text-align: center; }
+  .trail { position: relative; max-width: 880px; margin: 0 auto; }
+  .trail svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .trail ol { list-style: none; margin: 0; padding: 40px 0 60px; display: grid; gap: 120px; position: relative; }
+  .trail li { position: relative; padding-left: 64px; }
+  .trail h3 { font: 400 40px/1.05 var(--serif); letter-spacing: -0.015em; margin: 0 0 10px; }
+  .trail p { margin: 0; color: var(--ink-2); font-size: 17px; max-width: 34ch; }
+  .trail .stop { position: absolute; left: 13px; top: 10px; width: 22px; height: 22px; border-radius: 50%; background: var(--paper); border: 2px solid var(--pine); box-sizing: border-box; }
+  .trail li.here .stop { background: var(--pine); box-shadow: 0 0 0 6px var(--pine-50); }
+  @media (min-width: 760px) {
+    .trail ol { gap: 150px; }
+    .trail li { width: 50%; box-sizing: border-box; padding-left: 0; }
+    .trail li:nth-child(odd) { padding-right: 64px; text-align: right; }
+    .trail li:nth-child(odd) p { margin-left: auto; }
+    .trail li:nth-child(even) { margin-left: 50%; padding-left: 64px; }
+    .trail .stop { left: auto; right: -11px; }
+    .trail li:nth-child(even) .stop { right: auto; left: -11px; }
+  }
+  html.js:not(.reduce) .trail li { transition: opacity .5s ease, transform .5s cubic-bezier(.2,.7,.2,1); }
+  html.js:not(.reduce) .trail li:not(.here) { opacity: .35; transform: translateY(10px); }
+  html.js:not(.reduce) .trail .stop { transition: background-color .3s, box-shadow .3s; }
+  .trail .ground { fill: none; stroke: var(--rule); stroke-width: 2; stroke-dasharray: 2 9; stroke-linecap: round; }
+  .trail .walked { fill: none; stroke: var(--pine); stroke-width: 3; stroke-linecap: round; }
+  .trail .print { fill: var(--pine); opacity: 0; transition: opacity .4s ease; }
+  .trail .print.on { opacity: .55; }
+  .trail .walker circle:first-child { fill: var(--pine-50); }
+  .trail .walker circle:last-child { fill: var(--pine); stroke: var(--paper); stroke-width: 3; }
+
+  /* Therapist band (concept 9) */
+  .ther { position: relative; min-height: 78vh; display: grid; align-items: center; overflow: hidden; background: var(--pine); color: #fff; }
+  /* A therapist on their way to a session; the photo shows at full strength, darkened only behind the text card */
+  .ther img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 70% 50%; }
+  .ther::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(18,48,42,.55), rgba(18,48,42,0) 55%); }
+  /* A light line keeps the band apart from the green footer below it */
+  .ther { border-bottom: 1px solid rgba(255,255,255,.35); }
+  /* Phones: the photo sits above the card so the therapist isn't hidden */
+  @media (max-width: 759px) {
+    .ther { display: block; min-height: 0; padding: calc(56vh - 60px) 0 32px; }
+    .ther img { height: 56vh; object-position: 74% 50%; }
+    .ther::before { background: linear-gradient(180deg, rgba(18,48,42,0) calc(56vh - 140px), var(--pine) 56vh); }
+  }
+  .ther .wrap { position: relative; z-index: 2; width: 100%; }
+  .ther .box { max-width: 560px; background: var(--pine); padding: 40px; border-radius: 4px 72px 4px 4px; }
+  .ther h2 { font: 400 clamp(36px, 4vw, 54px)/1.04 var(--serif); margin: 0 0 16px; letter-spacing: -0.02em; }
+  .ther p { margin: 0 0 10px; font-size: 18px; color: #E3ECE7; }
+  .ther .free { color: var(--lilac); font: 400 22px/1.4 var(--serif); }
+  .ther .btn { background: #fff; color: var(--ink); margin-top: 16px; }
+  .ther .btn:hover { background: var(--lilac); }
+</style>
+</head>
+<body>
+<div class="navwrap"><nav class="pillnav" aria-label="Main"><a class="logo" href="index.html" aria-current="page">emu.</a><a class="l" href="#how">How it works</a><a class="l" href="#therapists">For therapists</a><a class="find" href="directory.html">Find a therapist</a></nav></div>
+<main id="main"></main>
+<footer class="end"><div class="wrap cols" id="foot"></div></footer>
+<script>
+  const H = EMU.home, PH = EMU.photos, B = EMU.brand.images;
+  // Hero: five places an Emu session can happen, crossfading slowly (images generated by Chris, 7 Oct 2026).
+  // Each slide names its place type with the same icon the directory and profile use. A hero video, if set, replaces the slides.
+  const SLIDES = [
+    ['images/hero-park-walk.jpg', 'Park', 'Two people walking side by side along a park path, seen from behind', '50% 60%'],
+    ['images/hero-cafe.jpg', 'Café', 'Two people talking at a table on a quiet café terrace, seen from behind', '50% 70%'],
+    ['images/hero-river.jpg', 'Waterfront', 'Two people walking along a riverside trail in autumn, seen from behind', '50% 60%'],
+    ['images/hero-library.jpg', 'Library', 'Two people talking at a long table in a library reading room, seen from behind', '50% 70%'],
+    ['images/hero-garden.jpg', 'Garden', 'Two people walking a wooden boardwalk through a garden, seen from behind', '50% 55%'],
+  ];
+  const heroMedia = EMU.brand.heroVideo
+    ? `<video class="media" autoplay muted loop playsinline poster="${SLIDES[0][0]}" aria-hidden="true"><source src="${EMU.brand.heroVideo}"></video>`
+    : `<div class="media slides" id="slides">${SLIDES.map(([src, , alt, pos], i) => `<img src="${src}" alt="${alt}" style="object-position:${pos}"${i ? ' loading="lazy" aria-hidden="true"' : ' class="on"'}>`).join('')}</div>`;
+  const slideBar = EMU.brand.heroVideo ? '' : `<div class="slidebar rv" data-d="2"><span class="where" id="slwhere" aria-hidden="true"></span><span class="dots" aria-hidden="true">${SLIDES.map((_, i) => `<i${i ? '' : ' class="on"'}></i>`).join('')}</span><button type="button" class="slpause" id="slpause" aria-pressed="false" aria-label="Pause the slideshow"></button></div>`;
+  document.getElementById('main').innerHTML = `
+    <section class="hero" aria-labelledby="h1">
+      ${heroMedia}
+      <div class="wrap hin">
+        <div><h1 id="h1" class="rv">${H.headline}</h1><p class="line rv" data-d="1">${H.line}</p>${slideBar}</div>
+        <form class="ask rv" data-d="2" action="directory.html" role="search">
+          <p>Show me therapists who meet near <span class="slot"><label for="loc" class="sr">City or ZIP code</label><input id="loc" name="location" placeholder="your city or ZIP" autocomplete="address-level2"></span></p>
+          <div class="go"><button class="btn">Find therapists nearby</button><span>Parks, trails and libraries near you.</span></div>
+        </form>
+      </div>
+    </section>
+
+    <section class="places" aria-labelledby="h-places">
+      <div class="wrap">
+        <h2 id="h-places" class="rv">${H.aboutLine.replace("screen. ", "screen.<br>")}</h2>
+        <p class="lead rv" data-d="1">${H.noOffice}</p>
+        <div class="spread">
+          <figure class="rv"><div class="ph"><img src="${PH.trailWalk.src}" alt="${PH.trailWalk.alt}" loading="lazy"></div><figcaption><em>Along a river trail</em>${PH.trailWalk.credit.split('. ').slice(1).join('. ').replace(', via Wikimedia Commons', '')}</figcaption></figure>
+          <figure class="rv" data-d="1"><div class="ph"><img src="${PH.library.src}" alt="${PH.library.alt}" loading="lazy"></div><figcaption><em>In a quiet corner of a library</em>${PH.library.credit.split('. ').slice(1).join('. ').replace(', via Wikimedia Commons', '')}</figcaption></figure>
+          <figure class="rv" data-d="2"><div class="ph"><img src="${B.feather}" alt="A feather caught in warm light" loading="lazy"></div><figcaption><em>${H.walk}</em>Image from emu.care</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="how" id="how" aria-labelledby="h-how">
+      <div class="wrap">
+        <h2 id="h-how" class="rv">How Emu works</h2>
+        <div class="trail" id="trail"><svg aria-hidden="true"><path class="ground"/><path class="walked"/><g class="prints"></g><g class="walker"><circle r="16"/><circle r="9"/></g></svg>
+          <ol>${EMU.howItWorks.map(([t, d]) => `<li class="here"><span class="stop" aria-hidden="true"></span><h3>${t}</h3><p>${d}</p></li>`).join('')}</ol></div>
+      </div>
+    </section>
+
+    <section class="ther" id="therapists" aria-labelledby="h-t">
+      <img src="images/therapist-walk.jpg" alt="" loading="lazy">
+      <div class="wrap"><div class="box rv"><h2 id="h-t">${H.therapistsTitle}</h2><p>${H.therapistsLine}</p><p class="free">${H.founding}</p><a class="btn" href="#">Join as a therapist</a></div></div>
+    </section>`;
+  document.getElementById('foot').innerHTML = `
+    <div><a class="logo" href="index.html">emu.</a><nav aria-label="Footer"><a href="directory.html">Find a therapist</a><a href="#">About Emu</a><a href="#therapists">For therapists</a><a href="#">Contact</a><a href="#">Privacy</a><a href="#">Terms</a></nav></div>
+    <div><p>${H.disclaimer}</p><p class="crisis">${H.crisis}</p><p class="cr">Photographs: ${PH.trailWalk.credit}. ${PH.library.credit}. Feather image from emu.care.</p></div>`;
+  // Hero slideshow: a new place every 7 seconds. Pauses when the tab is hidden, has a pause button (WCAG 2.2.2), and stays on the first image with reduced motion.
+  (() => {
+    const box = document.getElementById('slides'); if (!box) return;
+    const imgs = [...box.children], dots = [...document.querySelectorAll('.slidebar .dots i')], where = document.getElementById('slwhere'), btn = document.getElementById('slpause');
+    const ICONS = { pause: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>', play: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z"/></svg>' };
+    let i = 0, timer = null, paused = MOTION.reduce;
+    const label = n => { where.innerHTML = `${KIT.icon(KIT.placeIcon(SLIDES[n][1]))}${SLIDES[n][1]}`; };
+    const show = n => {
+      imgs[i].classList.remove('on'); imgs[i].setAttribute('aria-hidden', 'true'); dots[i].classList.remove('on');
+      i = n; imgs[i].classList.add('on'); imgs[i].removeAttribute('aria-hidden'); dots[i].classList.add('on');
+      where.style.opacity = 0; setTimeout(() => { label(i); where.style.opacity = 1; }, 450);
+    };
+    const run = () => { clearInterval(timer); if (!paused && !document.hidden) timer = setInterval(() => show((i + 1) % imgs.length), 7000); };
+    const paint = () => { btn.innerHTML = paused ? ICONS.play : ICONS.pause; btn.setAttribute('aria-pressed', paused); btn.setAttribute('aria-label', paused ? 'Play the slideshow' : 'Pause the slideshow'); };
+    btn.onclick = () => { paused = !paused; paint(); run(); };
+    document.addEventListener('visibilitychange', run);
+    // Load the other images early so each crossfade is smooth
+    imgs.slice(1).forEach(im => im.loading = 'eager');
+    label(0); paint(); run();
+  })();
+
+  // How it works: a footpath through the steps. A walker keeps pace with the reader, leaves footprints and wakes each step.
+  (() => {
+    const trail = document.getElementById('trail'), svg = trail.querySelector('svg');
+    const ground = svg.querySelector('.ground'), walked = svg.querySelector('.walked'), prints = svg.querySelector('.prints'), walker = svg.querySelector('.walker');
+    const items = [...trail.querySelectorAll('li')], still = MOTION.reduce;
+    let L = 0, stopsAt = [], marks = [];
+    function layout() {
+      const box = trail.getBoundingClientRect(), wide = innerWidth >= 760;
+      const pts = items.map(li => { const r = li.querySelector('.stop').getBoundingClientRect(); return [r.left + r.width / 2 - box.left, r.top + r.height / 2 - box.top]; });
+      const x0 = pts[0][0], swing = wide ? 110 : 12;
+      // Each bend leans away from the text beside it, so the path never runs through words
+      const away = i => wide ? (i % 2 ? -1 : 1) : -1;
+      const all = [[x0, 0, away(0)], ...pts.map((p, i) => [...p, away(i)]), [x0, box.height, away(pts.length - 1)]];
+      let d = `M ${all[0][0]} ${all[0][1]}`;
+      for (let i = 1; i < all.length; i++) { const [ax, ay, sa] = all[i - 1], [bx, by, sb] = all[i], h = by - ay; d += ` C ${ax + sa * swing} ${ay + h * .45}, ${bx + sb * swing} ${by - h * .45}, ${bx} ${by}`; }
+      ground.setAttribute('d', d); walked.setAttribute('d', d);
+      L = walked.getTotalLength(); walked.style.strokeDasharray = L;
+      stopsAt = pts.map(([px, py]) => { let best = 0, bd = Infinity; for (let s = 0; s <= 400; s++) { const q = walked.getPointAtLength(L * s / 400), dd = (q.x - px) ** 2 + (q.y - py) ** 2; if (dd < bd) { bd = dd; best = L * s / 400; } } return best; });
+      prints.innerHTML = ''; marks = [];
+      for (let s = 24, k = 0; s < L - 10; s += 30, k++) {
+        const a = walked.getPointAtLength(s), b = walked.getPointAtLength(s + 1), ang = Math.atan2(b.y - a.y, b.x - a.x), side = k % 2 ? 6 : -6;
+        const e = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+        e.setAttribute('class', 'print'); e.setAttribute('rx', 3.6); e.setAttribute('ry', 2.2);
+        e.setAttribute('transform', `translate(${a.x - Math.sin(ang) * side} ${a.y + Math.cos(ang) * side}) rotate(${ang * 180 / Math.PI})`);
+        prints.appendChild(e); marks.push([s, e]);
+      }
+      update();
+    }
+    function update() {
+      const r = trail.getBoundingClientRect();
+      const p = still ? 1 : Math.min(1, Math.max(0, (innerHeight * .55 - r.top) / r.height));
+      const at = L * p, pt = walked.getPointAtLength(at);
+      walked.style.strokeDashoffset = L - at;
+      walker.setAttribute('transform', `translate(${pt.x} ${pt.y})`);
+      walker.style.opacity = p > 0 && p < 1 ? 1 : 0;
+      marks.forEach(([s, e]) => e.classList.toggle('on', s < at - 14));
+      items.forEach((li, i) => li.classList.toggle('here', at >= stopsAt[i] - 4));
+    }
+    let ticking = false;
+    addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { ticking = false; update(); }); } }, { passive: true });
+    addEventListener('resize', layout);
+    if (document.fonts) document.fonts.ready.then(layout);
+    layout();
+  })();
+  MOTION.watch();
+</script>
+</body>
+</html>
