@@ -76,8 +76,8 @@
   .spread figure:hover img { transform: scale(1.04); }
   html.reduce .spread figure:hover img { transform: none; }
   .spread figure:nth-child(1) img { aspect-ratio: 4 / 3; }
-  .spread figure:nth-child(2) img { aspect-ratio: 1; object-position: 30% 50%; }
-  .spread figure:nth-child(3) img { aspect-ratio: 3 / 4; }
+  .spread figure:nth-child(2) img { aspect-ratio: 1; }
+  .spread figure:nth-child(3) img { aspect-ratio: 3 / 4; object-position: 58% 50%; }
   figcaption { font-size: 14px; color: var(--ink-2); margin-top: 12px; line-height: 1.45; }
   figcaption em { font: italic 500 28px/1.2 var(--serif); color: var(--pine); display: block; margin-bottom: 4px; }
 
@@ -155,9 +155,9 @@
         <h2 id="h-places" class="rv">${H.aboutLine.replace("screen. ", "screen.<br>")}</h2>
         <p class="lead rv" data-d="1">${H.noOffice}</p>
         <div class="spread">
-          <figure class="rv"><div class="ph"><img src="${PH.trailWalk.src}" alt="${PH.trailWalk.alt}" loading="lazy"></div><figcaption><em>Along a river trail</em>${PH.trailWalk.credit.split('. ').slice(1).join('. ').replace(', via Wikimedia Commons', '')}</figcaption></figure>
-          <figure class="rv" data-d="1"><div class="ph"><img src="${PH.library.src}" alt="${PH.library.alt}" loading="lazy"></div><figcaption><em>In a quiet corner of a library</em>${PH.library.credit.split('. ').slice(1).join('. ').replace(', via Wikimedia Commons', '')}</figcaption></figure>
-          <figure class="rv" data-d="2"><div class="ph"><img src="${B.feather}" alt="A feather caught in warm light" loading="lazy"></div><figcaption><em>${H.walk}</em>Image from emu.care</figcaption></figure>
+          <figure class="rv"><div class="ph"><img src="images/place-river.jpg" alt="An empty riverside trail under autumn trees, with a bench along the path" loading="lazy"></div><figcaption><em>Along a river trail</em></figcaption></figure>
+          <figure class="rv" data-d="1"><div class="ph"><img src="images/place-bench.jpg" alt="An empty wooden bench beside a path in a leafy city park" loading="lazy"></div><figcaption><em>On a park bench</em></figcaption></figure>
+          <figure class="rv" data-d="2"><div class="ph"><img src="images/place-cafe.jpg" alt="A window counter in a quiet café with two coffee cups and a view of an autumn street" loading="lazy"></div><figcaption><em>At a café window</em></figcaption></figure>
         </div>
       </div>
     </section>
@@ -176,7 +176,7 @@
     </section>`;
   document.getElementById('foot').innerHTML = `
     <div><a class="logo" href="index.html">emu.</a><nav aria-label="Footer"><a href="directory.html">Find a therapist</a><a href="#">About Emu</a><a href="#therapists">For therapists</a><a href="#">Contact</a><a href="#">Privacy</a><a href="#">Terms</a></nav></div>
-    <div><p>${H.disclaimer}</p><p class="crisis">${H.crisis}</p><p class="cr">Photographs: ${PH.trailWalk.credit}. ${PH.library.credit}. Feather image from emu.care.</p></div>`;
+    <div><p>${H.disclaimer}</p><p class="crisis">${H.crisis}</p></div>`;
   // Hero slideshow: a new place every 7 seconds. Pauses when the tab is hidden, has a pause button (WCAG 2.2.2), and stays on the first image with reduced motion.
   (() => {
     const box = document.getElementById('slides'); if (!box) return;
